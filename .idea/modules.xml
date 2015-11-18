@@ -3,9 +3,14 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/platform.iml" filepath="$PROJECT_DIR$/platform.iml" />
+      <module fileurl="file://$PROJECT_DIR$/platform.iml" filepath="$PROJECT_DIR$/platform.iml" />
+      <module fileurl="file://$PROJECT_DIR$/platform-server/platform-server.iml" filepath="$PROJECT_DIR$/platform-server/platform-server.iml" />
       <module fileurl="file://$PROJECT_DIR$/platform-server/platform-server.iml" filepath="$PROJECT_DIR$/platform-server/platform-server.iml" />
       <module fileurl="file://$PROJECT_DIR$/platform-server-kernel/platform-server-kernel.iml" filepath="$PROJECT_DIR$/platform-server-kernel/platform-server-kernel.iml" />
+      <module fileurl="file://$PROJECT_DIR$/platform-server-kernel/platform-server-kernel.iml" filepath="$PROJECT_DIR$/platform-server-kernel/platform-server-kernel.iml" />
+      <module fileurl="file://$PROJECT_DIR$/platform-server-rest/platform-server-rest.iml" filepath="$PROJECT_DIR$/platform-server-rest/platform-server-rest.iml" />
       <module fileurl="file://$PROJECT_DIR$/platform-server-rest/platform-server-rest.iml" filepath="$PROJECT_DIR$/platform-server-rest/platform-server-rest.iml" />
     </modules>
   </component>
 </project>
+
