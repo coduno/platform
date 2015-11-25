@@ -15,7 +15,7 @@ public class RestSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
             .authorizeRequests()
-                .antMatchers("/setup", "/organizations", "/users").permitAll()
+                .antMatchers("/setup", "/organizations", "/users", "/test").permitAll()
                 .anyRequest().authenticated()
             .and()
                 .httpBasic()

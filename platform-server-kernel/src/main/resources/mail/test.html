@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:remove="all">Coduno Invite</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+<p th:text="#{greeting(${name})}">
+    Hello, Peter Static!
+</p>
+<p th:text="${name}"></p>
+<p th:text="${url}"></p>
+<p th:if="${name.length() > 10}">
+    Wow! You've got a long name (more than 10 chars)!
+</p>
+<p>
+    Regards, <br />
+    <em>Coduno</em>
+</p>
+</body>
+</html>
