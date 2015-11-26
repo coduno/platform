@@ -63,6 +63,9 @@ public class User extends IdentifiableEntity implements UserDetails {
     @ManyToMany(mappedBy = "invitedUsers")
     private Set<Challenge> invitedChallenges;
 
+    @OneToMany(mappedBy = "user")
+    private Set<Result> results;
+
     @Column(nullable = false, updatable = false)
     private ZonedDateTime created = ZonedDateTime.now();
 
@@ -149,6 +152,22 @@ public class User extends IdentifiableEntity implements UserDetails {
         this.admin = admin;
     }
 
+    public CoderProfile getCoderProfile() {
+        return coderProfile;
+    }
+
+    public void setCoderProfile(CoderProfile coderProfile) {
+        this.coderProfile = coderProfile;
+    }
+
+    public Set<Result> getResults() {
+        return Collections.unmodifiableSet(results);
+    }
+
+    protected void setResults(Set<Result> results) {
+        this.results = results;
+    }
+
     @Transient
     public boolean isAccountNonExpired() {
         return true;
@@ -173,5 +192,13 @@ public class User extends IdentifiableEntity implements UserDetails {
             organizations = new HashSet<>();
         }
         organizations.add(member);
+    }
+
+    public void addResult(Result result) {
+        if (results == null) {
+            results = new HashSet<>();
+        }
+        results.add(result);
+        result.setUser(this);
     }
 }

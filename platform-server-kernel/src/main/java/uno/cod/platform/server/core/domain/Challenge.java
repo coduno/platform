@@ -3,6 +3,7 @@ package uno.cod.platform.server.core.domain;
 import javax.persistence.*;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -35,6 +36,9 @@ public class Challenge extends IdentifiableEntity {
     @OrderColumn
     @ManyToMany
     private List<Task> tasks;
+
+    @OneToMany(mappedBy = "challenge")
+    private Set<Result> results;
 
     /**
      * Start of the challenge, users can already be invited before
@@ -127,5 +131,13 @@ public class Challenge extends IdentifiableEntity {
         }
         task.addChallenge(this);
         tasks.add(task);
+    }
+
+    public void addResult(Result result) {
+        if (results == null) {
+            results = new HashSet<>();
+        }
+        results.add(result);
+        result.setChallenge(this);
     }
 }
