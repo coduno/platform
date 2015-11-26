@@ -95,9 +95,18 @@ public class SetupService {
         fizzBuzzTask.setEndpoint(outputMatchEndpoint);
         taskRepository.save(fizzBuzzTask);
 
+
+        Endpoint sequentialChallengeEndpoint = new Endpoint();
+        sequentialChallengeEndpoint.setComponent("sequential-challenge");
+        sequentialChallengeEndpoint.setName("Sequential challenge");
+        sequentialChallengeEndpoint = endpointRepository.save(sequentialChallengeEndpoint);
+
         Challenge challenge = new Challenge();
         challenge.setName("Coduno test");
+        challenge.setInstructions("Instructions for Coduno test");
+        challenge.setDescription("Description for Coduno test");
         challenge.setOrganization(organizationRepository.findByNick("coduno"));
+        challenge.setEndpoint(sequentialChallengeEndpoint);
         challenge.addTask(helloWorldTask);
         challenge.addTask(fizzBuzzTask);
         challengeRepository.save(challenge);

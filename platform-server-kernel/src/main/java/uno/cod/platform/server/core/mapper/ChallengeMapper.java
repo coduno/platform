@@ -12,10 +12,9 @@ public class ChallengeMapper {
         if(challenge==null){
             return null;
         }
-        ChallengeShowDto dto = new ChallengeShowDto();
-        dto.setId(challenge.getId());
-        dto.setName(challenge.getName());
-        dto.setTasks(challenge.getTasks().stream().map(e -> new TaskShowDto(e)).collect(Collectors.toList()));
+        ChallengeShowDto dto = new ChallengeShowDto(challenge);
+        dto.setEndpoint(EndpointMapper.map(challenge.getEndpoint()));
+        dto.setTasks(challenge.getTasks().stream().map(e -> TaskMapper.map(e)).collect(Collectors.toList()));
         return dto;
     }
 

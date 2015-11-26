@@ -20,6 +20,9 @@ public class Endpoint extends IdentifiableEntity {
     @OneToMany(mappedBy = "endpoint")
     private List<Task> tasks;
 
+    @OneToMany(mappedBy = "endpoint")
+    private List<Challenge> challenges;
+
     public String getName() {
         return name;
     }
@@ -44,11 +47,27 @@ public class Endpoint extends IdentifiableEntity {
         this.tasks = tasks;
     }
 
+    public List<Challenge> getChallenges() {
+        return challenges;
+    }
+
+    protected void setChallenges(List<Challenge> challenges) {
+        this.challenges = challenges;
+    }
+
     public void addTask(Task task) {
         if (tasks == null) {
             tasks = new ArrayList<>();
         }
         task.setEndpoint(this);
         tasks.add(task);
+    }
+
+    public void addChallenge(Challenge challenge) {
+        if (challenge == null) {
+            challenges = new ArrayList<>();
+        }
+        challenge.setEndpoint(this);
+        challenges.add(challenge);
     }
 }
