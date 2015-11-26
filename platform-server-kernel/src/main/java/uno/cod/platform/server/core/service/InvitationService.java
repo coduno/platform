@@ -61,8 +61,9 @@ public class InvitationService {
         if (!ok) {
             throw new AccessDeniedException("you are not an admin to the parent organization of the challenge");
         }
-        UserShowDto user = userService.findByEmail(dto.getEmail());
+        User user = userRepository.findByEmail(dto.getEmail());
         Map<String, Object> params = new HashMap<>();
+        String credentials = "";
         if (user == null) {
             UserCreateDto userCreateDto = new UserCreateDto();
             userCreateDto.setEmail(dto.getEmail());
@@ -71,14 +72,14 @@ public class InvitationService {
             userService.createFromDto(userCreateDto);
             params.put("username", userCreateDto.getNick());
             params.put("password", userCreateDto.getPassword());
+            credentials = new String(Base64.getEncoder().encode((userCreateDto.getNick() + ":" + userCreateDto.getPassword()).getBytes()));
         }
-
         params.put("organization", organization.getName());
-        params.put("token", getToken(challenge.getId()));
+        params.put("token", getToken(dto.getChallengeId(), credentials));
         mailService.sendMail("user", dto.getEmail(), "Challenge invitation", "challenge-invite.html", params, Locale.ENGLISH);
     }
 
-    private String getToken(Long challengeId) {
-        return challengeId + ":TOKEN";
+    private String getToken(Long challengeId, String credentials) {
+        return new String(Base64.getEncoder().encode((challengeId + ":" + credentials).getBytes()));
     }
 }
