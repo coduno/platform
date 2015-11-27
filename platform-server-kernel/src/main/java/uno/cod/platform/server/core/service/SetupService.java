@@ -12,6 +12,7 @@ import uno.cod.platform.server.core.domain.*;
 import uno.cod.platform.server.core.repository.*;
 
 import javax.transaction.Transactional;
+import java.time.Duration;
 import java.util.Arrays;
 
 @Service
@@ -82,6 +83,7 @@ public class SetupService {
         helloWorldTask.setDescription("This is a welcome task to our platform. It is the easiest one so you can learn the ui and the workflow.");
         helloWorldTask.setInstructions("Create a program that outputs 'Hello, world!' in a language of your preference.");
         helloWorldTask.setEndpoint(outputMatchEndpoint);
+        helloWorldTask.setDuration(Duration.ofMinutes(30));
         taskRepository.save(helloWorldTask);
 
         Task fizzBuzzTask = new Task();
@@ -93,6 +95,7 @@ public class SetupService {
                 "The n parameter represents the max number to wich you need to generate the fizzbuzz data.\n" +
                 "The output needs to be separated by '\\n'.");
         fizzBuzzTask.setEndpoint(outputMatchEndpoint);
+        fizzBuzzTask.setDuration(Duration.ofMinutes(30));
         taskRepository.save(fizzBuzzTask);
 
 
@@ -109,6 +112,7 @@ public class SetupService {
         challenge.setEndpoint(sequentialChallengeEndpoint);
         challenge.addTask(helloWorldTask);
         challenge.addTask(fizzBuzzTask);
+        challenge.setDuration(Duration.ofMinutes(30));
         challengeRepository.save(challenge);
     }
 

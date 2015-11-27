@@ -14,16 +14,7 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "challenge")
-public class Challenge extends IdentifiableEntity {
-    @Column(nullable = false)
-    private String name;
-
-    @Column(nullable = false)
-    private String description;
-
-    @Column(nullable = false)
-    private String instructions;
-
+public class Challenge extends Assignment {
     @ManyToOne
     private Endpoint endpoint;
 
@@ -49,14 +40,6 @@ public class Challenge extends IdentifiableEntity {
      * End of the challenge, the challenge is read only afterwards
      */
     private ZonedDateTime endDate;
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 
     public Organization getOrganization() {
         return organization;
@@ -96,22 +79,6 @@ public class Challenge extends IdentifiableEntity {
 
     public void setEndDate(ZonedDateTime endDate) {
         this.endDate = endDate;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getInstructions() {
-        return instructions;
-    }
-
-    public void setInstructions(String instructions) {
-        this.instructions = instructions;
     }
 
     public Endpoint getEndpoint() {

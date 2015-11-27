@@ -43,6 +43,7 @@ public class TaskService {
         task.setInstructions(dto.getInstructions());
         task.setDescription(dto.getDescription());
         task.setPublic(dto.isPublic());
+        task.setDuration(dto.getDuration());
         endpoint.addTask(task);
         organization.addTask(task);
         repository.save(task);

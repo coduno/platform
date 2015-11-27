@@ -45,6 +45,7 @@ public class ChallengeService {
         challenge.setName(dto.getName());
         challenge.setDescription(dto.getDescription());
         challenge.setInstructions(dto.getInstructions());
+        challenge.setDuration(dto.getDuration());
         for (Long taskId : dto.getTasks()) {
             challenge.addTask(taskRepository.getOne(taskId));
         }
