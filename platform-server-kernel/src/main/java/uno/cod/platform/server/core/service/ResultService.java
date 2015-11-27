@@ -41,4 +41,8 @@ public class ResultService {
 
         return new ResultShowDto(repository.save(result));
     }
+
+    public ResultShowDto findOne(Long id){
+        return new ResultShowDto(repository.findOne(id));
+    }
 }
