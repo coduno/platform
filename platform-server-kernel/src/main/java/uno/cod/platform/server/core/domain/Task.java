@@ -2,9 +2,7 @@ package uno.cod.platform.server.core.domain;
 
 import javax.persistence.*;
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * A task is an atomic challenge that runs on the
@@ -24,6 +22,9 @@ public class Task extends Assignment {
 
     @Column
     private boolean isPublic = false;
+
+    @OneToMany(mappedBy = "result")
+    private Set<Submission> submissions;
 
     public List<Challenge> getChallenges() {
         return Collections.unmodifiableList(challenges);
@@ -57,11 +58,27 @@ public class Task extends Assignment {
         isPublic = aPublic;
     }
 
+    public Set<Submission> getSubmissions() {
+        return submissions;
+    }
+
+    public void setSubmissions(Set<Submission> submissions) {
+        this.submissions = submissions;
+    }
+
     protected void addChallenge(Challenge challenge) {
         if (challenges == null) {
             challenges = new ArrayList<>();
         }
         challenges.add(challenge);
+    }
+
+    public void addSubmission(Submission submission){
+        if(submissions == null){
+            submissions = new HashSet<>();
+        }
+        submissions.add(submission);
+        submission.setTask(this);
     }
 }
 
