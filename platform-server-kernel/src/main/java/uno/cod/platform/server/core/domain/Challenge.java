@@ -3,6 +3,7 @@ package uno.cod.platform.server.core.domain;
 import javax.persistence.*;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -13,8 +14,9 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "challenge")
-public class Challenge extends IdentifiableEntity {
-    private String name;
+public class Challenge extends Assignment {
+    @ManyToOne
+    private Endpoint endpoint;
 
     @ManyToOne
     private Organization organization;
@@ -26,6 +28,9 @@ public class Challenge extends IdentifiableEntity {
     @ManyToMany
     private List<Task> tasks;
 
+    @OneToMany(mappedBy = "challenge")
+    private Set<Result> results;
+
     /**
      * Start of the challenge, users can already be invited before
      */
@@ -35,14 +40,6 @@ public class Challenge extends IdentifiableEntity {
      * End of the challenge, the challenge is read only afterwards
      */
     private ZonedDateTime endDate;
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 
     public Organization getOrganization() {
         return organization;
@@ -84,6 +81,14 @@ public class Challenge extends IdentifiableEntity {
         this.endDate = endDate;
     }
 
+    public Endpoint getEndpoint() {
+        return endpoint;
+    }
+
+    public void setEndpoint(Endpoint endpoint) {
+        this.endpoint = endpoint;
+    }
+
     public void addTask(Task task) {
         if (task == null) {
             throw new IllegalArgumentException("task.invalid");
@@ -93,5 +98,13 @@ public class Challenge extends IdentifiableEntity {
         }
         task.addChallenge(this);
         tasks.add(task);
+    }
+
+    public void addResult(Result result) {
+        if (results == null) {
+            results = new HashSet<>();
+        }
+        results.add(result);
+        result.setChallenge(this);
     }
 }

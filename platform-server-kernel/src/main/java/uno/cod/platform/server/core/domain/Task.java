@@ -1,9 +1,8 @@
 package uno.cod.platform.server.core.domain;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.time.Duration;
+import java.util.*;
 
 /**
  * A task is an atomic challenge that runs on the
@@ -11,16 +10,7 @@ import java.util.List;
  */
 @Entity
 @Table(name = "task")
-public class Task extends IdentifiableEntity {
-    @Column(unique = true, nullable = false, length = 255)
-    private String name;
-
-    @Column(nullable = false)
-    private String description;
-
-    @Column(nullable = false)
-    private String instructions;
-
+public class Task extends Assignment {
     @ManyToMany(mappedBy = "tasks")
     private List<Challenge> challenges;
 
@@ -33,13 +23,8 @@ public class Task extends IdentifiableEntity {
     @Column
     private boolean isPublic = false;
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
+    @OneToMany(mappedBy = "result")
+    private Set<Submission> submissions;
 
     public List<Challenge> getChallenges() {
         return Collections.unmodifiableList(challenges);
@@ -55,22 +40,6 @@ public class Task extends IdentifiableEntity {
 
     public void setEndpoint(Endpoint endpoint) {
         this.endpoint = endpoint;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getInstructions() {
-        return instructions;
-    }
-
-    public void setInstructions(String instructions) {
-        this.instructions = instructions;
     }
 
     public Organization getOrganization() {
@@ -89,11 +58,27 @@ public class Task extends IdentifiableEntity {
         isPublic = aPublic;
     }
 
+    public Set<Submission> getSubmissions() {
+        return submissions;
+    }
+
+    public void setSubmissions(Set<Submission> submissions) {
+        this.submissions = submissions;
+    }
+
     protected void addChallenge(Challenge challenge) {
         if (challenges == null) {
             challenges = new ArrayList<>();
         }
         challenges.add(challenge);
+    }
+
+    public void addSubmission(Submission submission){
+        if(submissions == null){
+            submissions = new HashSet<>();
+        }
+        submissions.add(submission);
+        submission.setTask(this);
     }
 }
 

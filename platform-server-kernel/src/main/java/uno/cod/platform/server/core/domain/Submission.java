@@ -11,32 +11,19 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "submission")
 public class Submission extends IdentifiableEntity {
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "user_id", nullable = false, updatable = false)
-    private User user;
-
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "challenge_id", nullable = false, updatable = false)
-    private Challenge challenge;
+    @ManyToOne
+    private Result result;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "task_id", nullable = false, updatable = false)
     private Task task;
 
-    public User getUser() {
-        return user;
+    public Result getResult() {
+        return result;
     }
 
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public Challenge getChallenge() {
-        return challenge;
-    }
-
-    public void setChallenge(Challenge challenge) {
-        this.challenge = challenge;
+    public void setResult(Result result) {
+        this.result = result;
     }
 
     public Task getTask() {

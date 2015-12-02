@@ -1,28 +1,18 @@
 package uno.cod.platform.server.core.dto.challenge;
 
+import org.springframework.beans.BeanUtils;
+import uno.cod.platform.server.core.domain.Challenge;
+import uno.cod.platform.server.core.dto.assignment.AssignmentShowDto;
+import uno.cod.platform.server.core.dto.endpoint.EndpointShowDto;
 import uno.cod.platform.server.core.dto.task.TaskShowDto;
 
 import java.util.List;
 
-public class ChallengeShowDto {
-    private Long id;
-    private String name;
+public class ChallengeShowDto extends AssignmentShowDto{
     private List<TaskShowDto> tasks;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+    public ChallengeShowDto(Challenge challenge){
+        BeanUtils.copyProperties(challenge, this);
     }
 
     public List<TaskShowDto> getTasks() {

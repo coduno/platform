@@ -12,6 +12,7 @@ import uno.cod.platform.server.core.domain.*;
 import uno.cod.platform.server.core.repository.*;
 
 import javax.transaction.Transactional;
+import java.time.Duration;
 import java.util.Arrays;
 
 @Service
@@ -82,6 +83,7 @@ public class SetupService {
         helloWorldTask.setDescription("This is a welcome task to our platform. It is the easiest one so you can learn the ui and the workflow.");
         helloWorldTask.setInstructions("Create a program that outputs 'Hello, world!' in a language of your preference.");
         helloWorldTask.setEndpoint(outputMatchEndpoint);
+        helloWorldTask.setDuration(Duration.ofMinutes(30));
         taskRepository.save(helloWorldTask);
 
         Task fizzBuzzTask = new Task();
@@ -93,13 +95,24 @@ public class SetupService {
                 "The n parameter represents the max number to wich you need to generate the fizzbuzz data.\n" +
                 "The output needs to be separated by '\\n'.");
         fizzBuzzTask.setEndpoint(outputMatchEndpoint);
+        fizzBuzzTask.setDuration(Duration.ofMinutes(30));
         taskRepository.save(fizzBuzzTask);
+
+
+        Endpoint sequentialChallengeEndpoint = new Endpoint();
+        sequentialChallengeEndpoint.setComponent("sequential-challenge");
+        sequentialChallengeEndpoint.setName("Sequential challenge");
+        sequentialChallengeEndpoint = endpointRepository.save(sequentialChallengeEndpoint);
 
         Challenge challenge = new Challenge();
         challenge.setName("Coduno test");
+        challenge.setInstructions("Instructions for Coduno test");
+        challenge.setDescription("Description for Coduno test");
         challenge.setOrganization(organizationRepository.findByNick("coduno"));
+        challenge.setEndpoint(sequentialChallengeEndpoint);
         challenge.addTask(helloWorldTask);
         challenge.addTask(fizzBuzzTask);
+        challenge.setDuration(Duration.ofMinutes(30));
         challengeRepository.save(challenge);
     }
 
