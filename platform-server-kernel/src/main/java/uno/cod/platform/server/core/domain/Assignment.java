@@ -1,6 +1,7 @@
 package uno.cod.platform.server.core.domain;
 
 import javax.persistence.Column;
+import javax.persistence.Lob;
 import javax.persistence.MappedSuperclass;
 import java.time.Duration;
 
@@ -14,9 +15,11 @@ public abstract class Assignment extends IdentifiableEntity{
     private String name;
 
     @Column(nullable = false)
+    @Lob
     private String description;
 
     @Column(nullable = false)
+    @Lob
     private String instructions;
 
     @Column(nullable = false)
