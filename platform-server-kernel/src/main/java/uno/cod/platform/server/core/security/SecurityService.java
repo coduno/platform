@@ -2,6 +2,7 @@ package uno.cod.platform.server.core.security;
 
 
 import org.springframework.stereotype.Service;
+import uno.cod.platform.server.core.domain.Challenge;
 import uno.cod.platform.server.core.domain.OrganizationMember;
 import uno.cod.platform.server.core.domain.TeamMember;
 import uno.cod.platform.server.core.domain.User;
@@ -37,6 +38,9 @@ public class SecurityService {
     }
 
     public boolean isOrganizationMember(User user, Long organizationId) {
+        if(organizationId == null){
+            return false;
+        }
         Set<OrganizationMember> organizations = user.getOrganizations();
         for (OrganizationMember organizationMember : user.getOrganizations()) {
             if (organizationMember.getKey().getOrganization().getId().equals(organizationId)) {
@@ -54,5 +58,24 @@ public class SecurityService {
             }
         }
         return false;
+    }
+
+    public boolean canGetChallenge(User user, Long challengeId, Long organizationId){
+        if(organizationId!=null){
+            return isOrganizationMember(user, organizationId);
+        }
+        for(Challenge challenge: user.getInvitedChallenges()){
+            if(challenge.getId() == challengeId){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean canGetTask(User user, Long taskId, Long organizationId){
+        if(organizationId!=null){
+            return isOrganizationMember(user, organizationId);
+        }
+        return true;
     }
 }

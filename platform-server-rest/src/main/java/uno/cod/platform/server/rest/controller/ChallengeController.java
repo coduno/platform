@@ -34,8 +34,8 @@ public class ChallengeController {
     }
 
     @RequestMapping(value = RestUrls.CHALLENGES_ID, method = RequestMethod.GET)
-    @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<ChallengeShowDto> get(@PathVariable Long id) {
+    @PreAuthorize("isAuthenticated() and @securityService.canGetChallenge(principal, #id, #organizationId)")
+    public ResponseEntity<ChallengeShowDto> get(@PathVariable Long id, @RequestParam("organization") Long organizationId) {
         return new ResponseEntity<>(service.findById(id), HttpStatus.OK);
     }
 }
