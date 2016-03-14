@@ -80,7 +80,7 @@ public class SubmissionService {
 
         // TODO update submission with results
         for (Test test : task.getTests()) {
-            runTest(user.getId(), file, language, test);
+            runTest(user.getId(), submission.filePath(), language, test);
         }
     }
 
@@ -101,10 +101,10 @@ public class SubmissionService {
         webSocketService.send(userId, postToRuntime(runner, form).toString());
     }
 
-    private void runTest(Long userId, MultipartFile file, String language, Test test) throws IOException {
+    private void runTest(Long userId, String filePath, String language, Test test) throws IOException {
         MultiValueMap<String, Object> form = new LinkedMultiValueMap<>();
         form.add("language", language);
-        form.add("files", new FileMessageResource(file.getBytes(), file.getOriginalFilename()));
+        form.add("files_gcs", filePath);
         Map<String, String> params = test.getParams();
         if (params != null) {
             for (Map.Entry<String, String> param : params.entrySet()) {
