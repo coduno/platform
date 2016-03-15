@@ -88,7 +88,7 @@ public class SetupService {
                 outputMatchTaskEndpoint, simpleRunner, Duration.ofMinutes(30));
 
         Map<String, String> params = new HashMap<>();
-        params.put(Test.PATH, "helloworld");
+        params.put(Test.PATH, "helloworld/helloworld");
         createTest(helloWorldTask, diffRunner, params);
 
         createTemplate(helloWorldTask, Language.PYTHON, "default/app.py");
@@ -186,37 +186,37 @@ public class SetupService {
 
         Task levelOne = createTask("Level 1", "## Description", "## Instructions", cccEndpoint, cccNormalRunner, Duration.ofHours(4), catalysts);
         Map<String, String> params = new HashMap<>();
-        params.put(Test.PATH, "helloworld");
+        params.put(Test.PATH, "helloworld/helloworld");
         createTest(levelOne, cccTestRunner, params);
 
         Task levelTwo = createTask("Level 2", "## Description", "## Instructions", cccEndpoint, cccNormalRunner, Duration.ofHours(4), catalysts);
         params = new HashMap<>();
-        params.put(Test.PATH, "helloworld");
+        params.put(Test.PATH, "helloworld/helloworld");
         createTest(levelTwo, cccTestRunner, params);
 
         Task levelThree = createTask("Level 3", "## Description", "## Instructions", cccEndpoint, cccNormalRunner, Duration.ofHours(4), catalysts);
         params = new HashMap<>();
-        params.put(Test.PATH, "helloworld");
+        params.put(Test.PATH, "helloworld/helloworld");
         createTest(levelThree, cccTestRunner, params);;
 
         Task levelFour = createTask("Level 4", "## Description", "## Instructions", cccEndpoint, cccNormalRunner, Duration.ofHours(4), catalysts);
         params = new HashMap<>();
-        params.put(Test.PATH, "helloworld");
+        params.put(Test.PATH, "helloworld/helloworld");
         createTest(levelFour, cccTestRunner, params);
 
         Task levelFive = createTask("Level 5", "## Description", "## Instructions", cccEndpoint, cccNormalRunner, Duration.ofHours(4), catalysts);
         params = new HashMap<>();
-        params.put(Test.PATH, "helloworld");
+        params.put(Test.PATH, "helloworld/helloworld");
         createTest(levelFive, cccTestRunner, params);
 
         Task levelSix = createTask("Level 6", "## Description", "## Instructions", cccEndpoint, cccNormalRunner, Duration.ofHours(4), catalysts);
         params = new HashMap<>();
-        params.put(Test.PATH, "helloworld");
+        params.put(Test.PATH, "helloworld/helloworld");
         createTest(levelSix, cccTestRunner, params);
 
         Task levelSeven = createTask("Level 7", "## Description", "## Instructions", cccEndpoint, cccNormalRunner, Duration.ofHours(4), catalysts);
         params = new HashMap<>();
-        params.put(Test.PATH, "helloworld");
+        params.put(Test.PATH, "helloworld/helloworld");
         createTest(levelSeven, cccTestRunner, params);
 
         Challenge ccc = new Challenge();
