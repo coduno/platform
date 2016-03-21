@@ -28,4 +28,9 @@ public interface ResultRepository extends JpaRepository<Result, UUID> {
             "JOIN challenge.challengeTemplate template " +
             "WHERE template.id = :templateId ")
     List<Result> findAllByTemplate(@Param("template") UUID templateId);
+
+    @Query("SELECT result FROM Result result " +
+            "JOIN result.challenge challenge " +
+            "WHERE challenge.id = :id ")
+    List<Result> findAllByChallenge(@Param("id") UUID id);
 }
