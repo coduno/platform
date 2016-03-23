@@ -55,7 +55,7 @@ public class SetupService {
         user.setPassword(this.passwordEncoder.encode(password));
         user.setEnabled(true);
         this.userRepository.save(user);
-        if(Arrays.asList(this.environment.getActiveProfiles()).contains(Profiles.DEVELOPMENT)) {
+        if (Arrays.asList(this.environment.getActiveProfiles()).contains(Profiles.DEVELOPMENT)) {
             LOGGER.info("initializing development database");
             this.initDevelopmentDatabase();
         }
@@ -142,9 +142,11 @@ public class SetupService {
         challengeTemplate.addTask(fizzBuzzTask);
         challengeTemplate.setDuration(Duration.ofMinutes(30));
         challengeTemplateRepository.save(challengeTemplate);
+
+        initCCC(organizationRepository.findByNick("coduno"), languages, cccTestRunner, cccNormalRunner, cccChallengeEndpoint, cccTaskEndpoint);
     }
 
-    private void initCoduno(){
+    private void initCoduno() {
         User victor = new User();
         victor.setUsername("vbalan");
         victor.setEmail("victor.balan@cod.uno");
@@ -168,7 +170,7 @@ public class SetupService {
         victorCoduno = organizationMemberRepository.save(victorCoduno);
     }
 
-    private Organization initCatalysts(){
+    private Organization initCatalysts() {
         User victor = new User();
         victor.setUsername("vbalan_catalysts");
         victor.setEmail("victor.balan@catalysts.cc");
@@ -193,24 +195,48 @@ public class SetupService {
         return catalysts;
     }
 
-    private Runner createRunner(String name){
+    private void initCCC(Organization org, Set<Language> languages, Runner cccTestRunner, Runner cccNormalRunner, Endpoint cccChallengeEndpoint, Endpoint cccEndpoint) {
+
+        ChallengeTemplate ccc = new ChallengeTemplate();
+        ccc.setName("Catalysts Coding Contest");
+        ccc.setDescription("## Description");
+        ccc.setInstructions("## Instructions for Catalysts Coding Contest");
+        ccc.setOrganization(org);
+        ccc.setEndpoint(cccChallengeEndpoint);
+        ccc.setDuration(Duration.ofHours(4));
+
+        for (int i = 1; i <= 7; i++) {
+            Task task = createTask("Level " + i, "## Description", "## Instructions", cccEndpoint, cccNormalRunner, Duration.ofHours(4), org, languages);
+            for (int j = 1; j <= 3; j++) {
+                Map<String, String> params = new HashMap<>();
+                params.put("level", i + "");
+                params.put("test", j + "");
+                createTest(task, cccTestRunner, params);
+            }
+            ccc.addTask(task);
+        }
+        challengeTemplateRepository.save(ccc);
+
+    }
+
+    private Runner createRunner(String name) {
         Runner runner = new Runner();
         runner.setName(name);
         return runnerRepository.save(runner);
     }
 
-    private Endpoint createEndpoint(String name, String component){
+    private Endpoint createEndpoint(String name, String component) {
         Endpoint outputMatchEndpoint = new Endpoint();
         outputMatchEndpoint.setName(name);
         outputMatchEndpoint.setComponent(component);
         return endpointRepository.save(outputMatchEndpoint);
     }
 
-    private Task createTask(String name, String description, String instructions, Endpoint endpoint, Runner runner, Duration duration, Set<Language> languages){
+    private Task createTask(String name, String description, String instructions, Endpoint endpoint, Runner runner, Duration duration, Set<Language> languages) {
         return createTask(name, description, instructions, endpoint, runner, duration, null, languages);
     }
 
-    private Task createTask(String name, String description, String instructions, Endpoint endpoint, Runner runner, Duration duration, Organization organization, Set<Language> languages){
+    private Task createTask(String name, String description, String instructions, Endpoint endpoint, Runner runner, Duration duration, Organization organization, Set<Language> languages) {
         Task task = new Task();
         task.setName(name);
         task.setDescription(description);
@@ -224,7 +250,7 @@ public class SetupService {
         return taskRepository.save(task);
     }
 
-    private Test createTest(Task task, Runner runner, Map<String, String> params){
+    private Test createTest(Task task, Runner runner, Map<String, String> params) {
         Test helloWorldTest = new Test();
         helloWorldTest.setTask(task);
         helloWorldTest.setRunner(runner);
@@ -232,7 +258,7 @@ public class SetupService {
         return testRepository.save(helloWorldTest);
     }
 
-    private Template createTemplate(Task task, Language language, String fileName){
+    private Template createTemplate(Task task, Language language, String fileName) {
         Template helloWorldPyTemplate = new Template();
         helloWorldPyTemplate.setTask(task);
         helloWorldPyTemplate.setLanguage(language);
