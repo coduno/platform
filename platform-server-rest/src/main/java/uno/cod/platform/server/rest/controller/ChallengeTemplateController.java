@@ -38,4 +38,10 @@ public class ChallengeTemplateController {
     public ResponseEntity<ChallengeTemplateShowDto> get(@PathVariable Long id) {
         return new ResponseEntity<>(service.findById(id), HttpStatus.OK);
     }
+
+    @RequestMapping(value = RestUrls.CHALLENGE_TEMPLATES_CHALLENGE, method = RequestMethod.GET)
+    @PreAuthorize("isAuthenticated() and @securityService.canAccessScheduledChallengeChallenge(principal, #id)")
+    public ResponseEntity<ChallengeTemplateShowDto> getByChallengeId(@PathVariable Long id) {
+        return new ResponseEntity<>(service.findByChallengeId(id), HttpStatus.OK);
+    }
 }

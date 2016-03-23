@@ -4,6 +4,10 @@ import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
 
 public class ChallengeCreateDto {
+
+    @NotNull
+    private Long templateId;
+
     @NotNull
     private String name;
     private String canonicalName;
@@ -40,5 +44,13 @@ public class ChallengeCreateDto {
 
     public void setCanonicalName(String canonicalName) {
         this.canonicalName = canonicalName;
+    }
+
+    public Long getTemplateId() {
+        return templateId;
+    }
+
+    public void setTemplateId(Long templateId) {
+        this.templateId = templateId;
     }
 }

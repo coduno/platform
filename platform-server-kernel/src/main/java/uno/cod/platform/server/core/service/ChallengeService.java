@@ -5,6 +5,8 @@ import org.springframework.stereotype.Service;
 import uno.cod.platform.server.core.domain.Challenge;
 import uno.cod.platform.server.core.domain.ChallengeTemplate;
 import uno.cod.platform.server.core.dto.challenge.ChallengeCreateDto;
+import uno.cod.platform.server.core.dto.challenge.ChallengeDto;
+import uno.cod.platform.server.core.mapper.ChallengeMapper;
 import uno.cod.platform.server.core.repository.ChallengeRepository;
 import uno.cod.platform.server.core.repository.ChallengeTemplateRepository;
 
@@ -21,12 +23,8 @@ public class ChallengeService {
         this.challengeTemplateRepository = challengeTemplateRepository;
     }
 
-    public void createFromDto(Long templateId, ChallengeCreateDto dto){
-        if (templateId == null){
-            throw new IllegalArgumentException("challenge.invalid");
-        }
-
-        ChallengeTemplate template = challengeTemplateRepository.findOne(templateId);
+    public void createFromDto(ChallengeCreateDto dto){
+        ChallengeTemplate template = challengeTemplateRepository.findOne(dto.getTemplateId());
         if (template == null){
             throw new IllegalArgumentException("challenge.invalid");
         }
@@ -40,6 +38,10 @@ public class ChallengeService {
         }
         challenge.setInviteOnly(dto.isInviteOnly());
         repository.save(challenge);
+    }
+
+    public ChallengeDto findOneById(Long challengeId){
+        return ChallengeMapper.map(repository.findOne(challengeId));
     }
 
     public Challenge findOrCreateByTemplateAndStartDateAndOrganization(Long templateId, ZonedDateTime startDate, Long organizationId){

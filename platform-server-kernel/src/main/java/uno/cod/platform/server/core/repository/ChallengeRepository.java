@@ -21,4 +21,9 @@ public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
             "JOIN FETCH challenge.challengeTemplate template " +
             "WHERE challenge.id=:id")
     Challenge findOneWithTemplate(@Param("id") Long id);
+
+    @Query("SELECT challenge FROM Challenge challenge " +
+            "JOIN FETCH challenge.invitedUsers " +
+            "WHERE challenge.id=:id")
+    Challenge findOneWithUsers(@Param("id") Long id);
 }
