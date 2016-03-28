@@ -38,13 +38,6 @@ public class TaskController {
         return new ResponseEntity<>(taskService.findById(id), HttpStatus.OK);
     }
 
-    @RequestMapping(value = RestUrls.RESULTS_ID_TASK_ID, method = RequestMethod.POST)
-    @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<String> start(@PathVariable("id") UUID resultId, @PathVariable("taskId") UUID taskId) {
-        resultService.startTask(resultId, taskId);
-        return new ResponseEntity<>("ok", HttpStatus.OK);
-    }
-
     @RequestMapping(value = RestUrls.TASKS, method = RequestMethod.GET)
     @PreAuthorize("isAuthenticated() and @securityService.isOrganizationAdmin(principal, #organizationId)")
     public ResponseEntity<List<TaskShowDto>> findAll(@RequestParam("organization") UUID organizationId) {

@@ -1,6 +1,7 @@
 package uno.cod.platform.server.core.domain;
 
 import javax.persistence.*;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 /**
@@ -8,33 +9,33 @@ import java.util.List;
  */
 @Entity
 @Table(name = "submission")
-public class Submission extends IdentifiableEntity implements StoredObject {
-    @ManyToOne
-    private Result result;
+public class Submission extends IdentifiableEntity implements StoredObject{
+    @ManyToOne(optional = false)
+    private TaskResult taskResult;
 
     @OneToMany(mappedBy = "submission")
     private List<TestResult> testResults;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "task_id", nullable = false, updatable = false)
-    private Task task;
-
     private String fileName;
 
-    public Result getResult() {
-        return result;
+    private ZonedDateTime submissionTime;
+
+    private boolean green;
+
+    public TaskResult getTaskResult() {
+        return taskResult;
     }
 
-    public void setResult(Result result) {
-        this.result = result;
+    public void setTaskResult(TaskResult taskResult) {
+        this.taskResult = taskResult;
     }
 
-    public Task getTask() {
-        return task;
+    public ZonedDateTime getSubmissionTime() {
+        return submissionTime;
     }
 
-    public void setTask(Task task) {
-        this.task = task;
+    public void setSubmissionTime(ZonedDateTime submissionTime) {
+        this.submissionTime = submissionTime;
     }
 
     public String getFileName() {
@@ -43,6 +44,14 @@ public class Submission extends IdentifiableEntity implements StoredObject {
 
     public void setFileName(String fileName) {
         this.fileName = fileName;
+    }
+
+    public boolean isGreen() {
+        return green;
+    }
+
+    public void setGreen(boolean green) {
+        this.green = green;
     }
 
     @Override

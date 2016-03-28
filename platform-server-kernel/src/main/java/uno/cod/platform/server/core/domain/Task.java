@@ -22,9 +22,6 @@ public class Task extends Assignment {
     @Column
     private boolean isPublic;
 
-    @OneToMany(mappedBy = "result")
-    private Set<Submission> submissions;
-
     @ElementCollection
     @CollectionTable(name = "task_skillmap")
     private Map<CodingSkill, Double> skillMap;
@@ -79,14 +76,6 @@ public class Task extends Assignment {
         isPublic = aPublic;
     }
 
-    public Set<Submission> getSubmissions() {
-        return Collections.unmodifiableSet(submissions);
-    }
-
-    public void setSubmissions(Set<Submission> submissions) {
-        this.submissions = submissions;
-    }
-
     public List<Test> getTests() {
         return Collections.unmodifiableList(tests);
     }
@@ -132,14 +121,6 @@ public class Task extends Assignment {
             challengeTemplates = new ArrayList<>();
         }
         challengeTemplates.add(challengeTemplate);
-    }
-
-    public void addSubmission(Submission submission) {
-        if (submissions == null) {
-            submissions = new HashSet<>();
-        }
-        submissions.add(submission);
-        submission.setTask(this);
     }
 
     public void addTest(Test test) {

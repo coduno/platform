@@ -30,6 +30,7 @@ public class SubmissionService {
     private final RuntimeClient runtimeClient;
     private final IClientPushConnection appClientConnection;
     private final PlatformStorage platformStorage;
+    private final TaskResultService taskResultService;
     private final TestResultRepository testResultRepository;
 
     @Value("${coduno.storage.gcs.buckets.submissions}")
@@ -42,6 +43,7 @@ public class SubmissionService {
                              TestRepository testRepository,
                              PlatformStorage platformStorage,
                              RuntimeClient runtimeClient,
+                             TaskResultService taskResultService,
                              TestResultRepository testResultRepository,
                              IClientPushConnection appClientConnection) {
         this.repository = repository;
@@ -49,6 +51,7 @@ public class SubmissionService {
         this.taskRepository = taskRepository;
         this.testRepository = testRepository;
         this.platformStorage = platformStorage;
+        this.taskResultService = taskResultService;
         this.testResultRepository = testResultRepository;
         this.runtimeClient = runtimeClient;
         this.appClientConnection = appClientConnection;
@@ -70,19 +73,28 @@ public class SubmissionService {
             throw new IllegalArgumentException("task.invalid");
         }
 
+        TaskResult taskResult = taskResultService.findByTaskAndResult(taskId, resultId);
+
         Submission submission = new Submission();
-        result.addSubmission(submission);
-        task.addSubmission(submission);
+        submission.setTaskResult(taskResult);
         submission.setFileName(file.getOriginalFilename());
+        submission.setSubmissionTime(ZonedDateTime.now());
         submission = repository.save(submission);
 
         platformStorage.upload(bucket, submission.filePath(), file.getInputStream(), file.getContentType());
 
         repository.save(submission);
 
-        // TODO update submission with results
+        // TODO(pbochis) update taskResult with results
+        boolean green = true;
         for (Test test : task.getTests()) {
-            runTest(user.getId(), submission, language, test);
+            green = green && runTest(user.getId(), submission, language, test);
+        }
+
+        submission.setGreen(green);
+        repository.save(submission);
+        if (green && !taskResult.isGreen()){
+            taskResultService.finishTaskResult(taskResult, submission.getSubmissionTime(), green);
         }
     }
 
@@ -123,7 +135,7 @@ public class SubmissionService {
         return !obj.get("Failed").booleanValue();
     }
 
-    private void runTest(UUID userId, Submission submission, String language, Test test) throws IOException {
+    private boolean runTest(UUID userId, Submission submission, String language, Test test) throws IOException {
         MultiValueMap<String, Object> form = new LinkedMultiValueMap<>();
         form.add("language", language);
         form.add("files_gcs", submission.filePath());
@@ -145,5 +157,7 @@ public class SubmissionService {
         testResultRepository.save(testResult);
         //TODO: think wether we should save the test results in the database or as a json file in gcs
         appClientConnection.send(userId, obj.toString());
+
+        return !failed;
     }
 }

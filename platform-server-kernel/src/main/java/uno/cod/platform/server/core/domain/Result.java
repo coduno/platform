@@ -17,17 +17,12 @@ public class Result extends IdentifiableEntity {
     @ManyToOne
     private Challenge challenge;
 
-    @OrderColumn
-    @ElementCollection
-    @CollectionTable(name = "result_starttimes")
-    private List<ZonedDateTime> startTimes;
-
     private ZonedDateTime started;
 
     private ZonedDateTime finished;
 
-    @OneToMany(mappedBy = "result")
-    private Set<Submission> submissions;
+    @OneToMany(mappedBy = "key.result")
+    private List<TaskResult> taskResults;
 
     public User getUser() {
         return user;
@@ -43,17 +38,6 @@ public class Result extends IdentifiableEntity {
 
     public void setChallenge(Challenge challenge) {
         this.challenge = challenge;
-    }
-
-    public List<ZonedDateTime> getStartTimes() {
-        if (startTimes == null) {
-            return null;
-        }
-        return Collections.unmodifiableList(startTimes);
-    }
-
-    public void setStartTimes(List<ZonedDateTime> startTimes) {
-        this.startTimes = startTimes;
     }
 
     public ZonedDateTime getStarted() {
@@ -72,35 +56,14 @@ public class Result extends IdentifiableEntity {
         this.finished = finished;
     }
 
-    public Set<Submission> getSubmissions() {
-        return Collections.unmodifiableSet(submissions);
+    public List<TaskResult> getTaskResults() {
+        if (taskResults == null){
+            return null;
+        }
+        return Collections.unmodifiableList(taskResults);
     }
 
-    public void setSubmissions(Set<Submission> submissions) {
-        this.submissions = submissions;
-    }
-
-    public void addSubmission(Submission submission) {
-        if (submissions == null) {
-            submissions = new HashSet<>();
-        }
-        submissions.add(submission);
-        submission.setResult(this);
-    }
-
-    public boolean start(int index) {
-        if (startTimes == null) {
-            startTimes = new ArrayList<>();
-        }
-        if (index >= startTimes.size()) {
-            for (int i = startTimes.size() - 1; i <= index; i++) {
-                startTimes.add(null);
-            }
-        }
-        if (startTimes.get(index) == null) {
-            startTimes.set(index, ZonedDateTime.now());
-            return true;
-        }
-        return false;
+    public void setTaskResults(List<TaskResult> taskResults) {
+        this.taskResults = taskResults;
     }
 }
