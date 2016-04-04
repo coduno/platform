@@ -6,6 +6,7 @@ import org.springframework.data.repository.query.Param;
 import uno.cod.platform.server.core.domain.Challenge;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.UUID;
 
 public interface ChallengeRepository extends JpaRepository<Challenge, UUID> {
@@ -27,4 +28,9 @@ public interface ChallengeRepository extends JpaRepository<Challenge, UUID> {
             "JOIN FETCH challenge.invitedUsers " +
             "WHERE challenge.id=:id")
     Challenge findOneWithUsers(@Param("id") UUID id);
+
+    @Query("SELECT challenge FROM Challenge challenge " +
+            "JOIN FETCH challenge.invitedUsers users " +
+            "WHERE users.id = :user")
+    List<Challenge> findAllByInvitedUser(@Param("user") UUID id);
 }

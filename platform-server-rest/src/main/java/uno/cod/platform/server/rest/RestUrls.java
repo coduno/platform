@@ -24,6 +24,7 @@ public class RestUrls {
     public static final String USERS = "/users";
     public static final String USER = "/user";
     public static final String USER_ORGANIZATION = "/user/organization";
+    public static final String USER_CHALLENGES = "/user/challenges";
 
     public static final String RESULTS = "/results";
     public static final String RESULTS_ID = "/results/{id}";
