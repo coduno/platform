@@ -8,10 +8,12 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import uno.cod.platform.server.core.domain.User;
+import uno.cod.platform.server.core.dto.test.OutputTestResultDto;
 import uno.cod.platform.server.core.service.SubmissionService;
 import uno.cod.platform.server.rest.RestUrls;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -37,11 +39,10 @@ public class SubmissionController {
 
     @RequestMapping(value = RestUrls.RESULTS_TESTS_OUTPUT, method = RequestMethod.POST)
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<String> testOutput(@PathVariable UUID resultId,
-                                             @PathVariable UUID testId,
-                                             @RequestParam("file") MultipartFile file,
-                                             @AuthenticationPrincipal User principal) throws IOException {
-        return new ResponseEntity<>(service.testOutput(testId, file) ? HttpStatus.OK : HttpStatus.BAD_REQUEST);
+    public ResponseEntity<List<OutputTestResultDto>> testOutput(@PathVariable UUID resultId,
+                                                                @PathVariable UUID taskId,
+                                                                @RequestParam("files") MultipartFile[] files) throws IOException {
+        return new ResponseEntity<>(service.testOutput(resultId, taskId, files), HttpStatus.OK);
     }
 
     @RequestMapping(value = RestUrls.TASKS_ID_RUN, method = RequestMethod.POST)
