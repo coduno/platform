@@ -46,3 +46,4 @@ server:
       name: IDOFDEATH
       http-only: true
       path: /
+      max-age: 86400
