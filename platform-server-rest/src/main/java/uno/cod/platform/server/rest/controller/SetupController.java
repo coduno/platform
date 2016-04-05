@@ -19,7 +19,7 @@ public class SetupController {
 
     @RequestMapping(value = RestUrls.SETUP)
     public ResponseEntity<String> setup() {
-        setupService.init("user", "password", "user@mail.com");
+        setupService.init();
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 }
