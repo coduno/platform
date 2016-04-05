@@ -11,7 +11,6 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.multipart.MultipartFile;
 import uno.cod.platform.runtime.RuntimeClient;
 import uno.cod.platform.server.core.domain.*;
-import uno.cod.platform.server.core.dto.test.OutputTestResultDto;
 import uno.cod.platform.server.core.repository.*;
 import uno.cod.storage.PlatformStorage;
 
@@ -61,7 +60,12 @@ public class SubmissionService {
         this.appClientConnection = appClientConnection;
     }
 
-    public void create(User user, UUID resultId, UUID taskId, MultipartFile file, String language) throws IOException {
+    public enum SubmissionType {
+        NORMAL,
+        OUTPUT;
+    }
+
+    public void submitToRuntime(SubmissionType type, UUID resultId, UUID taskId, MultipartFile[] files, String language) throws IOException {
         Result result = resultRepository.findOne(resultId);
         if (result == null) {
             throw new IllegalArgumentException("result.invalid");
@@ -81,26 +85,79 @@ public class SubmissionService {
 
         Submission submission = new Submission();
         submission.setTaskResult(taskResult);
-        submission.setLanguage(languageRepository.findByTag(language));
-        submission.setFileName(file.getOriginalFilename());
+        if (SubmissionType.NORMAL.equals(type)) {
+            submission.setLanguage(languageRepository.findByTag(language));
+            platformStorage.upload(bucket, submission.filePath(), files[0].getInputStream(), files[0].getContentType());
+            submission.setFileName(files[0].getOriginalFilename());
+        }
         submission.setSubmissionTime(ZonedDateTime.now());
         submission = repository.save(submission);
-
-        platformStorage.upload(bucket, submission.filePath(), file.getInputStream(), file.getContentType());
-
         repository.save(submission);
-
-        // TODO(pbochis) update taskResult with results
         boolean green = true;
-        for (Test test : task.getTests()) {
-            green = green && runTest(user.getId(), submission, language, test);
+        switch (type) {
+            case NORMAL:
+                for (Test test : task.getTests()) {
+                    MultiValueMap<String, Object> form = createForm(test);
+                    form.add("language", language);
+                    form.add("files_gcs", submission.filePath());
+                    green = green && runAndSendResults(form, result.getUser().getId(), submission, test);
+                }
+                break;
+            case OUTPUT:
+                for (MultipartFile file : files) {
+                    UUID testId = UUID.fromString(file.getOriginalFilename());
+                    Test test = testRepository.findOneWithRunner(testId);
+
+                    MultiValueMap<String, Object> form = createForm(test);
+                    form.add("files", new FileMessageResource(file.getBytes(), file.getOriginalFilename()));
+                    form.add("validate", "true");
+
+                    green = green && runAndSendResults(form, result.getUser().getId(), submission, test);
+                }
+                green = green && files.length == testRepository.findByTask(task.getId()).size();
+                break;
         }
 
-        submission.setGreen(green);
-        repository.save(submission);
-        if (green && !taskResult.isGreen()) {
-            taskResultService.finishTaskResult(taskResult, submission.getSubmissionTime(), green);
+        if (green) {
+            submission.setGreen(true);
+            repository.save(submission);
+            taskResultService.finishTaskResult(taskResult, submission.getSubmissionTime(), true);
         }
+    }
+
+    private MultiValueMap<String, Object> createForm(Test test){
+        MultiValueMap<String, Object> form = new LinkedMultiValueMap<>();
+
+        Map<String, String> params = test.getParams();
+        if (params != null) {
+            for (Map.Entry<String, String> param : params.entrySet()) {
+                form.add(param.getKey(), param.getValue());
+            }
+        }
+
+        return form;
+
+    }
+
+    private boolean runAndSendResults(MultiValueMap<String, Object> form , UUID userId, Submission submission, Test test) throws IOException {
+        JsonNode obj = runtimeClient.postToRuntime(test.getRunner().getName(), form);
+        ((ObjectNode) obj).put("test", test.getId().toString());
+
+        if (obj.get("error") != null) {
+            appClientConnection.send(userId, obj.toString());
+            return false;
+        }
+
+        boolean successful = obj.get("successful") != null && !obj.get("successful").booleanValue();
+
+        TestResult testResult = new TestResult();
+        testResult.setTest(test);
+        testResult.setSubmission(submission);
+        testResult.setGreen(successful);
+        testResultRepository.save(testResult);
+        //TODO: think wether we should save the test results in the database or as a json file in gcs
+        appClientConnection.send(userId, obj.toString());
+        return successful;
     }
 
     public void run(User user, UUID taskId, MultipartFile file, String language) throws IOException {
@@ -118,107 +175,5 @@ public class SubmissionService {
         }
 
         appClientConnection.send(user.getId(), runtimeClient.postToRuntime(task.getRunner().getName(), form).toString());
-    }
-
-    public List<OutputTestResultDto> testOutput(UUID resultId, UUID taskId, MultipartFile[] files) throws IOException {
-        Result result = resultRepository.findOne(resultId);
-        if (result == null) {
-            throw new IllegalArgumentException("result.invalid");
-        }
-
-        Task task = taskRepository.findOneWithTests(taskId);
-        if (task == null) {
-            throw new IllegalArgumentException("task.invalid");
-        }
-
-        TaskResult taskResult = taskResultService.findByTaskAndResult(taskId, resultId);
-        Submission submission = new Submission();
-        submission.setTaskResult(taskResult);
-        submission.setSubmissionTime(ZonedDateTime.now());
-        submission = repository.save(submission);
-
-        List<OutputTestResultDto> testResults = new ArrayList<>(files.length);
-        boolean green = true;
-        for (MultipartFile file : files) {
-            UUID testId = UUID.fromString(file.getOriginalFilename());
-            Test test = testRepository.findOneWithRunner(testId);
-            OutputTestResultDto testResult = runOutputTest(submission, test, file);
-            testResults.add(testResult);
-            green = green && testResult.isGreen();
-        }
-        if (testResults.size() == testRepository.findByTask(task.getId()).size() && green) {
-            submission.setGreen(true);
-            repository.save(submission);
-            taskResultService.finishTaskResult(taskResult, submission.getSubmissionTime(), true);
-        }
-        return testResults;
-    }
-
-    private OutputTestResultDto runOutputTest(Submission submission, Test test, MultipartFile file) throws IOException {
-        MultiValueMap<String, Object> form = new LinkedMultiValueMap<>();
-        form.add("files", new FileMessageResource(file.getBytes(), file.getOriginalFilename()));
-        form.add("output_test", "true");
-        // TODO quickfix for runtime fault
-        form.add("language", "py");
-        Map<String, String> params = test.getParams();
-        if (params != null) {
-            for (Map.Entry<String, String> param : params.entrySet()) {
-                form.add(param.getKey(), param.getValue());
-            }
-        }
-        JsonNode obj = runtimeClient.postToRuntime(test.getRunner().getName(), form);
-        boolean success = obj.get("failed") != null && !obj.get("failed").booleanValue();
-
-        TestResult testResult = new TestResult();
-        testResult.setTest(test);
-        testResult.setSubmission(submission);
-        testResult.setGreen(success);
-        testResultRepository.save(testResult);
-
-        OutputTestResultDto testResultDto = new OutputTestResultDto(test.getId(), success);
-        byte[] stdout = obj.get("stdout").asText().getBytes();
-        if (stdout.length > MAX_RESPONSE_SIZE) {
-            stdout = Arrays.copyOfRange(stdout, 0, MAX_RESPONSE_SIZE);
-        }
-        testResultDto.setStdout(stdout);
-
-        byte[] stderr = obj.get("stderr").asText().getBytes();
-        if (stderr.length > MAX_RESPONSE_SIZE) {
-            stderr = Arrays.copyOfRange(stderr, 0, MAX_RESPONSE_SIZE);
-        }
-        testResultDto.setStderr(stderr);
-
-        return testResultDto;
-    }
-
-    private boolean runTest(UUID userId, Submission submission, String language, Test test) throws IOException {
-        MultiValueMap<String, Object> form = new LinkedMultiValueMap<>();
-        form.add("language", language);
-        form.add("files_gcs", submission.filePath());
-        Map<String, String> params = test.getParams();
-        if (params != null) {
-            for (Map.Entry<String, String> param : params.entrySet()) {
-                form.add(param.getKey(), param.getValue());
-            }
-        }
-        JsonNode obj = runtimeClient.postToRuntime(test.getRunner().getName(), form);
-        ((ObjectNode) obj).put("test", test.getId().toString());
-
-        if (obj.get("error") != null) {
-            appClientConnection.send(userId, obj.toString());
-            return false;
-        }
-
-        boolean failed = (obj.get("stderr") != null && !obj.get("stderr").asText().isEmpty()) || obj.get("failed").booleanValue();
-
-        TestResult testResult = new TestResult();
-        testResult.setTest(test);
-        testResult.setSubmission(submission);
-        testResult.setGreen(!failed);
-        testResultRepository.save(testResult);
-        //TODO: think wether we should save the test results in the database or as a json file in gcs
-        appClientConnection.send(userId, obj.toString());
-
-        return !failed;
     }
 }

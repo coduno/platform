@@ -30,19 +30,19 @@ public class SubmissionController {
     public ResponseEntity<String> create(@PathVariable UUID resultId,
                                          @PathVariable UUID taskId,
                                          @RequestParam("language") String language,
-                                         @RequestParam("file") MultipartFile file,
-                                         @AuthenticationPrincipal User principal) throws IOException {
-        service.create(principal, resultId, taskId, file, language);
+                                         @RequestParam("file") MultipartFile file) throws IOException {
+        service.submitToRuntime(SubmissionService.SubmissionType.NORMAL, resultId, taskId, new MultipartFile[]{file}, language);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
 
     @RequestMapping(value = RestUrls.RESULTS_TESTS_OUTPUT, method = RequestMethod.POST)
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<List<OutputTestResultDto>> testOutput(@PathVariable UUID resultId,
+    public ResponseEntity<String> testOutput(@PathVariable UUID resultId,
                                                                 @PathVariable UUID taskId,
                                                                 @RequestParam("files") MultipartFile[] files) throws IOException {
-        return new ResponseEntity<>(service.testOutput(resultId, taskId, files), HttpStatus.OK);
+        service.submitToRuntime(SubmissionService.SubmissionType.OUTPUT, resultId, taskId, files, "");
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @RequestMapping(value = RestUrls.TASKS_ID_RUN, method = RequestMethod.POST)
