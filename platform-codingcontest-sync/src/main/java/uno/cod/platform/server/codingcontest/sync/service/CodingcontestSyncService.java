@@ -14,6 +14,7 @@ import javax.transaction.Transactional;
 import java.time.Year;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -119,10 +120,13 @@ public class CodingcontestSyncService {
         for (TaskResult taskResult: result.getTaskResults()){
             int failedTests = countFailedTests(taskResult);
             ContestResultDto contestResultDto = new ContestResultDto();
-            Long finishTime = taskResult.getEndTime() == null ? null : taskResult.getEndTime().toInstant().toEpochMilli();
-            contestResultDto.setFinishTime(finishTime);
             contestResultDto.setFailedTests(failedTests);
             contestResultDto.setCodeUploaded(taskResult.getSubmissions() != null && !taskResult.getSubmissions().isEmpty());
+            Long finishTime = null;
+            if (taskResult.getEndTime() != null){
+                finishTime = ChronoUnit.MILLIS.between(taskResult.getStartTime(), taskResult.getEndTime());
+            }
+            contestResultDto.setFinishTime(finishTime);
             contestResultDto.setLevel(tasks.indexOf(taskResult.getKey().getTask()) + 1);
             contestResults.add(contestResultDto);
         }
