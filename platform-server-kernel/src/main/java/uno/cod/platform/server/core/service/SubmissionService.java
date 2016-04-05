@@ -176,17 +176,21 @@ public class SubmissionService {
         testResultRepository.save(testResult);
 
         OutputTestResultDto testResultDto = new OutputTestResultDto(test.getId(), success);
-        byte[] stdout = obj.get("stdout").binaryValue();
-        if (stdout.length > MAX_RESPONSE_SIZE) {
-            stdout = Arrays.copyOfRange(stdout, 0, MAX_RESPONSE_SIZE);
+        if (obj.get("stdout") != null){
+            byte[] stdout = obj.get("stdout").binaryValue();
+            if (stdout.length > MAX_RESPONSE_SIZE) {
+                stdout = Arrays.copyOfRange(stdout, 0, MAX_RESPONSE_SIZE);
+            }
+            testResultDto.setStdout(stdout);
         }
-        testResultDto.setStdout(stdout);
 
-        byte[] stderr = obj.get("stderr").binaryValue();
-        if (stderr.length > MAX_RESPONSE_SIZE) {
-            stderr = Arrays.copyOfRange(stderr, 0, MAX_RESPONSE_SIZE);
+        if (obj.get("stderr") != null) {
+            byte[] stderr = obj.get("stderr").binaryValue();
+            if (stderr.length > MAX_RESPONSE_SIZE) {
+                stderr = Arrays.copyOfRange(stderr, 0, MAX_RESPONSE_SIZE);
+            }
+            testResultDto.setStderr(stderr);
         }
-        testResultDto.setStderr(stderr);
 
         return testResultDto;
     }
