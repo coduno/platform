@@ -43,15 +43,15 @@ public class RestConfig {
     }
 
     @Bean
-    @Profile(Profiles.PRODUCTION)
+    @Profile({Profiles.PRODUCTION, Profiles.APPENGINE})
     public WebMvcConfigurer corsConfigurer(){
         return new WebMvcConfigurerAdapter() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**").allowedOrigins(codunoUrl);
                 registry.addMapping("/contestuploadraw").allowedOrigins(codingContestUrl);
                 registry.addMapping("/uploaduserraw").allowedOrigins(codingContestUrl);
                 registry.addMapping("/api/contests/*/report/json").allowedOrigins(codingContestUrl);
+                registry.addMapping("/**").allowedOrigins(codunoUrl);
             }
         };
     }
