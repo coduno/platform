@@ -24,6 +24,14 @@ public class ResultInfoDto {
         this.taskResults = result.getTaskResults().stream().map(TaskResultShowDto::new).collect(Collectors.toList());
     }
 
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
     public List<TaskResultShowDto> getTaskResults() {
         return taskResults;
     }
