@@ -43,9 +43,9 @@ public interface ResultRepository extends JpaRepository<Result, UUID> {
     List<Result> findAllByChallenge(@Param("id") UUID id);
 
     @Query(" SELECT result, " +
-            "   (select count(tr) FROM result.taskResults as tr where tr.green=true) as finishedTasksCount," +
-            "   (select max(tr.endTime) FROM result.taskResults tr where tr.green=true group by tr.key.result) as lastFinishedTaskTime, " +
-            "   (select cast(max(tr.endTime) - result.started as int) FROM result.taskResults tr where tr.green=true group by tr.key.result) as duration " +
+            "   (select count(tr) FROM result.taskResults as tr where tr.successful=true) as finishedTasksCount," +
+            "   (select max(tr.endTime) FROM result.taskResults tr where tr.successful=true group by tr.key.result) as lastFinishedTaskTime, " +
+            "   (select cast(max(tr.endTime) - result.started as int) FROM result.taskResults tr where tr.successful=true group by tr.key.result) as duration " +
             "FROM Result result  " +
             "JOIN result.challenge challenge " +
             "WHERE challenge.id =:challengeId " +

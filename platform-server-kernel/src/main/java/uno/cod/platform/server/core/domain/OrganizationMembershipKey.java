@@ -5,7 +5,7 @@ import javax.persistence.ManyToOne;
 import java.io.Serializable;
 
 @Embeddable
-public class OrganizationMemberKey implements Serializable{
+public class OrganizationMembershipKey implements Serializable{
     @ManyToOne
     private Organization organization;
     @ManyToOne
@@ -36,7 +36,7 @@ public class OrganizationMemberKey implements Serializable{
             return false;
         }
 
-        OrganizationMemberKey that = (OrganizationMemberKey) o;
+        OrganizationMembershipKey that = (OrganizationMembershipKey) o;
 
         if (organization != null ? !organization.equals(that.organization) : that.organization != null) {
             return false;

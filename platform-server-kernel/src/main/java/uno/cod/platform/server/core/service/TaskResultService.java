@@ -63,7 +63,7 @@ public class TaskResultService {
 
     public void finishTaskResult(TaskResult taskResult, ZonedDateTime endTime, boolean green) {
         taskResult.setEndTime(endTime);
-        taskResult.setGreen(green);
+        taskResult.setSuccessful(green);
         taskResultRepository.save(taskResult);
 
         Result result = taskResult.getKey().getResult();

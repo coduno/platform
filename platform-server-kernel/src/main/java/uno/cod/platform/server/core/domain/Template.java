@@ -9,7 +9,6 @@ import javax.persistence.Table;
 public class Template extends IdentifiableEntity implements StoredObject {
     @ManyToOne
     private Language language;
-    private String fileName;
 
     @ManyToOne
     private Task task;
@@ -30,16 +29,8 @@ public class Template extends IdentifiableEntity implements StoredObject {
         this.task = task;
     }
 
-    public String getFileName() {
-        return fileName;
-    }
-
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
-    }
-
     @Override
     public String filePath() {
-        return fileName;
+        return task.getCanonicalName() + "/" + language.getTag();
     }
 }

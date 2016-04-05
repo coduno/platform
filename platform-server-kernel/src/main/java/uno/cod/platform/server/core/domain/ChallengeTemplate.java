@@ -21,7 +21,7 @@ public class ChallengeTemplate extends Assignment {
     private Organization organization;
 
     @OrderColumn
-    @ManyToMany
+    @ManyToMany(mappedBy = "challengeTemplates")
     private List<Task> tasks;
 
     @OneToMany(mappedBy = "challengeTemplate")

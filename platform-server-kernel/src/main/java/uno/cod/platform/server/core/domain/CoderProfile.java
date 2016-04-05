@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @Entity
-@Table(name = "coderprofile")
+@Table(name = "coder_profile")
 public class CoderProfile {
 
     @Id
@@ -17,9 +17,12 @@ public class CoderProfile {
     private User user;
 
     @ElementCollection
-    @CollectionTable(name = "coderprofile_skillmap")
+    @MapKeyColumn(name = "skill_map_KEY")
+    @Column(name = "skill_map")
+    @CollectionTable(name = "coder_profile_skill_map",
+        joinColumns = {@JoinColumn(name = "coder_profile_user_id")})
     private Map<CodingSkill, Double> skillMap;
 
-    @Column
+    @Column(name = "last_updated")
     private Date lastUpdated;
 }

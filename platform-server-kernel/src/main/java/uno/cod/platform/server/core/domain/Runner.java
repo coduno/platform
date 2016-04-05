@@ -13,6 +13,9 @@ public class Runner extends IdentifiableEntity {
     @Column
     private String name;
 
+    @Column(name = "canonical_name", unique = true, nullable = false)
+    private String canonicalName;
+
     @OneToMany(mappedBy = "runner")
     private List<Test> tests;
 
@@ -41,5 +44,13 @@ public class Runner extends IdentifiableEntity {
 
     public void setTasks(List<Task> tasks) {
         this.tasks = tasks;
+    }
+
+    public String getCanonicalName() {
+        return canonicalName;
+    }
+
+    public void setCanonicalName(String canonicalName) {
+        this.canonicalName = canonicalName;
     }
 }

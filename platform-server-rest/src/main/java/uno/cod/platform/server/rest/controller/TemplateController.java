@@ -27,9 +27,8 @@ public class TemplateController {
     public ResponseEntity<String> save(
             @RequestParam("taskId") UUID task,
             @RequestParam("languageId") UUID language,
-            @RequestParam("filePath") String filePath,
             @RequestParam("file") MultipartFile file) {
-        service.save(task, language, filePath, file);
+        service.save(task, language, file);
         return new ResponseEntity<>("ok", HttpStatus.OK);
     }
 

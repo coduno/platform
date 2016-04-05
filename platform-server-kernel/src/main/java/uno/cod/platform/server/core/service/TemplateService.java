@@ -36,7 +36,7 @@ public class TemplateService {
         this.storage = storage;
     }
 
-    public void save(UUID taskId, UUID languageId, String path, MultipartFile file) {
+    public void save(UUID taskId, UUID languageId, MultipartFile file) {
         Task task = taskRepository.findOne(taskId);
         if (task == null) {
             throw new IllegalArgumentException("task.invalid");
@@ -45,14 +45,13 @@ public class TemplateService {
         if (language == null) {
             throw new IllegalArgumentException("language.invalid");
         }
-        path =  path + "/" + language.getTag() + "/" + file.getOriginalFilename();
+        String path =  task.getCanonicalName() + "/" + language.getTag();
         try {
             storage.upload(bucket, path , file.getInputStream(), "text/plain");
         } catch (IOException e) {
             throw new IllegalArgumentException("file.invalid");
         }
         Template template = new Template();
-        template.setFileName(path);
         template.setTask(task);
         template.setLanguage(language);
         repository.save(template);

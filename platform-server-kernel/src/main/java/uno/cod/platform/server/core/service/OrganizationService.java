@@ -3,13 +3,13 @@ package uno.cod.platform.server.core.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uno.cod.platform.server.core.domain.Organization;
-import uno.cod.platform.server.core.domain.OrganizationMember;
-import uno.cod.platform.server.core.domain.OrganizationMemberKey;
+import uno.cod.platform.server.core.domain.OrganizationMembership;
+import uno.cod.platform.server.core.domain.OrganizationMembershipKey;
 import uno.cod.platform.server.core.domain.User;
 import uno.cod.platform.server.core.dto.organization.OrganizationCreateDto;
 import uno.cod.platform.server.core.dto.organization.OrganizationShowDto;
 import uno.cod.platform.server.core.mapper.OrganizationMapper;
-import uno.cod.platform.server.core.repository.OrganizationMemberRepository;
+import uno.cod.platform.server.core.repository.OrganizationMembershipRepository;
 import uno.cod.platform.server.core.repository.OrganizationRepository;
 import uno.cod.platform.server.core.repository.UserRepository;
 
@@ -21,15 +21,15 @@ import java.util.UUID;
 @Transactional
 public class OrganizationService {
     private final OrganizationRepository organizationRepository;
-    private final OrganizationMemberRepository organizationMemberRepository;
+    private final OrganizationMembershipRepository organizationMembershipRepository;
     private final UserRepository userRepository;
 
     @Autowired
     public OrganizationService(OrganizationRepository organizationRepository,
-                               OrganizationMemberRepository organizationMemberRepository,
+                               OrganizationMembershipRepository organizationMembershipRepository,
                                UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.organizationMemberRepository = organizationMemberRepository;
+        this.organizationMembershipRepository = organizationMembershipRepository;
         this.organizationRepository = organizationRepository;
     }
 
@@ -41,15 +41,15 @@ public class OrganizationService {
 
         User user = userRepository.findByUsername(owner);
 
-        OrganizationMemberKey organizationMemberKey = new OrganizationMemberKey();
-        organizationMemberKey.setOrganization(organization);
-        organizationMemberKey.setUser(user);
+        OrganizationMembershipKey organizationMembershipKey = new OrganizationMembershipKey();
+        organizationMembershipKey.setOrganization(organization);
+        organizationMembershipKey.setUser(user);
 
-        OrganizationMember organizationMember = new OrganizationMember();
-        organizationMember.setKey(organizationMemberKey);
-        organizationMember.setAdmin(true);
+        OrganizationMembership organizationMembership = new OrganizationMembership();
+        organizationMembership.setKey(organizationMembershipKey);
+        organizationMembership.setAdmin(true);
 
-        organizationMemberRepository.save(organizationMember);
+        organizationMembershipRepository.save(organizationMembership);
     }
 
     public OrganizationShowDto findById(UUID id){
@@ -58,7 +58,7 @@ public class OrganizationService {
 
     public OrganizationShowDto findUserAdminOrganization(String username){
         User user = userRepository.findByUsernameOrEmail(username, username);
-        for(OrganizationMember member: user.getOrganizations()){
+        for(OrganizationMembership member: user.getOrganizationMemberships()){
             if(member.isAdmin()){
                 return OrganizationMapper.map(member.getKey().getOrganization());
             }

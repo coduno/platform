@@ -14,6 +14,10 @@ public class TaskCreateDto extends AssignmentCreateDto{
 
     @NotNull
     @NotEmpty
+    private String canonicalName;
+
+    @NotNull
+    @NotEmpty
     private Map<CodingSkill, Double> skillMap;
     private Map<String, String> params;
 
@@ -49,5 +53,13 @@ public class TaskCreateDto extends AssignmentCreateDto{
 
     public void setParams(Map<String, String> params) {
         this.params = params;
+    }
+
+    public String getCanonicalName() {
+        return canonicalName;
+    }
+
+    public void setCanonicalName(String canonicalName) {
+        this.canonicalName = canonicalName;
     }
 }

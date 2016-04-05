@@ -17,6 +17,7 @@ public class Test extends IdentifiableEntity {
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "test_params")
+    @Column(name = "test_id")
     @Lob
     private Map<String, String> params;
 

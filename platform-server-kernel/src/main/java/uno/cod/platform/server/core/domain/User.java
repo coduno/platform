@@ -11,13 +11,13 @@ import java.util.*;
 
 /**
  * A user, can be a coder, an organization employee, lecturer, or all of them
- * The role of the user is defined by the profile, teams and organizations he belongs
+ * The role of the user is defined by the profile, teams and organizationMemberships he belongs
  */
 @Entity
 @Table(name = "user")
 @NamedEntityGraph(name = "User.detail",
         attributeNodes = {
-                @NamedAttributeNode("organizations"),
+                @NamedAttributeNode("organizationMemberships"),
                 @NamedAttributeNode("teams"),
                 @NamedAttributeNode("invitedChallenges")
         })
@@ -29,6 +29,11 @@ public class User extends IdentifiableEntity implements UserDetails {
     @Column(unique = true, nullable = false)
     @Email
     private String email;
+
+    @Column(name = "first_name")
+    private String firstName;
+    @Column(name = "last_name")
+    private String lastName;
 
     @Column(nullable = false)
     private String password;
@@ -45,10 +50,10 @@ public class User extends IdentifiableEntity implements UserDetails {
     private CoderProfile coderProfile;
 
     /**
-     * Organizations he belongs to, like github organizations
+     * Organizations he belongs to, like github organizationMemberships
      */
     @OneToMany(mappedBy = "key.user")
-    private Set<OrganizationMember> organizations;
+    private Set<OrganizationMembership> organizationMemberships;
 
     /**
      * Teams he belongs to, can be used across multiple
@@ -69,7 +74,7 @@ public class User extends IdentifiableEntity implements UserDetails {
     @Column(nullable = false, updatable = false)
     private ZonedDateTime created = ZonedDateTime.now();
 
-    @Column
+    @Column(name = "last_login")
     private ZonedDateTime lastLogin;
 
     public String getUsername() {
@@ -96,15 +101,31 @@ public class User extends IdentifiableEntity implements UserDetails {
         this.email = email;
     }
 
-    public Set<OrganizationMember> getOrganizations() {
-        if(this.organizations==null){
-            return null;
-        }
-        return Collections.unmodifiableSet(organizations);
+    public String getFirstName() {
+        return firstName;
     }
 
-    protected void setOrganizations(Set<OrganizationMember> organizations) {
-        this.organizations = organizations;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public Set<OrganizationMembership> getOrganizationMemberships() {
+        if(this.organizationMemberships ==null){
+            return null;
+        }
+        return Collections.unmodifiableSet(organizationMemberships);
+    }
+
+    protected void setOrganizationMemberships(Set<OrganizationMembership> organizationMemberships) {
+        this.organizationMemberships = organizationMemberships;
     }
 
     public Set<TeamMember> getTeams() {
@@ -190,11 +211,11 @@ public class User extends IdentifiableEntity implements UserDetails {
         return new ArrayList<>();
     }
 
-    public void addOrganizationMember(OrganizationMember member) {
-        if (organizations == null) {
-            organizations = new HashSet<>();
+    public void addOrganizationMembership(OrganizationMembership membership) {
+        if (organizationMemberships == null) {
+            organizationMemberships = new HashSet<>();
         }
-        organizations.add(member);
+        organizationMemberships.add(membership);
     }
 
     public void addResult(Result result) {

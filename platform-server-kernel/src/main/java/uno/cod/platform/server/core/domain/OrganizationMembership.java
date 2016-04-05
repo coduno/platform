@@ -4,28 +4,28 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "organization_member")
+@Table(name = "organization_membership")
 @AssociationOverrides({
         @AssociationOverride(name = "key.user", joinColumns = {@JoinColumn(name = "user_id")}),
         @AssociationOverride(name = "key.organization", joinColumns = {@JoinColumn(name = "organization_id")})
 })
-public class OrganizationMember {
+public class OrganizationMembership {
     @EmbeddedId
-    private OrganizationMemberKey key = new OrganizationMemberKey();
+    private OrganizationMembershipKey key = new OrganizationMembershipKey();
 
     @Column(nullable = false, updatable = false)
     private Date created = new Date();
 
     private boolean admin;
 
-    public OrganizationMember() {
+    public OrganizationMembership() {
     }
 
-    public OrganizationMemberKey getKey() {
+    public OrganizationMembershipKey getKey() {
         return this.key;
     }
 
-    public void setKey(OrganizationMemberKey key) {
+    public void setKey(OrganizationMembershipKey key) {
         this.key = key;
     }
 

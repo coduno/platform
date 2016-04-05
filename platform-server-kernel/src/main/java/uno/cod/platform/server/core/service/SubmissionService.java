@@ -96,9 +96,9 @@ public class SubmissionService {
             green = green && runTest(user.getId(), submission, language, test);
         }
 
-        submission.setGreen(green);
+        submission.setSuccessful(green);
         repository.save(submission);
-        if (green && !taskResult.isGreen()) {
+        if (green && !taskResult.isSuccessful()) {
             taskResultService.finishTaskResult(taskResult, submission.getSubmissionTime(), green);
         }
     }
@@ -144,10 +144,10 @@ public class SubmissionService {
             Test test = testRepository.findOneWithRunner(testId);
             OutputTestResultDto testResult = runOutputTest(submission, test, file);
             testResults.add(testResult);
-            green = green && testResult.isGreen();
+            green = green && testResult.isSuccessful();
         }
         if (testResults.size() == testRepository.findByTask(task.getId()).size() && green) {
-            submission.setGreen(true);
+            submission.setSuccessful(true);
             repository.save(submission);
             taskResultService.finishTaskResult(taskResult, submission.getSubmissionTime(), true);
         }
@@ -172,7 +172,7 @@ public class SubmissionService {
         TestResult testResult = new TestResult();
         testResult.setTest(test);
         testResult.setSubmission(submission);
-        testResult.setGreen(success);
+        testResult.setSuccessful(success);
         testResultRepository.save(testResult);
 
         OutputTestResultDto testResultDto = new OutputTestResultDto(test.getId(), success);
@@ -214,7 +214,7 @@ public class SubmissionService {
         TestResult testResult = new TestResult();
         testResult.setTest(test);
         testResult.setSubmission(submission);
-        testResult.setGreen(!failed);
+        testResult.setSuccessful(!failed);
         testResultRepository.save(testResult);
         //TODO: think wether we should save the test results in the database or as a json file in gcs
         appClientConnection.send(userId, obj.toString());

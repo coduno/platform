@@ -25,7 +25,7 @@ public class SetupService {
     private final EndpointRepository endpointRepository;
     private final TaskRepository taskRepository;
     private final OrganizationRepository organizationRepository;
-    private final OrganizationMemberRepository organizationMemberRepository;
+    private final OrganizationMembershipRepository organizationMembershipRepository;
     private final ChallengeTemplateRepository challengeTemplateRepository;
     private final RunnerRepository runnerRepository;
     private final TestRepository testRepository;
@@ -33,14 +33,14 @@ public class SetupService {
     private final LanguageRepository languageRepository;
 
     @Autowired
-    public SetupService(Environment environment, PasswordEncoder passwordEncoder, UserRepository userRepository, EndpointRepository endpointRepository, TaskRepository taskRepository, OrganizationRepository organizationRepository, OrganizationMemberRepository organizationMemberRepository, ChallengeTemplateRepository challengeTemplateRepository, RunnerRepository runnerRepository, TestRepository testRepository, TemplateRepository templateRepository, LanguageRepository languageRepository) {
+    public SetupService(Environment environment, PasswordEncoder passwordEncoder, UserRepository userRepository, EndpointRepository endpointRepository, TaskRepository taskRepository, OrganizationRepository organizationRepository, OrganizationMembershipRepository organizationMembershipRepository, ChallengeTemplateRepository challengeTemplateRepository, RunnerRepository runnerRepository, TestRepository testRepository, TemplateRepository templateRepository, LanguageRepository languageRepository) {
         this.environment = environment;
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
         this.endpointRepository = endpointRepository;
         this.taskRepository = taskRepository;
         this.organizationRepository = organizationRepository;
-        this.organizationMemberRepository = organizationMemberRepository;
+        this.organizationMembershipRepository = organizationMembershipRepository;
         this.challengeTemplateRepository = challengeTemplateRepository;
         this.runnerRepository = runnerRepository;
         this.testRepository = testRepository;
@@ -160,14 +160,14 @@ public class SetupService {
         coduno.setNick("coduno");
         coduno = organizationRepository.save(coduno);
 
-        OrganizationMemberKey victorCodunoKey = new OrganizationMemberKey();
+        OrganizationMembershipKey victorCodunoKey = new OrganizationMembershipKey();
         victorCodunoKey.setUser(victor);
         victorCodunoKey.setOrganization(coduno);
 
-        OrganizationMember victorCoduno = new OrganizationMember();
+        OrganizationMembership victorCoduno = new OrganizationMembership();
         victorCoduno.setKey(victorCodunoKey);
         victorCoduno.setAdmin(true);
-        victorCoduno = organizationMemberRepository.save(victorCoduno);
+        victorCoduno = organizationMembershipRepository.save(victorCoduno);
     }
 
     private Organization initCatalysts() {
@@ -184,14 +184,14 @@ public class SetupService {
         catalysts.setNick("catalysts");
         catalysts = organizationRepository.save(catalysts);
 
-        OrganizationMemberKey victorCatalystsKey = new OrganizationMemberKey();
+        OrganizationMembershipKey victorCatalystsKey = new OrganizationMembershipKey();
         victorCatalystsKey.setUser(victor);
         victorCatalystsKey.setOrganization(catalysts);
 
-        OrganizationMember victorCatalysts = new OrganizationMember();
+        OrganizationMembership victorCatalysts = new OrganizationMembership();
         victorCatalysts.setKey(victorCatalystsKey);
         victorCatalysts.setAdmin(true);
-        victorCatalysts = organizationMemberRepository.save(victorCatalysts);
+        victorCatalysts = organizationMembershipRepository.save(victorCatalysts);
         return catalysts;
     }
 
@@ -242,6 +242,7 @@ public class SetupService {
     private Task createTask(String name, String description, String instructions, Endpoint endpoint, Runner runner, Duration duration, Organization organization, Set<Language> languages, Map<String, String> params) {
         Task task = new Task();
         task.setName(name);
+        task.setCanonicalName(name + + new Random().nextInt(1024));
         task.setDescription(description);
         task.setInstructions(instructions);
         task.setEndpoint(endpoint);
@@ -269,7 +270,6 @@ public class SetupService {
         Template helloWorldPyTemplate = new Template();
         helloWorldPyTemplate.setTask(task);
         helloWorldPyTemplate.setLanguage(language);
-        helloWorldPyTemplate.setFileName(fileName);
         return templateRepository.save(helloWorldPyTemplate);
     }
 }

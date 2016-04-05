@@ -60,8 +60,8 @@ public class InvitationService {
 
         Organization organization = challenge.getChallengeTemplate().getOrganization();
         boolean ok = false;
-        for (OrganizationMember organizationMember : invitingUser.getOrganizations()) {
-            if (organizationMember.isAdmin() && organizationMember.getKey().getOrganization().getId().equals(organization.getId())) {
+        for (OrganizationMembership organizationMembership : invitingUser.getOrganizationMemberships()) {
+            if (organizationMembership.isAdmin() && organizationMembership.getKey().getOrganization().getId().equals(organization.getId())) {
                 ok = true;
                 break;
             }

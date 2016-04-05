@@ -138,7 +138,7 @@ public class CodingcontestSyncService {
         int failed = 0;
         for (Submission submission: taskResult.getSubmissions()){
             for (TestResult testResult: submission.getTestResults()){
-                if (!testResult.isGreen()){
+                if (!testResult.isSuccessful()){
                     failed++;
                 }
             }

@@ -3,7 +3,7 @@ package uno.cod.platform.server.core.dto.organization.member;
 import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
-public class OrganizationMemberCreateDto {
+public class OrganizationMembershipCreateDto {
     @NotNull
     private UUID userId;
     private boolean isAdmin;

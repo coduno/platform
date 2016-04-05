@@ -16,7 +16,7 @@ public class TaskResultShowDto {
         this.task = new TaskShowDto(taskResult.getKey().getTask());
         this.startTime = taskResult.getStartTime();
         this.endTime = taskResult.getEndTime();
-        this.successful = taskResult.isGreen();
+        this.successful = taskResult.isSuccessful();
         this.numberOfSubmissions = taskResult.getSubmissions() != null ? taskResult.getSubmissions().size() : 0;
     }
 

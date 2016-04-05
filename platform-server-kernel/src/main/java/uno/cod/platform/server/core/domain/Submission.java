@@ -1,9 +1,6 @@
 package uno.cod.platform.server.core.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.time.ZonedDateTime;
 import java.util.List;
 
@@ -19,14 +16,16 @@ public class Submission extends IdentifiableEntity implements StoredObject {
     @OneToMany(mappedBy = "submission")
     private List<TestResult> testResults;
 
-    @ManyToOne()
+    @ManyToOne
     private Language language;
 
+    @Column(name = "file_name")
     private String fileName;
 
+    @Column(name = "submission_time")
     private ZonedDateTime submissionTime;
 
-    private boolean green;
+    private boolean successful;
 
     public TaskResult getTaskResult() {
         return taskResult;
@@ -52,12 +51,12 @@ public class Submission extends IdentifiableEntity implements StoredObject {
         this.fileName = fileName;
     }
 
-    public boolean isGreen() {
-        return green;
+    public boolean isSuccessful() {
+        return successful;
     }
 
-    public void setGreen(boolean green) {
-        this.green = green;
+    public void setSuccessful(boolean successful) {
+        this.successful = successful;
     }
 
     @Override

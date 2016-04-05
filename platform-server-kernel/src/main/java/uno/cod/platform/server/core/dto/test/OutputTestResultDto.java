@@ -4,13 +4,13 @@ import java.util.UUID;
 
 public class OutputTestResultDto {
     private UUID testId;
-    private boolean green;
+    private boolean successful;
     private byte[] stdout;
     private byte[] stderr;
 
-    public OutputTestResultDto(UUID testId, boolean green){
+    public OutputTestResultDto(UUID testId, boolean successful){
         this.testId = testId;
-        this.green = green;
+        this.successful = successful;
     }
 
     public UUID getTestId() {
@@ -21,12 +21,12 @@ public class OutputTestResultDto {
         this.testId = testId;
     }
 
-    public boolean isGreen() {
-        return green;
+    public boolean isSuccessful() {
+        return successful;
     }
 
-    public void setGreen(boolean green) {
-        this.green = green;
+    public void setSuccessful(boolean successful) {
+        this.successful = successful;
     }
 
     public byte[] getStdout() {

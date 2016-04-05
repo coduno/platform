@@ -16,10 +16,12 @@ public class TaskResult {
     @EmbeddedId
     private TaskResultKey key = new TaskResultKey();
 
+    @Column(name = "start_time")
     private ZonedDateTime startTime;
+    @Column(name = "end_time")
     private ZonedDateTime endTime;
 
-    private boolean green;
+    private boolean successful;
 
     @OneToMany(mappedBy = "taskResult")
     private Set<Submission> submissions;
@@ -40,12 +42,12 @@ public class TaskResult {
         this.endTime = endTime;
     }
 
-    public boolean isGreen() {
-        return green;
+    public boolean isSuccessful() {
+        return successful;
     }
 
-    public void setGreen(boolean green) {
-        this.green = green;
+    public void setSuccessful(boolean successful) {
+        this.successful = successful;
     }
 
     public Set<Submission> getSubmissions() {

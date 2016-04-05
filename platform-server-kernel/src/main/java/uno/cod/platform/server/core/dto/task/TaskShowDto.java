@@ -15,6 +15,7 @@ public class TaskShowDto extends AssignmentShowDto {
     public TaskShowDto(Task task) {
         this.setId(task.getId());
         this.setName(task.getName());
+        this.setCanonicalName(task.getCanonicalName());
         this.setDescription(task.getDescription());
         this.setInstructions(task.getInstructions());
         this.setDuration(task.getDuration());
@@ -24,7 +25,7 @@ public class TaskShowDto extends AssignmentShowDto {
             this.languages = task.getLanguages().stream().map(LanguageShowDto::new).collect(Collectors.toList());
         }
     }
-
+    private String canonicalName;
     private List<TemplateShowDto> templates;
     private Map<CodingSkill, Double> skillMap;
     private boolean normalRunAvailable;
@@ -67,5 +68,13 @@ public class TaskShowDto extends AssignmentShowDto {
             templates = new ArrayList<>();
         }
         templates.add(dto);
+    }
+
+    public String getCanonicalName() {
+        return canonicalName;
+    }
+
+    public void setCanonicalName(String canonicalName) {
+        this.canonicalName = canonicalName;
     }
 }

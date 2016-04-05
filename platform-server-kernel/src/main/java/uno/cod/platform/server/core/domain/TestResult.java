@@ -1,6 +1,9 @@
 package uno.cod.platform.server.core.domain;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 @Entity
 @Table(name = "test_result")
@@ -13,7 +16,7 @@ public class TestResult extends IdentifiableEntity {
     @JoinColumn(name = "test_id", nullable = false, updatable = false)
     private Test test;
 
-    private boolean green;
+    private boolean successful;
 
     public Submission getSubmission() {
         return submission;
@@ -31,11 +34,11 @@ public class TestResult extends IdentifiableEntity {
         this.test = test;
     }
 
-    public boolean isGreen() {
-        return green;
+    public boolean isSuccessful() {
+        return successful;
     }
 
-    public void setGreen(boolean green) {
-        this.green = green;
+    public void setSuccessful(boolean successful) {
+        this.successful = successful;
     }
 }
