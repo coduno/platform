@@ -2,9 +2,7 @@ package uno.cod.platform.server.core.domain;
 
 import javax.persistence.*;
 import java.time.ZonedDateTime;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * A submission for a (task, challenge, user). This
@@ -13,7 +11,7 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "submission")
-public class Submission extends IdentifiableEntity {
+public class Submission extends IdentifiableEntity implements StoredObject {
     @ManyToOne(optional = false)
     private TaskResult taskResult;
 
@@ -21,7 +19,7 @@ public class Submission extends IdentifiableEntity {
     private List<TestResult> testResults;
 
     /**
-     * Language this submission is in. Not that as we have
+     * Language this submission is in. Note that as we have
      * multiple files bundled in one Submission, the individual
      * files may well use different programming languages, so we
      * might use a more sophisticated way of encoding this as soon
@@ -29,13 +27,6 @@ public class Submission extends IdentifiableEntity {
      */
     @ManyToOne
     private Language language;
-
-    /**
-     * Names of the files associated with this submission.
-     * When querying storage for files, use exactly these names.
-     */
-    @Column(name = "file_names")
-    private Set<String> fileNames;
 
     /**
      * The point in time we received this submission.
@@ -64,17 +55,6 @@ public class Submission extends IdentifiableEntity {
         this.submissionTime = submissionTime;
     }
 
-    public Set<String> getFileNames() {
-        return fileNames;
-    }
-
-    public void addFile(String fileName) {
-        if (fileNames == null) {
-            fileNames = new HashSet<>();
-        }
-        fileNames.add(fileName);
-    }
-
     public boolean isSuccessful() {
         return successful;
     }
@@ -97,5 +77,10 @@ public class Submission extends IdentifiableEntity {
 
     public void setLanguage(Language language) {
         this.language = language;
+    }
+
+    @Override
+    public String filePath() {
+        return getId() + "/";
     }
 }

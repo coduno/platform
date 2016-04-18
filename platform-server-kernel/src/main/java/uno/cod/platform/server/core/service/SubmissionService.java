@@ -68,9 +68,8 @@ public class SubmissionService {
         submission.setLanguage(languageRepository.findByTag(language));
 
         for (MultipartFile file : files) {
-            final String path = submission.getId() + "/" + file.getOriginalFilename();
+            final String path = submission.filePath() + file.getOriginalFilename();
             platformStorage.upload(bucket, path, file.getInputStream(), file.getContentType());
-            submission.addFile(path);
         }
 
         submission = repository.save(submission);
@@ -80,7 +79,9 @@ public class SubmissionService {
         for (Test test : tests) {
             MultiValueMap<String, Object> form = createForm(test.getParams());
             form.add("language", language);
-            form.add("files", submission.getFileNames());
+            for (MultipartFile file : files) {
+                form.add("files", submission.filePath() + file.getOriginalFilename());
+            }
             successful = runAndSendResults(form, key.getResult().getUser(), submission, test) && successful;
         }
 
