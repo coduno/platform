@@ -61,12 +61,61 @@ public class SubmissionService {
         this.appClientConnection = appClientConnection;
     }
 
-    public enum SubmissionType {
-        COMPILE_AND_RUN,
-        VALIDATE_SOLUTION_FILE
+    public void compileAndRun(UUID resultId, UUID taskId, MultipartFile[] files, String language) throws IOException {
+        Submission submission = create(resultId, taskId);
+        TaskResultKey key = submission.getTaskResult().getKey();
+
+        submission.setLanguage(languageRepository.findByTag(language));
+
+        for (MultipartFile file : files) {
+            final String path = submission.getId() + "/" + file.getOriginalFilename();
+            platformStorage.upload(bucket, path, file.getInputStream(), file.getContentType());
+            submission.addFile(path);
+        }
+
+        submission = repository.save(submission);
+
+        boolean successful = true;
+        List<Test> tests = testRepository.findByTaskIdOrderByIndex(taskId);
+        for (Test test : tests) {
+            MultiValueMap<String, Object> form = createForm(test.getParams());
+            form.add("language", language);
+            form.add("files", submission.getFileNames());
+            successful = runAndSendResults(form, key.getResult().getUser().getId(), submission, test) && successful;
+        }
+
+        if (successful) {
+            success(submission);
+        }
     }
 
-    public void submitToRuntime(SubmissionType type, UUID resultId, UUID taskId, MultipartFile[] files, String language) throws IOException {
+    public void validateSolution(UUID resultId, UUID taskId, MultipartFile[] files) throws IOException {
+        Submission submission = create(resultId, taskId);
+        TaskResultKey key = submission.getTaskResult().getKey();
+
+        boolean successful = true;
+
+        // NOTE(flowlo): Traditionally, when validating solution files, one file is
+        // validated at a time (separately). Therefore we're splitting up the uploaded
+        // array of files here.
+        for (MultipartFile file : files) {
+            UUID testId = UUID.fromString(file.getOriginalFilename());
+            Test test = testRepository.findOneWithRunner(testId);
+
+            MultiValueMap<String, Object> form = createForm(test.getParams());
+            form.add("files", new FileMessageResource(file.getBytes(), file.getOriginalFilename()));
+            form.add("validate", "true");
+
+            successful = runAndSendResults(form, key.getResult().getUser().getId(), submission, test) && successful;
+        }
+        successful = files.length == testRepository.findByTaskIdOrderByIndex(key.getTask().getId()).size() && successful;
+
+        if (successful) {
+            success(submission);
+        }
+    }
+
+    private Submission create(UUID resultId, UUID taskId) {
         Result result = resultRepository.findOne(resultId);
         if (result == null) {
             throw new IllegalArgumentException("result.invalid");
@@ -87,47 +136,15 @@ public class SubmissionService {
         Submission submission = new Submission();
         submission.setTaskResult(taskResult);
         submission.setSubmissionTime(ZonedDateTime.now());
-        submission = repository.save(submission);
-        if (SubmissionType.COMPILE_AND_RUN.equals(type)) {
-            submission.setLanguage(languageRepository.findByTag(language));
-            submission.setFileName(files[0].getOriginalFilename());
-            platformStorage.upload(bucket, submission.filePath(), files[0].getInputStream(), files[0].getContentType());
-        }
+        return repository.save(submission);
+    }
 
-        boolean successful = true;
-        switch (type) {
-            case COMPILE_AND_RUN:
-                List<Test> tests = testRepository.findByTaskIdOrderByIndex(taskId);
-                for (Test test : tests) {
-                    MultiValueMap<String, Object> form = createForm(test.getParams());
-                    form.add("language", language);
-                    form.add("files_gcs", submission.filePath());
-                    successful = runAndSendResults(form, result.getUser().getId(), submission, test) && successful;
-                }
-                break;
-            case VALIDATE_SOLUTION_FILE:
-                for (MultipartFile file : files) {
-                    UUID testId = UUID.fromString(file.getOriginalFilename());
-                    Test test = testRepository.findOneWithRunner(testId);
-
-                    MultiValueMap<String, Object> form = createForm(test.getParams());
-                    form.add("files", new FileMessageResource(file.getBytes(), file.getOriginalFilename()));
-                    form.add("validate", "true");
-
-                    successful = runAndSendResults(form, result.getUser().getId(), submission, test) && successful;
-                }
-                successful = files.length == testRepository.findByTaskIdOrderByIndex(task.getId()).size() && successful;
-                break;
-        }
-
-        if (!successful) {
-            return;
-        }
-
+    private void success(Submission submission) {
         submission.setSuccessful(true);
         repository.save(submission);
-        taskResultService.finishTaskResult(taskResult, submission.getSubmissionTime(), true);
-        this.appClientConnection.sendLevelCompleted(result.getUser().getId(), task.getId());
+        taskResultService.finishTaskResult(submission.getTaskResult(), submission.getSubmissionTime(), true);
+        TaskResultKey key = submission.getTaskResult().getKey();
+        appClientConnection.sendLevelCompleted(key.getResult().getUser().getId(), key.getTask().getId());
     }
 
     private MultiValueMap<String, Object> createForm(Map<String, String> params) {
@@ -169,7 +186,7 @@ public class SubmissionService {
         return successful;
     }
 
-    public void run(User user, UUID taskId, MultipartFile file, String language) throws IOException {
+    public void run(User user, UUID taskId, MultipartFile[] files, String language) throws IOException {
         Task task = taskRepository.findOneWithRunner(taskId);
         if (task == null) {
             throw new IllegalArgumentException("task.invalid");
@@ -177,7 +194,7 @@ public class SubmissionService {
 
         MultiValueMap<String, Object> form = createForm(task.getParams());
         form.add("language", language);
-        form.add("files", new FileMessageResource(file.getBytes(), file.getOriginalFilename()));
+        form.add("files", files);
 
         appClientConnection.send(user.getId(), runtimeClient.postToRuntime(task.getRunner().getPath(), form).toString());
     }

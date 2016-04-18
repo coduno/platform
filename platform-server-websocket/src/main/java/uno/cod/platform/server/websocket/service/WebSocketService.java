@@ -75,7 +75,7 @@ public class WebSocketService implements IClientPushConnection {
         JsonNode obj = objectMapper.createObjectNode();
         ((ObjectNode)obj).put("levelState", "completed");
         ((ObjectNode)obj).put("task", taskId.toString());
-        this.send(userId, obj.toString());
+        send(userId, obj.toString());
     }
 
     @Override
@@ -83,6 +83,6 @@ public class WebSocketService implements IClientPushConnection {
         JsonNode obj = objectMapper.createObjectNode();
         ((ObjectNode)obj).put("challengeState", "timeout");
         ((ObjectNode)obj).put("challenge", challengeId.toString());
-        this.send(userId, obj.toString());
+        send(userId, obj.toString());
     }
 }

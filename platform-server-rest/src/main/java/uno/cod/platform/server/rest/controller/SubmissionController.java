@@ -28,18 +28,17 @@ public class SubmissionController {
     public ResponseEntity<String> create(@PathVariable UUID resultId,
                                          @PathVariable UUID taskId,
                                          @RequestParam("language") String language,
-                                         @RequestParam("file") MultipartFile file) throws IOException {
-        service.submitToRuntime(SubmissionService.SubmissionType.COMPILE_AND_RUN, resultId, taskId, new MultipartFile[]{file}, language);
+                                         @RequestParam("files") MultipartFile[] files) throws IOException {
+        service.compileAndRun(resultId, taskId, files, language);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
 
     @RequestMapping(value = RestUrls.RESULTS_TESTS_OUTPUT, method = RequestMethod.POST)
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<String> testOutput(@PathVariable UUID resultId,
-                                                                @PathVariable UUID taskId,
-                                                                @RequestParam("files") MultipartFile[] files) throws IOException {
-        service.submitToRuntime(SubmissionService.SubmissionType.VALIDATE_SOLUTION_FILE, resultId, taskId, files, "");
+                                             @PathVariable UUID taskId,
+                                             @RequestParam("files") MultipartFile[] files) throws IOException {
+        service.validateSolution(resultId, taskId, files);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -47,9 +46,9 @@ public class SubmissionController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<String> runTask(@PathVariable UUID taskId,
                                           @RequestParam("language") String language,
-                                          @RequestParam("file") MultipartFile file,
+                                          @RequestParam("files") MultipartFile[] files,
                                           @AuthenticationPrincipal User principal) throws IOException {
-        service.run(principal, taskId, file, language);
+        service.run(principal, taskId, files, language);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
