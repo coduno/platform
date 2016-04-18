@@ -62,7 +62,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
             }
 
             User user = (User) auth.getPrincipal();
-            webSocketService.addSession(user.getId(), session);
+            webSocketService.addSession(user, session);
         }
 
         @Override

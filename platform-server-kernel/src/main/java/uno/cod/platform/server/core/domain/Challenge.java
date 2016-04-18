@@ -11,7 +11,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "challenge")
-public class Challenge extends IdentifiableEntity{
+public class Challenge extends IdentifiableEntity implements CanonicalEntity {
     private String name;
 
     @NotNull
@@ -120,6 +120,7 @@ public class Challenge extends IdentifiableEntity{
         this.name = name;
     }
 
+    @Override
     public String getCanonicalName() {
         return canonicalName;
     }

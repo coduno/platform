@@ -8,6 +8,7 @@ import java.io.Serializable;
 public class TeamMemberKey implements Serializable{
     @ManyToOne
     private Team team;
+
     @ManyToOne
     private User user;
 
@@ -42,7 +43,6 @@ public class TeamMemberKey implements Serializable{
             return false;
         }
         return !(user != null ? !user.equals(that.user) : that.user != null);
-
     }
 
     @Override

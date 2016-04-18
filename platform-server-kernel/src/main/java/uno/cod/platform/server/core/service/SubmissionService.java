@@ -81,7 +81,7 @@ public class SubmissionService {
             MultiValueMap<String, Object> form = createForm(test.getParams());
             form.add("language", language);
             form.add("files", submission.getFileNames());
-            successful = runAndSendResults(form, key.getResult().getUser().getId(), submission, test) && successful;
+            successful = runAndSendResults(form, key.getResult().getUser(), submission, test) && successful;
         }
 
         if (successful) {
@@ -106,7 +106,7 @@ public class SubmissionService {
             form.add("files", new FileMessageResource(file.getBytes(), file.getOriginalFilename()));
             form.add("validate", "true");
 
-            successful = runAndSendResults(form, key.getResult().getUser().getId(), submission, test) && successful;
+            successful = runAndSendResults(form, key.getResult().getUser(), submission, test) && successful;
         }
         successful = files.length == testRepository.findByTaskIdOrderByIndex(key.getTask().getId()).size() && successful;
 
@@ -144,7 +144,7 @@ public class SubmissionService {
         repository.save(submission);
         taskResultService.finishTaskResult(submission.getTaskResult(), submission.getSubmissionTime(), true);
         TaskResultKey key = submission.getTaskResult().getKey();
-        appClientConnection.sendLevelCompleted(key.getResult().getUser().getId(), key.getTask().getId());
+        appClientConnection.sendLevelCompleted(key.getResult().getUser(), key.getTask());
     }
 
     private MultiValueMap<String, Object> createForm(Map<String, String> params) {
@@ -164,12 +164,12 @@ public class SubmissionService {
         }
     }
 
-    private boolean runAndSendResults(MultiValueMap<String, Object> form, UUID userId, Submission submission, Test test) throws IOException {
+    private boolean runAndSendResults(MultiValueMap<String, Object> form, User user, Submission submission, Test test) throws IOException {
         JsonNode obj = runtimeClient.postToRuntime(test.getRunner().getPath(), form);
         ((ObjectNode) obj).put("test", test.getId().toString());
 
         if (obj.get("failure") != null) {
-            appClientConnection.send(userId, obj.toString());
+            appClientConnection.send(user, obj.toString());
             return false;
         }
 
@@ -182,7 +182,7 @@ public class SubmissionService {
         testResultRepository.save(testResult);
         // TODO: Think whether we should save the test
         // results in the database or as a JSON file in GCS.
-        appClientConnection.send(userId, obj.toString());
+        appClientConnection.send(user, obj.toString());
         return successful;
     }
 
@@ -196,6 +196,6 @@ public class SubmissionService {
         form.add("language", language);
         form.add("files", files);
 
-        appClientConnection.send(user.getId(), runtimeClient.postToRuntime(task.getRunner().getPath(), form).toString());
+        appClientConnection.send(user, runtimeClient.postToRuntime(task.getRunner().getPath(), form).toString());
     }
 }

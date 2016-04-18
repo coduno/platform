@@ -15,7 +15,7 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "team")
-public class Team extends IdentifiableEntity {
+public class Team extends IdentifiableEntity implements CanonicalEntity {
     @Column(unique = true, nullable = false)
     private String name;
 
@@ -36,6 +36,11 @@ public class Team extends IdentifiableEntity {
 
     protected void setMembers(Set<TeamMember> members) {
         this.members = members;
+    }
+
+    @Override
+    public String getCanonicalName() {
+        return name;
     }
 }
 

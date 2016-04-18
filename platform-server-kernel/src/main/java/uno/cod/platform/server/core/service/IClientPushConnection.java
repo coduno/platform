@@ -1,9 +1,9 @@
 package uno.cod.platform.server.core.service;
 
-import java.util.UUID;
+import uno.cod.platform.server.core.domain.CanonicalEntity;
+import uno.cod.platform.server.core.domain.Task;
 
 public interface IClientPushConnection {
-    void send(UUID userId, String message);
-    void sendLevelCompleted(UUID userId, UUID taskId);
-    void sendChallengeTimeout(UUID userId, UUID challengeId);
+    void send(CanonicalEntity entity, String message);
+    void sendLevelCompleted(CanonicalEntity entity, Task task);
 }
