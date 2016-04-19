@@ -5,7 +5,9 @@ import java.time.ZonedDateTime;
 import java.util.List;
 
 /**
- * A submission for a (task, challenge, user)
+ * A submission for a (task, challenge, user). This
+ * represents what the user uploaded, e.g. gave us
+ * to execute.
  */
 @Entity
 @Table(name = "submission")
@@ -16,15 +18,25 @@ public class Submission extends IdentifiableEntity implements StoredObject {
     @OneToMany(mappedBy = "submission")
     private List<TestResult> testResults;
 
+    /**
+     * Language this submission is in. Note that as we have
+     * multiple files bundled in one Submission, the individual
+     * files may well use different programming languages, so we
+     * might use a more sophisticated way of encoding this as soon
+     * as necessary.
+     */
     @ManyToOne
     private Language language;
 
-    @Column(name = "file_name")
-    private String fileName;
-
+    /**
+     * The point in time we received this submission.
+     */
     @Column(name = "submission_time")
     private ZonedDateTime submissionTime;
 
+    /**
+     * True if all associated tests ({@see #testResults}) succeeded.
+     */
     private boolean successful;
 
     public TaskResult getTaskResult() {
@@ -43,25 +55,12 @@ public class Submission extends IdentifiableEntity implements StoredObject {
         this.submissionTime = submissionTime;
     }
 
-    public String getFileName() {
-        return fileName;
-    }
-
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
-    }
-
     public boolean isSuccessful() {
         return successful;
     }
 
     public void setSuccessful(boolean successful) {
         this.successful = successful;
-    }
-
-    @Override
-    public String filePath() {
-        return getId() + "/" + fileName;
     }
 
     public List<TestResult> getTestResults() {
@@ -78,5 +77,10 @@ public class Submission extends IdentifiableEntity implements StoredObject {
 
     public void setLanguage(Language language) {
         this.language = language;
+    }
+
+    @Override
+    public String filePath() {
+        return getId() + "/";
     }
 }

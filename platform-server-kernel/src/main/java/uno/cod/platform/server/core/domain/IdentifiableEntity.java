@@ -23,5 +23,4 @@ public abstract class IdentifiableEntity {
     public void setId(UUID id) {
         this.id = id;
     }
-
 }

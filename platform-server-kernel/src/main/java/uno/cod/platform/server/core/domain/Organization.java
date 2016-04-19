@@ -15,7 +15,7 @@ import java.util.Set;
 @Table(name = "organization",
         uniqueConstraints = {@UniqueConstraint(name = "nick", columnNames = "nick")}
 )
-public class Organization extends IdentifiableEntity {
+public class Organization extends IdentifiableEntity implements CanonicalEntity {
     @Column(unique = true, nullable = false, length = 40)
     @Size(min = 5, max = 40)
     @Pattern(regexp = "^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*$")
@@ -109,5 +109,10 @@ public class Organization extends IdentifiableEntity {
         }
         challengeTemplate.setOrganization(this);
         challengeTemplates.add(challengeTemplate);
+    }
+
+    @Override
+    public String getCanonicalName() {
+        return name;
     }
 }

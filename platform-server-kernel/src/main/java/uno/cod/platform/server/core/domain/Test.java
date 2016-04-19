@@ -6,9 +6,6 @@ import java.util.Map;
 @Entity
 @Table(name = "test")
 public class Test extends IdentifiableEntity {
-    public static final String PATH = "test";
-    public static final String STDIN = "stdin";
-
     @ManyToOne
     private Runner runner;
 
