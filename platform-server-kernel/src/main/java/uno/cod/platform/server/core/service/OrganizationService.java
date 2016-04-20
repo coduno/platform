@@ -8,14 +8,17 @@ import uno.cod.platform.server.core.domain.OrganizationMembershipKey;
 import uno.cod.platform.server.core.domain.User;
 import uno.cod.platform.server.core.dto.organization.OrganizationCreateDto;
 import uno.cod.platform.server.core.dto.organization.OrganizationShowDto;
+import uno.cod.platform.server.core.dto.organization.member.OrganizationMembershipShowDto;
 import uno.cod.platform.server.core.mapper.OrganizationMapper;
 import uno.cod.platform.server.core.repository.OrganizationMembershipRepository;
 import uno.cod.platform.server.core.repository.OrganizationRepository;
 import uno.cod.platform.server.core.repository.UserRepository;
 
 import javax.transaction.Transactional;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -52,21 +55,19 @@ public class OrganizationService {
         organizationMembershipRepository.save(organizationMembership);
     }
 
-    public OrganizationShowDto findById(UUID id){
+    public OrganizationShowDto findById(UUID id) {
         return OrganizationMapper.map(organizationRepository.findOne(id));
     }
 
-    public OrganizationShowDto findUserAdminOrganization(String username){
+    public List<OrganizationMembershipShowDto> findUserAdminOrganizations(String username) {
         User user = userRepository.findByUsernameOrEmail(username, username);
-        for(OrganizationMembership member: user.getOrganizationMemberships()){
-            if(member.isAdmin()){
-                return OrganizationMapper.map(member.getKey().getOrganization());
-            }
+        if (user.getOrganizationMemberships() == null) {
+            return Collections.emptyList();
         }
-        return null;
+        return user.getOrganizationMemberships().stream().map(OrganizationMembershipShowDto::new).collect(Collectors.toList());
     }
 
-    public List<OrganizationShowDto> findAll(){
+    public List<OrganizationShowDto> findAll() {
         return OrganizationMapper.map(organizationRepository.findAll());
     }
 }

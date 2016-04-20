@@ -7,6 +7,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import uno.cod.platform.server.core.dto.organization.OrganizationCreateDto;
 import uno.cod.platform.server.core.dto.organization.OrganizationShowDto;
+import uno.cod.platform.server.core.dto.organization.member.OrganizationMembershipShowDto;
 import uno.cod.platform.server.core.service.OrganizationService;
 import uno.cod.platform.server.rest.RestUrls;
 
@@ -48,9 +49,9 @@ public class OrganizationController {
         return "";
     }
 
-    @RequestMapping(value = RestUrls.USER_ORGANIZATION, method = RequestMethod.GET)
+    @RequestMapping(value = RestUrls.USER_ORGANIZATIONS, method = RequestMethod.GET)
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<OrganizationShowDto> ownOrganization(Principal principal) {
-        return new ResponseEntity<>(organizationService.findUserAdminOrganization(principal.getName()), HttpStatus.OK);
+    public ResponseEntity<List<OrganizationMembershipShowDto>> ownOrganizations(Principal principal) {
+        return new ResponseEntity<>(organizationService.findUserAdminOrganizations(principal.getName()), HttpStatus.OK);
     }
 }
