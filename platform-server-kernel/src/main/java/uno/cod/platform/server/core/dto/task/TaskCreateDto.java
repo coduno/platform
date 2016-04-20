@@ -21,6 +21,8 @@ public class TaskCreateDto extends AssignmentCreateDto {
     private Map<CodingSkill, Double> skillMap;
     private Map<String, String> params;
 
+    private UUID organizationId;
+
     private UUID runnerId;
 
     public UUID getRunnerId() {
@@ -61,5 +63,13 @@ public class TaskCreateDto extends AssignmentCreateDto {
 
     public void setCanonicalName(String canonicalName) {
         this.canonicalName = canonicalName;
+    }
+
+    public UUID getOrganizationId() {
+        return organizationId;
+    }
+
+    public void setOrganizationId(UUID organizationId) {
+        this.organizationId = organizationId;
     }
 }

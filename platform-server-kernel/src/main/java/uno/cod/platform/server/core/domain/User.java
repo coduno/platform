@@ -77,6 +77,9 @@ public class User extends IdentifiableEntity implements UserDetails {
     @Column(name = "last_login")
     private ZonedDateTime lastLogin;
 
+    @Transient
+    private UUID activeOrganization;
+
     public String getUsername() {
         return username;
     }
@@ -252,5 +255,13 @@ public class User extends IdentifiableEntity implements UserDetails {
     @Override
     public int hashCode() {
         return email.hashCode();
+    }
+
+    public UUID getActiveOrganization() {
+        return activeOrganization;
+    }
+
+    public void setActiveOrganization(UUID activeOrganization) {
+        this.activeOrganization = activeOrganization;
     }
 }

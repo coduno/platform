@@ -7,7 +7,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import uno.cod.platform.server.core.dto.task.TaskCreateDto;
 import uno.cod.platform.server.core.dto.task.TaskShowDto;
-import uno.cod.platform.server.core.service.ResultService;
+import uno.cod.platform.server.core.service.SessionService;
 import uno.cod.platform.server.core.service.TaskService;
 import uno.cod.platform.server.rest.RestUrls;
 
@@ -18,12 +18,12 @@ import java.util.UUID;
 @RestController
 public class TaskController {
     private final TaskService taskService;
-    private final ResultService resultService;
+    private final SessionService sessionService;
 
     @Autowired
-    public TaskController(TaskService taskService, ResultService resultService) {
+    public TaskController(TaskService taskService, SessionService sessionService) {
         this.taskService = taskService;
-        this.resultService = resultService;
+        this.sessionService = sessionService;
     }
 
     @RequestMapping(value = RestUrls.TASKS, method = RequestMethod.POST)
@@ -39,8 +39,8 @@ public class TaskController {
     }
 
     @RequestMapping(value = RestUrls.TASKS, method = RequestMethod.GET)
-    @PreAuthorize("isAuthenticated() and @securityService.isOrganizationAdmin(principal, #organizationId)")
-    public ResponseEntity<List<TaskShowDto>> findAll(@RequestParam("organization") UUID organizationId) {
-        return new ResponseEntity<>(taskService.findAll(organizationId), HttpStatus.OK);
+    @PreAuthorize("isAuthenticated() and @securityService.isActiveOrganizationAdmin(principal)")
+    public ResponseEntity<List<TaskShowDto>> findAll() {
+        return new ResponseEntity<>(taskService.findAll(sessionService.getActiveOrganization()), HttpStatus.OK);
     }
 }

@@ -24,9 +24,6 @@ public abstract class AssignmentCreateDto {
     @NotNull
     private Duration duration;
 
-    @NotNull
-    private UUID organizationId;
-
     public String getName() {
         return name;
     }
@@ -65,13 +62,5 @@ public abstract class AssignmentCreateDto {
 
     public void setDuration(Duration duration) {
         this.duration = duration;
-    }
-
-    public UUID getOrganizationId() {
-        return organizationId;
-    }
-
-    public void setOrganizationId(UUID organizationId) {
-        this.organizationId = organizationId;
     }
 }

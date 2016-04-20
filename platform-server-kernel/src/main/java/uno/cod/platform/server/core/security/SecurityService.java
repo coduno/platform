@@ -53,6 +53,16 @@ public class SecurityService {
         return false;
     }
 
+    public boolean canSwitchOrganization(User user, UUID organizationId) {
+        if (user == null) {
+            return false;
+        }
+        if (organizationId == null) {
+            return true;
+        }
+        return isOrganizationMember(user, organizationId);
+    }
+
     public boolean isOrganizationMember(User user, UUID organizationId) {
         if (user == null || organizationId == null) {
             return false;
@@ -77,6 +87,10 @@ public class SecurityService {
             }
         }
         return false;
+    }
+
+    public boolean isActiveOrganizationAdmin(User user) {
+        return isOrganizationAdmin(user, user.getActiveOrganization());
     }
 
     public boolean canAccessScheduledChallengeChallenge(User user, UUID scheduledChallengeId) {

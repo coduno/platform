@@ -36,8 +36,8 @@ public class ChallengeTemplateService {
         this.endpointRepository = endpointRepository;
     }
 
-    public UUID save(ChallengeTemplateCreateDto dto) {
-        Organization organization = organizationRepository.findOne(dto.getOrganizationId());
+    public UUID save(ChallengeTemplateCreateDto dto, UUID organizationId) {
+        Organization organization = organizationRepository.findOne(organizationId);
         if (organization == null) {
             throw new IllegalArgumentException("organization.invalid");
         }
