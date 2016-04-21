@@ -27,6 +27,7 @@ public class RestUrls {
     public static final String USER_ORGANIZATIONS = "/user/organizations";
     public static final String USER_ORGANIZATIONS_ACTIVE = "/user/organizations/active";
     public static final String USER_CHALLENGES = "/user/challenges";
+    public static final String USER_TEAMS = "/user/teams";
 
     public static final String RESULTS = "/results";
     public static final String RESULTS_ID = "/results/{id}";
@@ -54,5 +55,7 @@ public class RestUrls {
     public static final String LANGUAGES = "/languages";
 
     public static final String TESTS = "/tests";
+
+    public static final String TEAMS = "/teams";
 
 }

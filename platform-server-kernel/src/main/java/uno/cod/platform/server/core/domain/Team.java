@@ -19,6 +19,9 @@ public class Team extends IdentifiableEntity {
     @Column(unique = true, nullable = false)
     private String name;
 
+    @Column(name = "canonical_name", nullable = false, unique = true)
+    private String canonicalName;
+
     @OneToMany(mappedBy = "key.team")
     private Set<TeamMember> members;
 
@@ -30,6 +33,14 @@ public class Team extends IdentifiableEntity {
         this.name = name;
     }
 
+    public String getCanonicalName() {
+        return canonicalName;
+    }
+
+    public void setCanonicalName(String canonicalName) {
+        this.canonicalName = canonicalName;
+    }
+
     public Set<TeamMember> getMembers() {
         return Collections.unmodifiableSet(members);
     }
@@ -37,5 +48,6 @@ public class Team extends IdentifiableEntity {
     protected void setMembers(Set<TeamMember> members) {
         this.members = members;
     }
+
 }
 
