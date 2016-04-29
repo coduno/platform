@@ -13,7 +13,6 @@ import uno.cod.platform.server.core.repository.TeamRepository;
 
 import javax.transaction.Transactional;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -50,8 +49,8 @@ public class TeamService {
         teamMemberRepository.save(member);
     }
 
-    public void join(User user, UUID teamId) {
-        Team team = repository.findOne(teamId);
+    public void join(User user, String canonicalName) {
+        Team team = repository.findOneByCanonicalName(canonicalName);
         if (team == null) {
             throw new IllegalArgumentException("team.invalid");
         }
@@ -62,6 +61,16 @@ public class TeamService {
         member.setKey(key);
         teamMemberRepository.save(member);
         //TODO maybe delete invitation after join/decline?
+    }
+
+    public void delete(String canonicalName) {
+        Team team = repository.findOneByCanonicalName(canonicalName);
+        team.setEnabled(false);
+        repository.save(team);
+    }
+
+    public TeamShowDto findOne(String canonicalName) {
+        return new TeamShowDto(repository.findOneByCanonicalName(canonicalName));
     }
 
     public List<TeamShowDto> findAllTeamsForUser(String username) {

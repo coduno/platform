@@ -11,6 +11,6 @@ import java.util.UUID;
 
 public interface TeamInvitationRepository extends JpaRepository<TeamInvitation, TeamUserKey> {
     @Query("SELECT DISTINCT invitation FROM TeamInvitation invitation " +
-            "WHERE invitation.key.user.id = :userId")
+            "WHERE invitation.key.team.enabled = true AND invitation.key.user.id = :userId")
     List<TeamInvitation> findAllByUserId(@Param("userId") UUID userId);
 }

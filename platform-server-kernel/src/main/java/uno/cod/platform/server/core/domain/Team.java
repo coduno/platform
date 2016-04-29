@@ -31,6 +31,8 @@ public class Team extends IdentifiableEntity implements CanonicalEntity {
     )
     private Set<User> invitedUsers;
 
+    private boolean enabled = true;
+
     public String getName() {
         return name;
     }
@@ -62,6 +64,14 @@ public class Team extends IdentifiableEntity implements CanonicalEntity {
 
     public void setInvitedUsers(Set<User> invitedUsers) {
         this.invitedUsers = invitedUsers;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     protected void addInvitedUser(User user) {

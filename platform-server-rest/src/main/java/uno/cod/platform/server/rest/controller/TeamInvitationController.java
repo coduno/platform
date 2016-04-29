@@ -5,10 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import uno.cod.platform.server.core.domain.User;
 import uno.cod.platform.server.core.dto.team.invitation.TeamInvitationCreateDto;
 import uno.cod.platform.server.core.dto.team.invitation.TeamInvitationShowDto;
@@ -27,10 +24,12 @@ public class TeamInvitationController {
         this.service = service;
     }
 
-    @RequestMapping(value = RestUrls.TEAMS_INVITATIONS, method = RequestMethod.POST)
-    @PreAuthorize("isAuthenticated() and @securityService.isTeamAdmin(principal, #dto.teamId)")
-    public ResponseEntity<String> create(@Valid @RequestBody TeamInvitationCreateDto dto, @AuthenticationPrincipal User user) {
-        service.create(user, dto);
+    @RequestMapping(value = RestUrls.TEAMS_CANONICAL_NAME_INVITATIONS, method = RequestMethod.POST)
+    @PreAuthorize("isAuthenticated() and @securityService.isTeamAdmin(principal, #canonicalName)")
+    public ResponseEntity<String> create(@Valid @RequestBody TeamInvitationCreateDto dto,
+                                         @PathVariable("canonicalName") String canonicalName,
+                                         @AuthenticationPrincipal User user) {
+        service.create(user, dto.getUsername(), canonicalName);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 

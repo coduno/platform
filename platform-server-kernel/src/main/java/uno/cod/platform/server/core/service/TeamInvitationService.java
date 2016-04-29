@@ -6,7 +6,6 @@ import uno.cod.platform.server.core.domain.Team;
 import uno.cod.platform.server.core.domain.TeamInvitation;
 import uno.cod.platform.server.core.domain.TeamUserKey;
 import uno.cod.platform.server.core.domain.User;
-import uno.cod.platform.server.core.dto.team.invitation.TeamInvitationCreateDto;
 import uno.cod.platform.server.core.dto.team.invitation.TeamInvitationShowDto;
 import uno.cod.platform.server.core.repository.TeamInvitationRepository;
 import uno.cod.platform.server.core.repository.TeamMemberRepository;
@@ -34,12 +33,12 @@ public class TeamInvitationService {
         this.userRepository = userRepository;
     }
 
-    public void create(User invitingUser, TeamInvitationCreateDto dto) {
-        User user = userRepository.findOne(dto.getUserId());
+    public void create(User invitingUser, String usernameToInvite, String canonicalName) {
+        User user = userRepository.findByUsername(usernameToInvite);
         if (user == null) {
             throw new IllegalArgumentException("user.invalid");
         }
-        Team team = teamRepository.findOne(dto.getTeamId());
+        Team team = teamRepository.findOneByCanonicalName(canonicalName);
         if (team == null) {
             throw new IllegalArgumentException("team.invalid");
         }

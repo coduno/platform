@@ -61,8 +61,8 @@ public class RestUrls {
     public static final String TESTS = "/tests";
 
     public static final String TEAMS = "/teams";
-    public static final String TEAMS_ID_JOIN = "/teams/{id}/join";
-
-    public static final String TEAMS_INVITATIONS = "/teams/invitations";
+    public static final String TEAMS_CANONICAL_NAME = "/teams/{canonicalName}";
+    public static final String TEAMS_CANONICAL_NAME_JOIN = "/teams/{canonicalName}/join";
+    public static final String TEAMS_CANONICAL_NAME_INVITATIONS = "/teams/{canonicalName}/invitations";
 
 }
