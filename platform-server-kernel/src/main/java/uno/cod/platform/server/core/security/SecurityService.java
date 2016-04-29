@@ -54,13 +54,13 @@ public class SecurityService {
         return false;
     }
 
-    public boolean isTeamAdmin(User user, UUID teamId) {
-        if (user == null || teamId == null) {
+    public boolean isTeamAdmin(User user, String canonicalName) {
+        if (user == null || canonicalName == null) {
             return false;
         }
 
         for (TeamMember teamMember : user.getTeams()) {
-            if (teamMember.isAdmin() && teamMember.getKey().getTeam().getId().equals(teamId)) {
+            if (teamMember.isAdmin() && teamMember.getKey().getTeam().getCanonicalName().equals(canonicalName)) {
                 return true;
             }
         }

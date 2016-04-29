@@ -1,0 +1,1 @@
+ALTER TABLE `team` ADD `enabled` bit(1) default 1;

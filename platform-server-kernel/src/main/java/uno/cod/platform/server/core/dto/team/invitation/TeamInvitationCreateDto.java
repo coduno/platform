@@ -1,27 +1,17 @@
 package uno.cod.platform.server.core.dto.team.invitation;
 
 import javax.validation.constraints.NotNull;
-import java.util.UUID;
 
 public class TeamInvitationCreateDto {
     @NotNull
-    private UUID userId;
-    @NotNull
-    private UUID teamId;
+    private String username;
 
-    public UUID getUserId() {
-        return userId;
+    public String getUsername() {
+        return username;
     }
 
-    public void setUserId(UUID userId) {
-        this.userId = userId;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
-    public UUID getTeamId() {
-        return teamId;
-    }
-
-    public void setTeamId(UUID teamId) {
-        this.teamId = teamId;
-    }
 }

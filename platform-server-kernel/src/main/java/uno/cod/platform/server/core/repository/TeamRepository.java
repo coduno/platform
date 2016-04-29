@@ -11,18 +11,14 @@ import java.util.UUID;
 
 @Repository
 public interface TeamRepository extends JpaRepository<Team, UUID> {
-    Team findOneByCanonicalName(String canonicalName);
+    @Query("SELECT team from Team team " +
+            "WHERE team.canonicalName = :canonicalName AND team.enabled = true")
+    Team findOneByCanonicalName(@Param("canonicalName") String canonicalName);
 
     @Query("SELECT DISTINCT team from Team team " +
             "JOIN FETCH team.members members " +
             "JOIN FETCH team.members " +
-            "WHERE members.key.user.id = :userId")
-    List<Team> findAllByUserId(@Param("userId") UUID userId);
-
-    @Query("SELECT DISTINCT team from Team team " +
-            "JOIN FETCH team.members members " +
-            "JOIN FETCH team.members " +
-            "WHERE members.key.user.username = :username")
+            "WHERE team.enabled = true AND members.key.user.username = :username")
     List<Team> findAllByUsername(@Param("username") String username);
 }
 
