@@ -60,6 +60,11 @@ public class TemplateService {
 
     public List<String> getTemplateUrl(UUID templateId) throws GeneralSecurityException, IOException {
         Template template = repository.findOne(templateId);
+
+        if (template == null) {
+            throw new IllegalArgumentException("template.invalid");
+        }
+
         //set expiration time to 2 hours
         Long expiration = (System.currentTimeMillis() / 1000) + 7200;
         return storage.exposeFilesInFolder(bucket, template.filePath(), expiration);
