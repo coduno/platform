@@ -47,14 +47,6 @@ public class TeamController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @RequestMapping(value = RestUrls.TEAMS_CANONICAL_NAME_JOIN, method = RequestMethod.PUT)
-    @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<String> joinTeam(@PathVariable("canonicalName") String canonicalName,
-                                           @AuthenticationPrincipal User user) {
-        teamInvitationService.join(user, canonicalName);
-        return new ResponseEntity<>(HttpStatus.CREATED);
-    }
-
     @RequestMapping(value = RestUrls.USERS_USERNAME_TEAMS, method = RequestMethod.GET)
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<TeamShowDto>> findByUsername(@PathVariable("username") String username) {

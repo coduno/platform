@@ -62,7 +62,8 @@ public class RestUrls {
 
     public static final String TEAMS = "/teams";
     public static final String TEAMS_CANONICAL_NAME = "/teams/{canonicalName}";
-    public static final String TEAMS_CANONICAL_NAME_JOIN = "/teams/{canonicalName}/join";
+    public static final String TEAMS_CANONICAL_NAME_INVITATION_ACCEPT = "/teams/{canonicalName}/invitation/accept";
+    public static final String TEAMS_CANONICAL_NAME_INVITATION_DECLINE = "/teams/{canonicalName}/invitation/decline";
     public static final String TEAMS_CANONICAL_NAME_INVITATIONS = "/teams/{canonicalName}/invitations";
 
 }

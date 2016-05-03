@@ -38,4 +38,20 @@ public class TeamInvitationController {
     public ResponseEntity<List<TeamInvitationShowDto>> findMyTeamInvitations(@AuthenticationPrincipal User user) {
         return new ResponseEntity<>(service.findInvitationsByUserId(user.getId()), HttpStatus.CREATED);
     }
+
+    @RequestMapping(value = RestUrls.TEAMS_CANONICAL_NAME_INVITATION_ACCEPT, method = RequestMethod.POST)
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<String> acceptInvitation(@PathVariable("canonicalName") String canonicalName,
+                                           @AuthenticationPrincipal User user) {
+        service.acceptInvitation(user, canonicalName);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    @RequestMapping(value = RestUrls.TEAMS_CANONICAL_NAME_INVITATION_DECLINE, method = RequestMethod.POST)
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<String> declineInvitation(@PathVariable("canonicalName") String canonicalName,
+                                                   @AuthenticationPrincipal User user) {
+        service.declineInvitation(user, canonicalName);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
 }

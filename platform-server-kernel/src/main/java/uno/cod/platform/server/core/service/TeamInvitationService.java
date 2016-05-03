@@ -63,7 +63,7 @@ public class TeamInvitationService {
         userRepository.save(user);
     }
 
-    public void join(User user, String canonicalName) {
+    public void acceptInvitation(User user, String canonicalName) {
         Team team = teamRepository.findByCanonicalNameAndEnabledTrue(canonicalName);
         if (team == null) {
             throw new IllegalArgumentException("team.invalid");
@@ -73,14 +73,30 @@ public class TeamInvitationService {
         key.setTeam(team);
         key.setUser(user);
         TeamInvitation invitation = repository.findByKey(key);
-        if(invitation == null) {
+        if (invitation == null) {
             throw new IllegalArgumentException("team.invite.notfound");
         }
         teamService.join(user, team);
         repository.delete(invitation);
     }
 
+    public void declineInvitation(User user, String canonicalName) {
+        Team team = teamRepository.findByCanonicalNameAndEnabledTrue(canonicalName);
+        if (team == null) {
+            throw new IllegalArgumentException("team.invalid");
+        }
+
+        TeamUserKey key = new TeamUserKey();
+        key.setTeam(team);
+        key.setUser(user);
+        TeamInvitation invitation = repository.findByKey(key);
+        if (invitation == null) {
+            throw new IllegalArgumentException("team.invite.notfound");
+        }
+        repository.delete(invitation);
+    }
+
     public List<TeamInvitationShowDto> findInvitationsByUserId(UUID userId) {
-        return repository.findAllByUserId(userId).stream().map(TeamInvitationShowDto::new).collect(Collectors.toList());
+        return repository.findAllByUserIdAndTeamEnabled(userId).stream().map(TeamInvitationShowDto::new).collect(Collectors.toList());
     }
 }
