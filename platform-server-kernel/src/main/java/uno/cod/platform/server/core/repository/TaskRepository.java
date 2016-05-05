@@ -44,4 +44,6 @@ public interface TaskRepository extends JpaRepository<Task, UUID> {
             "LEFT JOIN FETCH task.organization " +
             "WHERE task.id = :id")
     Task findOneWithOrganization(@Param("id") UUID id);
+
+    List<Task> findAllByChallengeTemplatesId(UUID challengeTemplate);
 }

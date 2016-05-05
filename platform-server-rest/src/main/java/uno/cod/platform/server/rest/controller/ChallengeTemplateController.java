@@ -7,8 +7,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import uno.cod.platform.server.core.dto.challenge.template.ChallengeTemplateCreateDto;
 import uno.cod.platform.server.core.dto.challenge.template.ChallengeTemplateShowDto;
+import uno.cod.platform.server.core.dto.task.TaskShowDto;
 import uno.cod.platform.server.core.service.ChallengeTemplateService;
 import uno.cod.platform.server.core.service.SessionService;
+import uno.cod.platform.server.core.service.TaskService;
 import uno.cod.platform.server.rest.RestUrls;
 
 import java.util.List;
@@ -17,11 +19,13 @@ import java.util.UUID;
 @RestController
 public class ChallengeTemplateController {
     private final ChallengeTemplateService service;
+    private final TaskService taskService;
     private final SessionService sessionService;
 
     @Autowired
-    public ChallengeTemplateController(ChallengeTemplateService service, SessionService sessionService) {
+    public ChallengeTemplateController(ChallengeTemplateService service, TaskService taskService, SessionService sessionService) {
         this.service = service;
+        this.taskService = taskService;
         this.sessionService = sessionService;
     }
 
@@ -41,6 +45,12 @@ public class ChallengeTemplateController {
     @PreAuthorize("isAuthenticated() and @securityService.canAccessChallenge(principal, #id)")
     public ResponseEntity<ChallengeTemplateShowDto> get(@PathVariable UUID id) {
         return new ResponseEntity<>(service.findById(id), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = RestUrls.CHALLENGE_TEMPLATES_ID_TASKS, method = RequestMethod.GET)
+    @PreAuthorize("isAuthenticated() and @securityService.canAccessChallenge(principal, #id)")
+    public ResponseEntity<List<TaskShowDto>> getTasksForChallengeTemplate(@PathVariable UUID id) {
+        return new ResponseEntity<>(taskService.findAllForChallengeTemplate(id), HttpStatus.OK);
     }
 
     @RequestMapping(value = RestUrls.CHALLENGE_ID_TEMPLATE, method = RequestMethod.GET)

@@ -76,4 +76,8 @@ public class TaskService {
     public List<TaskShowDto> findAll(UUID organizationId) {
         return TaskMapper.map(repository.findAllWithEndpoints(organizationId));
     }
+
+    public List<TaskShowDto> findAllForChallengeTemplate(UUID challengeTemplateId) {
+        return TaskMapper.map(repository.findAllByChallengeTemplatesId(challengeTemplateId));
+    }
 }
