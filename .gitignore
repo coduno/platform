@@ -116,4 +116,6 @@ application-local.yml
 service-account.json
 application-appengine-secrets.yml
 
+secrets.tar
+
 service-account.p12

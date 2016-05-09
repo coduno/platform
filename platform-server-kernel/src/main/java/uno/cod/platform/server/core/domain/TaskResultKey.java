@@ -6,6 +6,8 @@ import java.io.Serializable;
 
 @Embeddable
 public class TaskResultKey implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     @ManyToOne(optional = false)
     private Result result;
 

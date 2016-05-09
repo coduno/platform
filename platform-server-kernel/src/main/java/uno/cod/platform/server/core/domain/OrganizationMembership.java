@@ -1,6 +1,7 @@
 package uno.cod.platform.server.core.domain;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 
 @Entity
@@ -9,7 +10,9 @@ import java.util.Date;
         @AssociationOverride(name = "key.user", joinColumns = {@JoinColumn(name = "user_id")}),
         @AssociationOverride(name = "key.organization", joinColumns = {@JoinColumn(name = "organization_id")})
 })
-public class OrganizationMembership {
+public class OrganizationMembership implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     @EmbeddedId
     private OrganizationMembershipKey key = new OrganizationMembershipKey();
 

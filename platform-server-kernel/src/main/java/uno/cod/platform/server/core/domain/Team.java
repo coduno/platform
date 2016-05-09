@@ -1,6 +1,7 @@
 package uno.cod.platform.server.core.domain;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -13,7 +14,9 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "team")
-public class Team extends IdentifiableEntity implements CanonicalEntity {
+public class Team extends IdentifiableEntity implements CanonicalEntity, Serializable {
+    private static final long serialVersionUID = 1L;
+
     @Column(unique = true, nullable = false)
     private String name;
 

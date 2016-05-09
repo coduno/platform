@@ -22,6 +22,8 @@ import java.util.*;
                 @NamedAttributeNode("invitedChallenges")
         })
 public class User extends IdentifiableEntity implements UserDetails, CanonicalEntity {
+    private static final long serialVersionUID = 1L;
+
     @Column(unique = true, nullable = false)
     @NotNull
     private String username;

@@ -1,6 +1,7 @@
 package uno.cod.platform.server.core.domain;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.time.ZonedDateTime;
 
 @Entity
@@ -9,7 +10,9 @@ import java.time.ZonedDateTime;
         @AssociationOverride(name = "key.user", joinColumns = {@JoinColumn(name = "user_id")}),
         @AssociationOverride(name = "key.team", joinColumns = {@JoinColumn(name = "team_id")})
 })
-public class TeamMember {
+public class TeamMember implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     @EmbeddedId
     private TeamUserKey key = new TeamUserKey();
 

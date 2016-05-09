@@ -44,11 +44,3 @@ flyway:
 multipart:
   maxFileSize: 16MB
   maxRequestSize: 16MB
-
-server:
-  session:
-    cookie:
-      name: IDOFDEATH
-      http-only: true
-      path: /
-      max-age: 86400
