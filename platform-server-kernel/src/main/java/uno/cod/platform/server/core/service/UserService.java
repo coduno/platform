@@ -10,6 +10,7 @@ import uno.cod.platform.server.core.repository.UserRepository;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -40,10 +41,10 @@ public class UserService {
 
     public UserShowDto update(UserUpdateProfileDetailsDto dto, User user) {
         if (!dto.getUsername().equals(user.getUsername()) && repository.findByUsername(dto.getUsername()) != null) {
-            throw new IllegalArgumentException("username.existing");
+            throw new ResourceConflictException("username.existing");
         }
         if (!dto.getEmail().equals(user.getEmail()) && repository.findByEmail(dto.getEmail()) != null) {
-            throw new IllegalArgumentException("email.existing");
+            throw new ResourceConflictException("email.existing");
         }
         user.setUsername(dto.getUsername());
         user.setEmail(dto.getEmail());
@@ -64,11 +65,19 @@ public class UserService {
     }
 
     public UserShowDto findByUsername(String username) {
-        return new UserShowDto(repository.findByUsername(username));
+        User user = repository.findByUsername(username);
+        if (user == null) {
+            throw new NoSuchElementException("user.invalid");
+        }
+        return new UserShowDto(user);
     }
 
     public UserShowDto findOne(UUID id) {
-        return new UserShowDto(repository.findOne(id));
+        User user = repository.findOne(id);
+        if (user == null) {
+            throw new NoSuchElementException("user.invalid");
+        }
+        return new UserShowDto(user);
     }
 
     public List<UserShortShowDto> listUsers() {
@@ -78,7 +87,7 @@ public class UserService {
     public UserShortShowDto findByEmail(String email) {
         User user = repository.findByEmail(email);
         if (user == null) {
-            return null;
+            throw new NoSuchElementException("user.invalid");
         }
         return new UserShortShowDto(user);
     }
