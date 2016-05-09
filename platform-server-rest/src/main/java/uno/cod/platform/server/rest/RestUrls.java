@@ -6,7 +6,6 @@ public class RestUrls {
     public static final String CHALLENGE_TEMPLATES_ID = "/challenges/templates/{id}";
     public static final String CHALLENGE_TEMPLATES_ID_TASKS = "/challenges/templates/{id}/tasks";
     public static final String CHALLENGE_ID_TEMPLATE = "/challenges/{id}/template";
-    public static final String CHALLENGE_TEMPLATES_ID_CHALLENGE = "/challenges/templates/{id}/challenges";
 
     public static final String CHALLENGES_ID = "/challenges/{id}";
     public static final String CHALLENGES = "/challenges";
@@ -35,6 +34,7 @@ public class RestUrls {
     public static final String USER_TEAMS = "/user/teams";
     public static final String USER_TEAMS_INVITATIONS = "/user/teams/invitations";
     public static final String USER_SEARCH = "/users/search";
+    public static final String USER_ACCCESSTOKEN = "/user/access_token";
 
     public static final String RESULTS = "/results";
     public static final String RESULTS_ID = "/results/{id}";

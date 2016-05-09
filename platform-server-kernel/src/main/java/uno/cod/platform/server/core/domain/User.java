@@ -38,6 +38,9 @@ public class User extends IdentifiableEntity implements UserDetails, CanonicalEn
     @Column(nullable = false)
     private String password;
 
+    @OneToMany(mappedBy = "user")
+    private Set<AccessToken> accessTokens;
+
     private boolean enabled;
 
     private boolean admin;
@@ -121,6 +124,14 @@ public class User extends IdentifiableEntity implements UserDetails, CanonicalEn
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public Set<AccessToken> getAccessTokens() {
+        return Collections.unmodifiableSet(accessTokens);
+    }
+
+    protected void setAccessTokens(Set<AccessToken> accessTokens) {
+        this.accessTokens = accessTokens;
     }
 
     public Set<OrganizationMembership> getOrganizationMemberships() {
