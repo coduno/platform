@@ -84,6 +84,14 @@ public class UserService {
         return repository.findAll().stream().map(UserShortShowDto::new).collect(Collectors.toList());
     }
 
+    public List<UserShowDto> listUsersLikeNameOrEmail(String searchValue){
+        searchValue = "%" + searchValue + "%";
+        return repository.findLikeUsernameOrEmail(searchValue)
+                .stream()
+                .map(UserShowDto::new)
+                .collect(Collectors.toList());
+    }
+
     public UserShortShowDto findByEmail(String email) {
         User user = repository.findByEmail(email);
         if (user == null) {

@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import uno.cod.platform.server.core.domain.User;
 
+import java.util.List;
 import java.util.UUID;
 
 @Repository
@@ -18,6 +19,13 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     User findByEmail(String email);
 
     User findByUsernameOrEmail(String username, String email);
+
+    @Query("Select user From User user " +
+            "Where user.username like :searchValue " +
+            "   OR user.email like :searchValue " +
+            "   OR user.firstName like :searchValue " +
+            "   OR user.lastName like :searchValue")
+    List<User> findLikeUsernameOrEmail(@Param("searchValue") String searchValue);
 
     @Query("SELECT user FROM User user " +
             "LEFT JOIN FETCH user.results results " +

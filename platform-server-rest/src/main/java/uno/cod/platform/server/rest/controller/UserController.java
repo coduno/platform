@@ -51,6 +51,12 @@ public class UserController {
         return new ResponseEntity<>(userService.update(dto, user), HttpStatus.OK);
     }
 
+    @RequestMapping(value = RestUrls.USER_SEARCH, method = RequestMethod.GET)
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<List<UserShowDto>> searchUsers(@RequestParam String searchValue){
+        return new ResponseEntity<>(userService.listUsersLikeNameOrEmail(searchValue), HttpStatus.OK);
+    }
+
     @RequestMapping(value = RestUrls.USER_PASSWORD, method = RequestMethod.PUT)
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<String> updateMyPassword(@Valid @RequestBody UserPasswordChangeDto dto, @AuthenticationPrincipal User user) {
