@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import uno.cod.platform.server.core.dto.runner.RunnerShowDto;
+import uno.cod.platform.server.core.security.AllowedForAdmin;
 import uno.cod.platform.server.core.service.RunnerService;
 import uno.cod.platform.server.rest.RestUrls;
 
@@ -22,6 +23,7 @@ public class RunnerController {
     }
 
     @RequestMapping(value = RestUrls.RUNNERS, method = RequestMethod.GET)
+    @AllowedForAdmin
     public ResponseEntity<List<RunnerShowDto>> findAll() {
         return new ResponseEntity<>(service.findAll(), HttpStatus.OK);
     }

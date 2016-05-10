@@ -64,9 +64,9 @@ public class TaskServiceTest {
         Task task = TaskTestUtil.getValidTask();
         List<Task> tasks = Collections.singletonList(task);
 
-        Mockito.when(repository.findAllWithEndpoints(task.getOrganization().getId())).thenReturn(tasks);
+        Mockito.when(repository.findAllByOrganizationIdWithEndpoints(task.getOrganization().getId())).thenReturn(tasks);
 
-        List<TaskShowDto> dtos = service.findAll(task.getOrganization().getId());
+        List<TaskShowDto> dtos = service.findAllForOrganization(task.getOrganization().getId());
 
         Assert.assertEquals(dtos.size(), tasks.size());
         TaskShowDto dto = dtos.get(0);

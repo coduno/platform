@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import uno.cod.platform.server.core.dto.endpoint.EndpointShowDto;
+import uno.cod.platform.server.core.security.AllowedForAdmin;
 import uno.cod.platform.server.core.service.EndpointService;
 import uno.cod.platform.server.rest.RestUrls;
 
@@ -22,6 +23,7 @@ public class EndpointController {
     }
 
     @RequestMapping(value = RestUrls.ENDPOINTS, method = RequestMethod.GET)
+    @AllowedForAdmin
     public ResponseEntity<List<EndpointShowDto>> findAll() {
         return new ResponseEntity<>(service.findAll(), HttpStatus.OK);
     }

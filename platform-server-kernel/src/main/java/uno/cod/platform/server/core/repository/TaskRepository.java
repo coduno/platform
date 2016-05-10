@@ -15,7 +15,13 @@ public interface TaskRepository extends JpaRepository<Task, UUID> {
             "LEFT JOIN FETCH task.endpoint " +
             "LEFT JOIN FETCH task.organization organization " +
             "WHERE organization = null OR organization.id = :organizationId")
-    List<Task> findAllWithEndpoints(@Param("organizationId") UUID organizationId);
+    List<Task> findAllByOrganizationIdWithEndpoints(@Param("organizationId") UUID organizationId);
+
+    @Query("SELECT task FROM Task task " +
+            "LEFT JOIN FETCH task.endpoint " +
+            "LEFT JOIN FETCH task.organization " +
+            "LEFT JOIN FETCH task.runner ")
+    List<Task> findAllWithAll();
 
     @Query("SELECT task FROM Task task " +
             "LEFT JOIN FETCH task.tests tests " +

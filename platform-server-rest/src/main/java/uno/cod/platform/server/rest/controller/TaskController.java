@@ -7,6 +7,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import uno.cod.platform.server.core.dto.task.TaskCreateDto;
 import uno.cod.platform.server.core.dto.task.TaskShowDto;
+import uno.cod.platform.server.core.security.AllowedForAdmin;
 import uno.cod.platform.server.core.service.SessionService;
 import uno.cod.platform.server.core.service.TaskService;
 import uno.cod.platform.server.rest.RestUrls;
@@ -38,9 +39,15 @@ public class TaskController {
         return new ResponseEntity<>(taskService.findById(id), HttpStatus.OK);
     }
 
-    @RequestMapping(value = RestUrls.TASKS, method = RequestMethod.GET)
+    @RequestMapping(value = RestUrls.USER_ORGANIZATIONS_ACTIVE_TASKS, method = RequestMethod.GET)
     @PreAuthorize("isAuthenticated() and @securityService.isActiveOrganizationAdmin(principal)")
+    public ResponseEntity<List<TaskShowDto>> findAllForActiveOrganization() {
+        return new ResponseEntity<>(taskService.findAllForOrganization(sessionService.getActiveOrganization()), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = RestUrls.TASKS, method = RequestMethod.GET)
+    @AllowedForAdmin
     public ResponseEntity<List<TaskShowDto>> findAll() {
-        return new ResponseEntity<>(taskService.findAll(sessionService.getActiveOrganization()), HttpStatus.OK);
+        return new ResponseEntity<>(taskService.findAll(), HttpStatus.OK);
     }
 }

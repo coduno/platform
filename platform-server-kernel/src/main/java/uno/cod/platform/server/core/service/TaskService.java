@@ -73,8 +73,12 @@ public class TaskService {
         return TaskMapper.map(repository.findOneWithLanguagesAndTemplates(id));
     }
 
-    public List<TaskShowDto> findAll(UUID organizationId) {
-        return TaskMapper.map(repository.findAllWithEndpoints(organizationId));
+    public List<TaskShowDto> findAllForOrganization(UUID organizationId) {
+        return TaskMapper.map(repository.findAllByOrganizationIdWithEndpoints(organizationId));
+    }
+
+    public List<TaskShowDto> findAll() {
+        return TaskMapper.map(repository.findAllWithAll());
     }
 
     public List<TaskShowDto> findAllForChallengeTemplate(UUID challengeTemplateId) {

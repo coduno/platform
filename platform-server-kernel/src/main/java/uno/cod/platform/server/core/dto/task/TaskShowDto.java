@@ -4,6 +4,8 @@ import uno.cod.platform.server.core.domain.CodingSkill;
 import uno.cod.platform.server.core.domain.Task;
 import uno.cod.platform.server.core.dto.assignment.AssignmentShowDto;
 import uno.cod.platform.server.core.dto.language.LanguageShowDto;
+import uno.cod.platform.server.core.dto.organization.OrganizationShowDto;
+import uno.cod.platform.server.core.dto.runner.RunnerShowDto;
 import uno.cod.platform.server.core.dto.template.TemplateShowDto;
 
 import java.util.ArrayList;
@@ -17,6 +19,8 @@ public class TaskShowDto extends AssignmentShowDto {
     private Map<CodingSkill, Double> skillMap;
     private boolean normalRunAvailable;
     private List<LanguageShowDto> languages;
+    private RunnerShowDto runner;
+    private OrganizationShowDto organization;
 
     public TaskShowDto(Task task) {
         this.setId(task.getId());
@@ -29,6 +33,12 @@ public class TaskShowDto extends AssignmentShowDto {
         this.normalRunAvailable = task.getRunner() != null;
         if (task.getLanguages() != null) {
             this.languages = task.getLanguages().stream().map(LanguageShowDto::new).collect(Collectors.toList());
+        }
+        if (task.getRunner() != null) {
+            this.runner = new RunnerShowDto(task.getRunner());
+        }
+        if (task.getOrganization() != null) {
+            this.organization = new OrganizationShowDto(task.getOrganization());
         }
     }
 
@@ -77,5 +87,21 @@ public class TaskShowDto extends AssignmentShowDto {
 
     public void setCanonicalName(String canonicalName) {
         this.canonicalName = canonicalName;
+    }
+
+    public RunnerShowDto getRunner() {
+        return runner;
+    }
+
+    public void setRunner(RunnerShowDto runner) {
+        this.runner = runner;
+    }
+
+    public OrganizationShowDto getOrganization() {
+        return organization;
+    }
+
+    public void setOrganization(OrganizationShowDto organization) {
+        this.organization = organization;
     }
 }
