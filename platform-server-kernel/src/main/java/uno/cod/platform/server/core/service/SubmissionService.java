@@ -35,7 +35,7 @@ public class SubmissionService {
     private final TaskResultService taskResultService;
     private final TestResultRepository testResultRepository;
 
-    @Value("${coduno.storage.gcs.buckets.submissions}")
+    @Value("${coduno.submission.bucket}")
     private String bucket;
 
     @Autowired

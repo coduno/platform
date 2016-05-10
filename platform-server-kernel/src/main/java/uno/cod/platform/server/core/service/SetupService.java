@@ -18,7 +18,6 @@ import java.util.*;
 @Transactional
 public class SetupService {
     private static final Logger LOGGER = LoggerFactory.getLogger(SetupService.class);
-    private static final String TAG = SetupService.class.getSimpleName();
     private final Environment environment;
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
@@ -29,11 +28,10 @@ public class SetupService {
     private final ChallengeTemplateRepository challengeTemplateRepository;
     private final RunnerRepository runnerRepository;
     private final TestRepository testRepository;
-    private final TemplateRepository templateRepository;
     private final LanguageRepository languageRepository;
 
     @Autowired
-    public SetupService(Environment environment, PasswordEncoder passwordEncoder, UserRepository userRepository, EndpointRepository endpointRepository, TaskRepository taskRepository, OrganizationRepository organizationRepository, OrganizationMembershipRepository organizationMembershipRepository, ChallengeTemplateRepository challengeTemplateRepository, RunnerRepository runnerRepository, TestRepository testRepository, TemplateRepository templateRepository, LanguageRepository languageRepository) {
+    public SetupService(Environment environment, PasswordEncoder passwordEncoder, UserRepository userRepository, EndpointRepository endpointRepository, TaskRepository taskRepository, OrganizationRepository organizationRepository, OrganizationMembershipRepository organizationMembershipRepository, ChallengeTemplateRepository challengeTemplateRepository, RunnerRepository runnerRepository, TestRepository testRepository, LanguageRepository languageRepository) {
         this.environment = environment;
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
@@ -44,7 +42,6 @@ public class SetupService {
         this.challengeTemplateRepository = challengeTemplateRepository;
         this.runnerRepository = runnerRepository;
         this.testRepository = testRepository;
-        this.templateRepository = templateRepository;
         this.languageRepository = languageRepository;
     }
 
@@ -205,7 +202,7 @@ public class SetupService {
         OrganizationMembership membership = new OrganizationMembership();
         membership.setKey(key);
         membership.setAdmin(true);
-        membership = organizationMembershipRepository.save(membership);
+        organizationMembershipRepository.save(membership);
     }
 
     private Language createLanguage(String name, String tag) {
@@ -213,12 +210,5 @@ public class SetupService {
         language.setName(name);
         language.setTag(tag);
         return languageRepository.save(language);
-    }
-
-    private Template createTemplate(Task task, Language language, String fileName) {
-        Template helloWorldPyTemplate = new Template();
-        helloWorldPyTemplate.setTask(task);
-        helloWorldPyTemplate.setLanguage(language);
-        return templateRepository.save(helloWorldPyTemplate);
     }
 }

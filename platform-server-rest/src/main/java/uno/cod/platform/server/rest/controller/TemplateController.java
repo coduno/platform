@@ -23,19 +23,21 @@ public class TemplateController {
         this.service = service;
     }
 
-    @RequestMapping(path = RestUrls.TEMPLATES, method = RequestMethod.POST)
+    @RequestMapping(path = RestUrls.TASKS_ID_TEMPLATES, method = RequestMethod.POST)
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<String> save(
-            @RequestParam("taskId") UUID task,
-            @RequestParam("languageId") UUID language,
+            @PathVariable UUID id,
+            @RequestParam("languageObjectName") String objectName,
+            @RequestParam("languageReadableName") String readableName,
             @RequestParam("file") MultipartFile file) {
-        service.save(task, language, file);
+        service.save(id, objectName, readableName, file);
         return new ResponseEntity<>("ok", HttpStatus.OK);
     }
 
-    @RequestMapping(path = RestUrls.TEMPLATES_ID, method = RequestMethod.GET)
+    @RequestMapping(path = RestUrls.TASKS_ID_TEMPLATES_NAME, method = RequestMethod.GET)
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<List<String>> getTemplateUrl(@PathVariable UUID id) throws GeneralSecurityException, IOException {
-        return new ResponseEntity<>(service.getTemplateUrl(id), HttpStatus.OK);
+    public ResponseEntity<List<String>> getTemplateUrl(@PathVariable UUID id,
+                                                       @PathVariable String name) throws GeneralSecurityException, IOException {
+        return new ResponseEntity<>(service.getTemplateUrls(id, name), HttpStatus.OK);
     }
 }

@@ -70,7 +70,7 @@ public class TaskService {
     }
 
     public TaskShowDto findById(UUID id) {
-        return TaskMapper.map(repository.findOneWithLanguagesAndTemplates(id));
+        return TaskMapper.map(repository.findOneWithTemplates(id));
     }
 
     public List<TaskShowDto> findAllForOrganization(UUID organizationId) {

@@ -35,8 +35,17 @@ public class Task extends Assignment {
     @OneToMany(mappedBy = "task")
     private List<Test> tests;
 
-    @OneToMany(mappedBy = "task")
-    private List<Template> templates;
+    /**
+     * Maps from names in backing storage
+     * to human readable ones.
+     */
+    @ElementCollection(fetch = FetchType.EAGER)
+    @Column(name = "template_value")
+    @MapKeyColumn(name = "template_key")
+    @CollectionTable(name = "task_templates",
+            joinColumns = {@JoinColumn(name = "task_id")})
+    @Lob
+    private Map<String, String> templates;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "runner_id")
@@ -155,22 +164,22 @@ public class Task extends Assignment {
         skillMap.put(skill, value);
     }
 
-    public List<Template> getTemplates() {
+    public Map<String, String> getTemplates() {
         if (templates == null) {
             return null;
         }
-        return Collections.unmodifiableList(templates);
+        return Collections.unmodifiableMap(templates);
     }
 
-    public void setTemplates(List<Template> templates) {
+    public void setTemplates(Map<String, String> templates) {
         this.templates = templates;
     }
 
-    public void addTemplate(Template template) {
+    public void putTemplate(String objectName, String readableName) {
         if (templates == null) {
-            templates = new ArrayList<>();
+            templates = new HashMap<>();
         }
-        templates.add(template);
+        templates.put(objectName, readableName);
     }
 
     public void addLanguage(Language language) {

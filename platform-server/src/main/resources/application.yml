@@ -8,11 +8,11 @@ coduno:
     from: noreply@cod.uno
   invite:
     expire: P30D
-  storage:
-    gcs:
-      buckets:
-        submissions: coduno-submissions
-        templates: coduno-templates
+  template:
+    expire: PT2H
+    bucket: coduno-templates
+  submission:
+    bucket: coduno-submissions
 
 spring:
   application.name: Coduno Platform

@@ -10,6 +10,8 @@ import com.google.api.services.storage.model.Objects;
 import com.google.api.services.storage.model.StorageObject;
 import com.google.common.collect.Lists;
 import org.apache.commons.codec.binary.Base64;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import uno.cod.storage.PlatformStorage;
 
 import java.io.*;
@@ -19,10 +21,13 @@ import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.Signature;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
 public class GcsStorageDriver implements PlatformStorage {
+    private static final Logger LOGGER = LoggerFactory.getLogger(GcsStorageDriver.class);
+
     private Storage storage;
     private PrivateKey signingKey;
     private String accountId;
@@ -97,7 +102,13 @@ public class GcsStorageDriver implements PlatformStorage {
         }
         List<String> files = listFiles(bucket, folderName);
         files.remove(folderName);
-        List<String> exposedFiles = new ArrayList<>();
+
+        if (files.isEmpty()) {
+            LOGGER.debug("Was asked to expose files in folder {} (bucket {}) but there are no objects inside?", folderName, bucket);
+            return Collections.emptyList();
+        }
+
+        List<String> exposedFiles = new ArrayList<>(files.size());
         for (String file : files) {
             exposedFiles.add(exposeFile(bucket, file, expiration));
         }

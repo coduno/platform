@@ -6,16 +6,15 @@ import uno.cod.platform.server.core.dto.assignment.AssignmentShowDto;
 import uno.cod.platform.server.core.dto.language.LanguageShowDto;
 import uno.cod.platform.server.core.dto.organization.OrganizationShowDto;
 import uno.cod.platform.server.core.dto.runner.RunnerShowDto;
-import uno.cod.platform.server.core.dto.template.TemplateShowDto;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 public class TaskShowDto extends AssignmentShowDto {
     private String canonicalName;
-    private List<TemplateShowDto> templates;
+    private Map<String, String> templates;
     private Map<CodingSkill, Double> skillMap;
     private boolean normalRunAvailable;
     private List<LanguageShowDto> languages;
@@ -58,11 +57,11 @@ public class TaskShowDto extends AssignmentShowDto {
         this.normalRunAvailable = normalRunAvailable;
     }
 
-    public List<TemplateShowDto> getTemplates() {
+    public Map<String, String> getTemplates() {
         return templates;
     }
 
-    public void setTemplates(List<TemplateShowDto> templates) {
+    public void setTemplates(Map<String, String> templates) {
         this.templates = templates;
     }
 
@@ -74,11 +73,11 @@ public class TaskShowDto extends AssignmentShowDto {
         this.languages = languages;
     }
 
-    public void addTemplate(TemplateShowDto dto) {
+    public void putTemplate(String objectName, String readableName) {
         if (templates == null) {
-            templates = new ArrayList<>();
+            templates = new HashMap<>();
         }
-        templates.add(dto);
+        templates.put(objectName, readableName);
     }
 
     public String getCanonicalName() {

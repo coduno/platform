@@ -52,7 +52,7 @@ public class TaskServiceTest {
     @Test
     public void findById() throws Exception {
         Task task = TaskTestUtil.getValidTask();
-        Mockito.when(repository.findOneWithLanguagesAndTemplates(task.getId())).thenReturn(task);
+        Mockito.when(repository.findOneWithTemplates(task.getId())).thenReturn(task);
 
         TaskShowDto dto = service.findById(task.getId());
 
