@@ -45,6 +45,7 @@ public class SecurityService {
             return false;
         }
 
+        user = userRepository.findOneWithTeams(user.getId());
         for (TeamMember teamMember : user.getTeams()) {
             if (teamMember.isAdmin() && teamMember.getKey().getTeam().getCanonicalName().equals(canonicalName)) {
                 return true;
@@ -106,6 +107,11 @@ public class SecurityService {
             return true;
         }
         for (Challenge challenge : user.getInvitedChallenges()) {
+            if (challenge.getId().equals(challengeId)) {
+                return true;
+            }
+        }
+        for (Challenge challenge : user.getRegisteredChallenges()) {
             if (challenge.getId().equals(challengeId)) {
                 return true;
             }

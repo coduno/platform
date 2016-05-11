@@ -13,6 +13,7 @@ import uno.cod.platform.server.core.dto.challenge.UserChallengeShowDto;
 import uno.cod.platform.server.core.repository.ChallengeRepository;
 import uno.cod.platform.server.core.repository.ChallengeTemplateRepository;
 import uno.cod.platform.server.core.repository.ResultRepository;
+import uno.cod.platform.server.core.repository.UserRepository;
 import uno.cod.platform.server.core.service.util.ChallengeTestUtil;
 import uno.cod.platform.server.core.service.util.ResultTestUtil;
 import uno.cod.platform.server.core.service.util.UserTestUtil;
@@ -26,13 +27,15 @@ public class ChallengeServiceTest {
     private ChallengeRepository repository;
     private ChallengeTemplateRepository challengeTemplateRepository;
     private ResultRepository resultRepository;
+    private UserRepository userRepository;
 
     @Before
     public void setup() {
         repository = Mockito.mock(ChallengeRepository.class);
         challengeTemplateRepository = Mockito.mock(ChallengeTemplateRepository.class);
         resultRepository = Mockito.mock(ResultRepository.class);
-        service = new ChallengeService(repository, challengeTemplateRepository, resultRepository, null);
+        userRepository = Mockito.mock(UserRepository.class);
+        service = new ChallengeService(repository, challengeTemplateRepository, resultRepository, null, userRepository);
     }
 
     @Test
@@ -72,10 +75,10 @@ public class ChallengeServiceTest {
         result.setFinished(null);
         User user = UserTestUtil.getUser();
 
-        Mockito.when(repository.findAllByInvitedUser(user.getId())).thenReturn(Collections.singletonList(challenge));
+        Mockito.when(repository.findAllWithOrganizationAndInvitedUsersAndRegisteredUsers()).thenReturn(Collections.singletonList(challenge));
         Mockito.when(resultRepository.findOneByUserAndChallenge(user.getId(), challenge.getId())).thenReturn(result);
 
-        List<UserChallengeShowDto> dtos = service.getUserChallenges(user);
+        List<UserChallengeShowDto> dtos = service.getPublicChallenges(user);
 
         Assert.assertEquals(dtos.size(), 1);
         UserChallengeShowDto dto = dtos.get(0);
