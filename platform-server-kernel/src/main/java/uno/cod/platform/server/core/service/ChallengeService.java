@@ -14,22 +14,26 @@ import uno.cod.platform.server.core.repository.ChallengeRepository;
 import uno.cod.platform.server.core.repository.ChallengeTemplateRepository;
 import uno.cod.platform.server.core.repository.ResultRepository;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class ChallengeService {
     private final ChallengeTemplateRepository challengeTemplateRepository;
     private final ChallengeRepository repository;
     private final ResultRepository resultRepository;
+    private final SessionService sessionService;
 
     @Autowired
     public ChallengeService(ChallengeRepository repository,
-                            ChallengeTemplateRepository challengeTemplateRepository, ResultRepository resultRepository) {
+                            ChallengeTemplateRepository challengeTemplateRepository, ResultRepository resultRepository, SessionService sessionService) {
         this.repository = repository;
         this.challengeTemplateRepository = challengeTemplateRepository;
         this.resultRepository = resultRepository;
+        this.sessionService = sessionService;
     }
 
     public UUID createFromDto(ChallengeCreateDto dto) {
@@ -47,6 +51,17 @@ public class ChallengeService {
         }
         challenge.setInviteOnly(dto.isInviteOnly());
         return repository.save(challenge).getId();
+    }
+
+    public List<ChallengeDto> findAll() {
+        UUID activeOrganization = sessionService.getActiveOrganization();
+        List<Challenge> challenges = null;
+        if (activeOrganization == null) {
+            challenges = repository.findAllByInviteOnlyAndEndDateAfter(false, ZonedDateTime.now().plusMinutes(5));
+        } else {
+            challenges = repository.findAllByOrganization(activeOrganization);
+        }
+        return challenges.stream().map(ChallengeDto::new).collect(Collectors.toList());
     }
 
     public ChallengeDto findOneById(UUID challengeId) {

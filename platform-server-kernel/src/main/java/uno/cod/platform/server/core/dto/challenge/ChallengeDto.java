@@ -2,6 +2,7 @@ package uno.cod.platform.server.core.dto.challenge;
 
 import org.springframework.beans.BeanUtils;
 import uno.cod.platform.server.core.domain.Challenge;
+import uno.cod.platform.server.core.dto.organization.OrganizationShowDto;
 import uno.cod.platform.server.core.dto.user.UserShortShowDto;
 
 import java.time.ZonedDateTime;
@@ -15,11 +16,15 @@ public class ChallengeDto {
     private ZonedDateTime startDate;
     private ZonedDateTime endDate;
     private boolean inviteOnly;
+    private OrganizationShowDto organization;
 
     private List<UserShortShowDto> invitedUsers;
 
     public ChallengeDto(Challenge challenge) {
         BeanUtils.copyProperties(challenge, this);
+        if (challenge.getChallengeTemplate() != null && challenge.getChallengeTemplate().getOrganization() != null) {
+            this.organization = new OrganizationShowDto(challenge.getChallengeTemplate().getOrganization());
+        }
     }
 
     public UUID getId() {
@@ -76,5 +81,13 @@ public class ChallengeDto {
 
     public void setInvitedUsers(List<UserShortShowDto> invitedUsers) {
         this.invitedUsers = invitedUsers;
+    }
+
+    public OrganizationShowDto getOrganization() {
+        return organization;
+    }
+
+    public void setOrganization(OrganizationShowDto organization) {
+        this.organization = organization;
     }
 }

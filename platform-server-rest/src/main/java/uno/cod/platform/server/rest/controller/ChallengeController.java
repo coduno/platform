@@ -19,7 +19,6 @@ import java.util.UUID;
 
 @RestController
 public class ChallengeController {
-
     private final ChallengeService service;
 
     @Autowired
@@ -37,6 +36,12 @@ public class ChallengeController {
     @PreAuthorize("isAuthenticated() and @securityService.canAccessChallenge(principal, #dto.templateId)")
     public ResponseEntity<UUID> createChallenge(@Valid @RequestBody ChallengeCreateDto dto) {
         return new ResponseEntity<>(service.createFromDto(dto), HttpStatus.CREATED);
+    }
+
+    @RequestMapping(value = RestUrls.CHALLENGES, method = RequestMethod.GET)
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<List<ChallengeDto>> getChallenges() {
+        return new ResponseEntity<>(service.findAll(), HttpStatus.CREATED);
     }
 
     @RequestMapping(value = RestUrls.USER_CHALLENGES, method = RequestMethod.GET)

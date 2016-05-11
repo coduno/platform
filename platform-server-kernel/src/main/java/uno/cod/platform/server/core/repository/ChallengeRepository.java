@@ -33,4 +33,16 @@ public interface ChallengeRepository extends JpaRepository<Challenge, UUID> {
             "JOIN FETCH challenge.invitedUsers users " +
             "WHERE users.id = :user")
     List<Challenge> findAllByInvitedUser(@Param("user") UUID id);
+
+    @Query("SELECT challenge FROM Challenge challenge " +
+            "LEFT JOIN FETCH challenge.challengeTemplate challengeTemplate " +
+            "LEFT JOIN FETCH challengeTemplate.organization organization " +
+            "WHERE challenge.inviteOnly= :inviteOnly AND challenge.endDate > :endDate")
+    List<Challenge> findAllByInviteOnlyAndEndDateAfter(@Param("inviteOnly") Boolean inviteOnly, @Param("endDate")ZonedDateTime endDate);
+
+    @Query("SELECT challenge FROM Challenge challenge " +
+            "LEFT JOIN FETCH challenge.challengeTemplate challengeTemplate " +
+            "LEFT JOIN FETCH challengeTemplate.organization organization " +
+            "WHERE organization.id = :organization")
+    List<Challenge> findAllByOrganization(@Param("organization") UUID organization);
 }

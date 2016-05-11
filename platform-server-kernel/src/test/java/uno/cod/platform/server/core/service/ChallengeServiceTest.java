@@ -32,7 +32,7 @@ public class ChallengeServiceTest {
         repository = Mockito.mock(ChallengeRepository.class);
         challengeTemplateRepository = Mockito.mock(ChallengeTemplateRepository.class);
         resultRepository = Mockito.mock(ResultRepository.class);
-        service = new ChallengeService(repository, challengeTemplateRepository, resultRepository);
+        service = new ChallengeService(repository, challengeTemplateRepository, resultRepository, null);
     }
 
     @Test
