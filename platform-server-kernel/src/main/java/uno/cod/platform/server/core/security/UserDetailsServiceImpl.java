@@ -28,7 +28,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         if (username.contains("@")) {
             user = userRepository.findByEmail(username);
         } else {
-            user = userRepository.findByUsername(username);
+            user = userRepository.findByUsernameValue(username);
         }
 
         if (user == null) {

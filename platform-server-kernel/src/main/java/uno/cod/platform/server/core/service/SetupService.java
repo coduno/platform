@@ -83,7 +83,9 @@ public class SetupService {
     private Organization initCatalystsWithUsers() {
         Organization catalysts = new Organization();
         catalysts.setName("Catalysts");
-        catalysts.setNick("catalysts");
+        CanonicalName canonicalName = new CanonicalName();
+        canonicalName.setValue("catalysts");
+        catalysts.setCanonicalName(canonicalName);
         catalysts = organizationRepository.save(catalysts);
 
         String password = this.passwordEncoder.encode("Whatismypassword?");
@@ -189,7 +191,9 @@ public class SetupService {
 
     private User createUser(String username, String email, String password, Boolean admin) {
         User user = new User();
-        user.setUsername(username);
+        CanonicalName canonicalName = new CanonicalName();
+        canonicalName.setValue(username);
+        user.setCanonicalName(canonicalName);
         user.setEmail(email);
         user.setPassword(password);
         user.setAdmin(admin);

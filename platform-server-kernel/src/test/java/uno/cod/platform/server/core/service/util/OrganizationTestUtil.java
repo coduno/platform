@@ -1,5 +1,6 @@
 package uno.cod.platform.server.core.service.util;
 
+import uno.cod.platform.server.core.domain.CanonicalName;
 import uno.cod.platform.server.core.domain.Organization;
 
 import java.util.UUID;
@@ -13,7 +14,9 @@ public class OrganizationTestUtil {
         Organization organization = new Organization();
         organization.setId(id);
         organization.setName("Coduno");
-        organization.setNick("coduno");
+        CanonicalName canonicalName = new CanonicalName();
+        canonicalName.setValue("coduno");
+        organization.setCanonicalName(canonicalName);
         return organization;
     }
 }

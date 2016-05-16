@@ -2,12 +2,10 @@ package uno.cod.platform.server.core.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import uno.cod.platform.server.core.domain.Team;
-import uno.cod.platform.server.core.domain.TeamMember;
-import uno.cod.platform.server.core.domain.TeamUserKey;
-import uno.cod.platform.server.core.domain.User;
+import uno.cod.platform.server.core.domain.*;
 import uno.cod.platform.server.core.dto.team.TeamCreateDto;
 import uno.cod.platform.server.core.dto.team.TeamShowDto;
+import uno.cod.platform.server.core.repository.CanonicalNameRepository;
 import uno.cod.platform.server.core.repository.TeamInvitationRepository;
 import uno.cod.platform.server.core.repository.TeamMemberRepository;
 import uno.cod.platform.server.core.repository.TeamRepository;
@@ -23,22 +21,26 @@ public class TeamService {
     private final TeamMemberRepository teamMemberRepository;
     private final TeamInvitationRepository teamInvitationRepository;
     private final SessionService sessionService;
+    private final CanonicalNameRepository canonicalNameRepository;
 
     @Autowired
-    public TeamService(TeamRepository repository, TeamMemberRepository teamMemberRepository, TeamInvitationRepository teamInvitationRepository, SessionService sessionService) {
+    public TeamService(TeamRepository repository, TeamMemberRepository teamMemberRepository, TeamInvitationRepository teamInvitationRepository, SessionService sessionService, CanonicalNameRepository canonicalNameRepository) {
         this.repository = repository;
         this.teamMemberRepository = teamMemberRepository;
         this.teamInvitationRepository = teamInvitationRepository;
         this.sessionService = sessionService;
+        this.canonicalNameRepository = canonicalNameRepository;
     }
 
     public void create(TeamCreateDto dto) {
-        if (repository.findByCanonicalNameAndEnabledTrue(dto.getCanonicalName()) != null) {
+        if (canonicalNameRepository.findOne(dto.getCanonicalName()) != null) {
             throw new IllegalArgumentException("team.canonicalName.existing");
         }
         Team team = new Team();
         team.setName(dto.getName());
-        team.setCanonicalName(dto.getCanonicalName());
+        CanonicalName canonicalName = new CanonicalName();
+        canonicalName.setValue(dto.getCanonicalName());
+        team.setCanonicalName(canonicalName);
         team = repository.save(team);
 
         User user = sessionService.getLoggedInUser();
@@ -62,7 +64,7 @@ public class TeamService {
     }
 
     public void delete(String canonicalName) {
-        Team team = repository.findByCanonicalNameAndEnabledTrue(canonicalName);
+        Team team = repository.findByCanonicalNameValueAndEnabledTrue(canonicalName);
         team.setEnabled(false);
         repository.save(team);
 
@@ -70,7 +72,7 @@ public class TeamService {
     }
 
     public TeamShowDto findOne(String canonicalName) {
-        return new TeamShowDto(repository.findByCanonicalNameAndEnabledTrue(canonicalName));
+        return new TeamShowDto(repository.findByCanonicalNameValueAndEnabledTrue(canonicalName));
     }
 
     public List<TeamShowDto> findAllTeamsForUser(String username) {

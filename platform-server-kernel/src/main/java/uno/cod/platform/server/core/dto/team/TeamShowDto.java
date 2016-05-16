@@ -16,7 +16,7 @@ public class TeamShowDto {
     public TeamShowDto(Team team) {
         this.id = team.getId();
         this.name = team.getName();
-        this.canonicalName = team.getCanonicalName();
+        this.canonicalName = team.getCanonicalName().getValue();
         if (team.getMembers() == null) {
             return;
         }

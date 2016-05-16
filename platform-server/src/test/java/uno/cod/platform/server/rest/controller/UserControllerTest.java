@@ -27,6 +27,6 @@ public class UserControllerTest extends AbstractControllerTest {
                 .content(mapper.writeValueAsString(userCreateDto))
         ).andExpect(status().isCreated());
 
-        assertNotNull(userRepository.findByUsername("testnick"));
+        assertNotNull(userRepository.findByUsernameValue("testnick"));
     }
 }

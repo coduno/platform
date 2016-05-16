@@ -51,7 +51,7 @@ public class InvitationServiceTest {
         Result result = ResultTestUtil.getResult();
 
         Mockito.when(invitationRepository.findAllByChallenge(invitation.getChallenge().getId())).thenReturn(Collections.singletonList(invitation));
-        Mockito.when(userRepository.findByUsernameOrEmail(invitation.getEmail(), invitation.getEmail())).thenReturn(user);
+        Mockito.when(userRepository.findByUsernameValueOrEmail(invitation.getEmail(), invitation.getEmail())).thenReturn(user);
         Mockito.when(resultRepository.findOneByUserAndChallenge(user.getId(), invitation.getChallenge().getId())).thenReturn(result);
 
         List<InvitationShowDto> dtos = invitationService.getByChallengeId(invitation.getChallenge().getId());
