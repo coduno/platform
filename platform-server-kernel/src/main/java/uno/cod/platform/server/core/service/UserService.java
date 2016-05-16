@@ -3,9 +3,11 @@ package uno.cod.platform.server.core.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import uno.cod.platform.server.core.domain.CanonicalName;
 import uno.cod.platform.server.core.domain.User;
 import uno.cod.platform.server.core.dto.user.*;
 import uno.cod.platform.server.core.exception.ResourceConflictException;
+import uno.cod.platform.server.core.repository.CanonicalNameRepository;
 import uno.cod.platform.server.core.repository.UserRepository;
 
 import javax.transaction.Transactional;
@@ -19,20 +21,26 @@ import java.util.stream.Collectors;
 public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository repository;
+    private final CanonicalNameRepository canonicalNameRepository;
 
     @Autowired
-    public UserService(UserRepository repository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository repository, PasswordEncoder passwordEncoder, CanonicalNameRepository canonicalNameRepository) {
         this.repository = repository;
         this.passwordEncoder = passwordEncoder;
+        this.canonicalNameRepository = canonicalNameRepository;
     }
 
     public void createFromDto(UserCreateDto dto) {
-        User found = repository.findByUsernameOrEmail(dto.getNick(), dto.getEmail());
-        if (found != null) {
+        if (repository.findByEmail(dto.getEmail()) != null) {
+            throw new ResourceConflictException("user.email.exists");
+        }
+        if (canonicalNameRepository.findOne(dto.getNick()) != null) {
             throw new ResourceConflictException("user.name.exists");
         }
         User user = new User();
-        user.setUsername(dto.getNick());
+        CanonicalName username = new CanonicalName();
+        username.setValue(dto.getNick());
+        user.setCanonicalName(username);
         user.setEmail(dto.getEmail());
         user.setPassword(passwordEncoder.encode(dto.getPassword()));
         user.setEnabled(true);
@@ -40,13 +48,13 @@ public class UserService {
     }
 
     public UserShowDto update(UserUpdateProfileDetailsDto dto, User user) {
-        if (!dto.getUsername().equals(user.getUsername()) && repository.findByUsername(dto.getUsername()) != null) {
+        if (!dto.getUsername().equals(user.getUsername()) && repository.findByUsernameValue(dto.getUsername()) != null) {
             throw new ResourceConflictException("user.name.exists");
         }
         if (!dto.getEmail().equals(user.getEmail()) && repository.findByEmail(dto.getEmail()) != null) {
             throw new ResourceConflictException("email.existing");
         }
-        user.setUsername(dto.getUsername());
+//        user.setCanonicalName(dto.getUsername());
         user.setEmail(dto.getEmail());
         user.setFirstName(dto.getFirstName());
         user.setLastName(dto.getLastName());
@@ -65,7 +73,7 @@ public class UserService {
     }
 
     public UserShowDto findByUsername(String username) {
-        User user = repository.findByUsername(username);
+        User user = repository.findByUsernameValue(username);
         if (user == null) {
             throw new NoSuchElementException("user.invalid");
         }
@@ -85,11 +93,11 @@ public class UserService {
     }
 
     public List<UserShortShowDto> listUsersByUsernameContaining(String searchValue) {
-        if(searchValue.length() <= 3) {
+        if (searchValue.length() <= 3) {
             throw new IllegalArgumentException("user.search.length.invalid");
         }
 
-        return repository.findByUsernameContaining(searchValue)
+        return repository.findByUsernameValueContaining(searchValue)
                 .stream()
                 .map(UserShortShowDto::new)
                 .collect(Collectors.toList());

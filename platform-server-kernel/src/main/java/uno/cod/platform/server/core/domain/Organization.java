@@ -1,8 +1,6 @@
 package uno.cod.platform.server.core.domain;
 
 import javax.persistence.*;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -16,10 +14,9 @@ import java.util.Set;
         uniqueConstraints = {@UniqueConstraint(name = "nick", columnNames = "nick")}
 )
 public class Organization extends IdentifiableEntity implements CanonicalEntity {
-    @Column(unique = true, nullable = false, length = 40)
-    @Size(min = 5, max = 40)
-    @Pattern(regexp = "^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*$")
-    private String nick;
+    @JoinColumn(name = "nick", nullable = false, unique = true)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    private CanonicalName nick;
 
     @Column(nullable = false)
     private String name;
@@ -39,11 +36,11 @@ public class Organization extends IdentifiableEntity implements CanonicalEntity 
     @OneToMany(mappedBy = "organization")
     private Set<Task> tasks;
 
-    public String getNick() {
+    public CanonicalName getCanonicalName() {
         return nick;
     }
 
-    public void setNick(String nick) {
+    public void setCanonicalName(CanonicalName nick) {
         this.nick = nick;
     }
 
@@ -111,8 +108,4 @@ public class Organization extends IdentifiableEntity implements CanonicalEntity 
         challengeTemplates.add(challengeTemplate);
     }
 
-    @Override
-    public String getCanonicalName() {
-        return name;
-    }
 }

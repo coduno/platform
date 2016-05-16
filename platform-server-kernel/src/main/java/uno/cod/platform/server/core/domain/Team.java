@@ -17,8 +17,9 @@ public class Team extends IdentifiableEntity implements CanonicalEntity {
     @Column(unique = true, nullable = false)
     private String name;
 
-    @Column(name = "canonical_name", nullable = false, unique = true)
-    private String canonicalName;
+    @JoinColumn(name = "canonical_name", nullable = false, unique = true)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    private CanonicalName canonicalName;
 
     @OneToMany(mappedBy = "key.team")
     private Set<TeamMember> members;
@@ -41,12 +42,11 @@ public class Team extends IdentifiableEntity implements CanonicalEntity {
         this.name = name;
     }
 
-    @Override
-    public String getCanonicalName() {
+    public CanonicalName getCanonicalName() {
         return canonicalName;
     }
 
-    public void setCanonicalName(String canonicalName) {
+    public void setCanonicalName(CanonicalName canonicalName) {
         this.canonicalName = canonicalName;
     }
 

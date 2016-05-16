@@ -13,14 +13,14 @@ import java.util.UUID;
 @Repository
 public interface UserRepository extends JpaRepository<User, UUID> {
     @EntityGraph("User.detail")
-    User findByUsername(String username);
+    User findByUsernameValue(String username);
 
     @EntityGraph("User.detail")
     User findByEmail(String email);
 
-    User findByUsernameOrEmail(String username, String email);
+    User findByUsernameValueOrEmail(String username, String email);
 
-    List<User> findByUsernameContaining(@Param("searchValue") String searchValue);
+    List<User> findByUsernameValueContaining(@Param("searchValue") String searchValue);
 
     @Query("SELECT user FROM User user " +
             "LEFT JOIN FETCH user.results results " +

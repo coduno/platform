@@ -58,7 +58,7 @@ public class InvitationService {
     }
 
     public void invite(InvitationDto dto, String from) throws MessagingException {
-        User invitingUser = userRepository.findByUsername(from);
+        User invitingUser = userRepository.findByUsernameValue(from);
         Challenge challenge = challengeRepository.findOne(dto.getChallengeId());
 
         Organization organization = challenge.getChallengeTemplate().getOrganization();
@@ -141,7 +141,7 @@ public class InvitationService {
             dto.setEmail(invitation.getEmail());
             dto.setToken(invitation.getToken());
             dto.setExpire(invitation.getExpire());
-            User user = userRepository.findByUsernameOrEmail(invitation.getEmail(), invitation.getEmail());
+            User user = userRepository.findByUsernameValueOrEmail(invitation.getEmail(), invitation.getEmail());
             if (user != null) {
                 dto.setUsername(user.getUsername());
                 Result result = resultRepository.findOneByUserAndChallenge(user.getId(), challengeId);

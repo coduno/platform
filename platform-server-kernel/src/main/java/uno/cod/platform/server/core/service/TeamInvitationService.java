@@ -36,11 +36,11 @@ public class TeamInvitationService {
     }
 
     public void create(User invitingUser, String usernameToInvite, String canonicalName) {
-        User user = userRepository.findByUsername(usernameToInvite);
+        User user = userRepository.findByUsernameValue(usernameToInvite);
         if (user == null) {
             throw new IllegalArgumentException("user.invalid");
         }
-        Team team = teamRepository.findByCanonicalNameAndEnabledTrue(canonicalName);
+        Team team = teamRepository.findByCanonicalNameValueAndEnabledTrue(canonicalName);
         if (team == null) {
             throw new IllegalArgumentException("team.invalid");
         }
@@ -64,7 +64,7 @@ public class TeamInvitationService {
     }
 
     public void acceptInvitation(User user, String canonicalName) {
-        Team team = teamRepository.findByCanonicalNameAndEnabledTrue(canonicalName);
+        Team team = teamRepository.findByCanonicalNameValueAndEnabledTrue(canonicalName);
         if (team == null) {
             throw new IllegalArgumentException("team.invalid");
         }
@@ -81,7 +81,7 @@ public class TeamInvitationService {
     }
 
     public void declineInvitation(User user, String canonicalName) {
-        Team team = teamRepository.findByCanonicalNameAndEnabledTrue(canonicalName);
+        Team team = teamRepository.findByCanonicalNameValueAndEnabledTrue(canonicalName);
         if (team == null) {
             throw new IllegalArgumentException("team.invalid");
         }

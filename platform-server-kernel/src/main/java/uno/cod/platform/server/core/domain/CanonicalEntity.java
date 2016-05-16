@@ -4,5 +4,6 @@ import java.util.UUID;
 
 public interface CanonicalEntity {
     UUID getId();
-    String getCanonicalName();
+
+    CanonicalName getCanonicalName();
 }

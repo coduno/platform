@@ -192,7 +192,10 @@ public class CodingcontestSyncService {
     private User createUserFromDto(ParticipationDto dto) {
         User user = new User();
         user.setId(UUID.fromString(dto.getUuid()));
-        user.setUsername(dto.getName());
+        // check if exists and replace with ?
+        CanonicalName username = new CanonicalName();
+        username.setValue(dto.getName());
+        user.setCanonicalName(username);
         user.setPassword(dto.getPassword());
         if (dto.getEmail() != null) {
             user.setEmail(dto.getEmail());

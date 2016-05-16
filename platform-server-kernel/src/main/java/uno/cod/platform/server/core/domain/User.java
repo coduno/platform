@@ -22,9 +22,10 @@ import java.util.*;
                 @NamedAttributeNode("invitedChallenges")
         })
 public class User extends IdentifiableEntity implements UserDetails, CanonicalEntity {
-    @Column(unique = true, nullable = false)
+    @JoinColumn(name = "username", unique = true, nullable = false)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @NotNull
-    private String username;
+    private CanonicalName username;
 
     @Column(unique = true, nullable = false)
     @Email
@@ -86,11 +87,16 @@ public class User extends IdentifiableEntity implements UserDetails, CanonicalEn
     @Transient
     private UUID activeOrganization;
 
+    @Override
     public String getUsername() {
-        return username;
+        return getStringCanonicalName();
     }
 
-    public void setUsername(String username) {
+    public CanonicalName getCanonicalName() {
+        return this.username;
+    }
+
+    public void setCanonicalName(CanonicalName username) {
         this.username = username;
     }
 
@@ -267,9 +273,8 @@ public class User extends IdentifiableEntity implements UserDetails, CanonicalEn
         invitedTeams.add(team);
     }
 
-    @Override
-    public String getCanonicalName() {
-        return username;
+    public String getStringCanonicalName() {
+        return username.getValue();
     }
 
     @Override

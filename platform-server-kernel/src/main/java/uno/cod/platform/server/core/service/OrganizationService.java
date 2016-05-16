@@ -2,14 +2,12 @@ package uno.cod.platform.server.core.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import uno.cod.platform.server.core.domain.Organization;
-import uno.cod.platform.server.core.domain.OrganizationMembership;
-import uno.cod.platform.server.core.domain.OrganizationMembershipKey;
-import uno.cod.platform.server.core.domain.User;
+import uno.cod.platform.server.core.domain.*;
 import uno.cod.platform.server.core.dto.organization.OrganizationCreateDto;
 import uno.cod.platform.server.core.dto.organization.OrganizationShowDto;
 import uno.cod.platform.server.core.dto.organization.member.OrganizationMembershipShowDto;
 import uno.cod.platform.server.core.mapper.OrganizationMapper;
+import uno.cod.platform.server.core.repository.CanonicalNameRepository;
 import uno.cod.platform.server.core.repository.OrganizationMembershipRepository;
 import uno.cod.platform.server.core.repository.OrganizationRepository;
 import uno.cod.platform.server.core.repository.UserRepository;
@@ -26,23 +24,30 @@ public class OrganizationService {
     private final OrganizationRepository organizationRepository;
     private final OrganizationMembershipRepository organizationMembershipRepository;
     private final UserRepository userRepository;
+    private final CanonicalNameRepository canonicalNameRepository;
 
     @Autowired
     public OrganizationService(OrganizationRepository organizationRepository,
                                OrganizationMembershipRepository organizationMembershipRepository,
-                               UserRepository userRepository) {
+                               UserRepository userRepository, CanonicalNameRepository canonicalNameRepository) {
         this.userRepository = userRepository;
         this.organizationMembershipRepository = organizationMembershipRepository;
         this.organizationRepository = organizationRepository;
+        this.canonicalNameRepository = canonicalNameRepository;
     }
 
     public void createFromDto(OrganizationCreateDto dto, String owner) {
+        if (canonicalNameRepository.findOne(dto.getNick()) != null) {
+            throw new IllegalArgumentException("canonical.name.invalid");
+        }
         Organization organization = new Organization();
-        organization.setNick(dto.getNick());
+        CanonicalName canonicalName = new CanonicalName();
+        canonicalName.setValue(dto.getNick());
+        organization.setCanonicalName(canonicalName);
         organization.setName(dto.getName());
         organization = organizationRepository.save(organization);
 
-        User user = userRepository.findByUsername(owner);
+        User user = userRepository.findByUsernameValue(owner);
 
         OrganizationMembershipKey organizationMembershipKey = new OrganizationMembershipKey();
         organizationMembershipKey.setOrganization(organization);
@@ -60,7 +65,7 @@ public class OrganizationService {
     }
 
     public List<OrganizationMembershipShowDto> findUserAdminOrganizations(String username) {
-        User user = userRepository.findByUsernameOrEmail(username, username);
+        User user = userRepository.findByUsernameValueOrEmail(username, username);
         if (user.getOrganizationMemberships() == null) {
             return Collections.emptyList();
         }

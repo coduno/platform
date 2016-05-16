@@ -35,14 +35,14 @@ public class WebSocketService implements IClientPushConnection {
                 LOGGER.error("Could not close session {}.", session.getId());
             }
         }
-        LOGGER.debug("User {} connected with {}.", entity.getCanonicalName(), session.getId());
+        LOGGER.debug("User {} connected with {}.", entity.getCanonicalName().getValue(), session.getId());
         sessions.put(entity, session);
     }
 
     public void removeSession(WebSocketSession session) {
         CanonicalEntity entity = sessions.inverse().remove(session);
         if (entity != null) {
-            LOGGER.debug("User {} disconnected from {}.", entity.getCanonicalName(), session.getId());
+            LOGGER.debug("User {} disconnected from {}.", entity.getCanonicalName().getValue(), session.getId());
         } else {
             LOGGER.error("Removing unknown session, this could be a synchronization problem!");
         }
@@ -50,22 +50,22 @@ public class WebSocketService implements IClientPushConnection {
 
     public void send(CanonicalEntity entity, String message) {
         if (sessions.get(entity) == null) {
-            LOGGER.info("Wanted to talk to user {} but have no session.", entity.getCanonicalName());
+            LOGGER.info("Wanted to talk to user {} but have no session.", entity.getCanonicalName().getValue());
             return;
         }
         try {
-            LOGGER.debug("Sending \"{}\" to user {}.", message, entity.getCanonicalName());
+            LOGGER.debug("Sending \"{}\" to user {}.", message, entity.getCanonicalName().getValue());
             sessions.get(entity).sendMessage(new TextMessage(message));
         } catch (IOException e) {
-            LOGGER.warn("Sending a message to user {} failed.", message, entity.getCanonicalName(), e);
+            LOGGER.warn("Sending a message to user {} failed.", message, entity.getCanonicalName().getValue(), e);
         }
     }
 
     @Override
     public void sendLevelCompleted(CanonicalEntity entity, Task task) {
         JsonNode obj = objectMapper.createObjectNode();
-        ((ObjectNode)obj).put("levelState", "completed");
-        ((ObjectNode)obj).put("task", task.getId().toString());
+        ((ObjectNode) obj).put("levelState", "completed");
+        ((ObjectNode) obj).put("task", task.getId().toString());
         send(entity, obj.toString());
     }
 }
