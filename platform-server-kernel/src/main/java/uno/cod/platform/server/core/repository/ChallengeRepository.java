@@ -5,19 +5,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import uno.cod.platform.server.core.domain.Challenge;
 
-import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.UUID;
 
 public interface ChallengeRepository extends JpaRepository<Challenge, UUID> {
-
-    @Query("SELECT challenge FROM Challenge challenge " +
-            "JOIN FETCH challenge.challengeTemplate challengeTemplate " +
-            "LEFT JOIN FETCH challengeTemplate.organization organization " +
-            "WHERE challengeTemplate.id=:templateId AND challenge.startDate=:startDate AND organization.id=:organizationId")
-    Challenge findOneByTemplateAndStartDateAndOrganization(@Param("templateId") UUID challengeTemplate,
-                                                           @Param("startDate") ZonedDateTime startDate,
-                                                           @Param("organizationId") UUID organizationId);
+    Challenge findOneByCanonicalName(String canonicalName);
 
     @Query("SELECT challenge FROM Challenge challenge " +
             "JOIN FETCH challenge.challengeTemplate template " +
@@ -35,14 +27,16 @@ public interface ChallengeRepository extends JpaRepository<Challenge, UUID> {
     List<Challenge> findAllByInvitedUser(@Param("user") UUID id);
 
     @Query("SELECT challenge FROM Challenge challenge " +
-            "LEFT JOIN FETCH challenge.challengeTemplate challengeTemplate " +
-            "LEFT JOIN FETCH challengeTemplate.organization organization " +
-            "WHERE challenge.inviteOnly= :inviteOnly AND challenge.endDate > :endDate")
-    List<Challenge> findAllByInviteOnlyAndEndDateAfter(@Param("inviteOnly") Boolean inviteOnly, @Param("endDate")ZonedDateTime endDate);
+            "LEFT JOIN FETCH challenge.challengeTemplate template " +
+            "LEFT JOIN FETCH template.organization " +
+            "LEFT JOIN FETCH challenge.invitedUsers " +
+            "LEFT JOIN FETCH challenge.registeredUsers ")
+    List<Challenge> findAllWithOrganizationAndInvitedUsersAndRegisteredUsers();
 
     @Query("SELECT challenge FROM Challenge challenge " +
             "LEFT JOIN FETCH challenge.challengeTemplate challengeTemplate " +
             "LEFT JOIN FETCH challengeTemplate.organization organization " +
             "WHERE organization.id = :organization")
     List<Challenge> findAllByOrganization(@Param("organization") UUID organization);
+
 }

@@ -73,6 +73,9 @@ public class User extends IdentifiableEntity implements UserDetails, CanonicalEn
     @ManyToMany(mappedBy = "invitedUsers")
     private Set<Challenge> invitedChallenges;
 
+    @ManyToMany(mappedBy = "registeredUsers")
+    private Set<Challenge> registeredChallenges;
+
     @ManyToMany(mappedBy = "invitedUsers")
     private Set<Team> invitedTeams;
 
@@ -211,6 +214,14 @@ public class User extends IdentifiableEntity implements UserDetails, CanonicalEn
         this.results = results;
     }
 
+    public Set<Challenge> getRegisteredChallenges() {
+        return registeredChallenges;
+    }
+
+    public void setRegisteredChallenges(Set<Challenge> registeredChallenges) {
+        this.registeredChallenges = registeredChallenges;
+    }
+
     @Transient
     public boolean isAccountNonExpired() {
         return true;
@@ -259,6 +270,22 @@ public class User extends IdentifiableEntity implements UserDetails, CanonicalEn
         }
         challenge.addInvitedUser(this);
         invitedChallenges.add(challenge);
+    }
+
+    public void addRegisteredChallenge(Challenge challenge) {
+        if (registeredChallenges == null) {
+            registeredChallenges = new HashSet<>();
+        }
+        challenge.addRegisteredUser(this);
+        registeredChallenges.add(challenge);
+    }
+
+    public void removeInvitedChallenge(Challenge challenge) {
+        if (invitedChallenges == null) {
+            return;
+        }
+        challenge.removeInvitedUser(this);
+        invitedChallenges.remove(challenge);
     }
 
     public void addInvitedTeam(Team team) {

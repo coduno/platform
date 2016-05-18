@@ -31,6 +31,14 @@ public class Challenge extends IdentifiableEntity implements CanonicalEntity {
     )
     private Set<User> invitedUsers;
 
+    @ManyToMany
+    @JoinTable(
+            name = "challenge_registered_user",
+            joinColumns = {@JoinColumn(name = "challenge_id")},
+            inverseJoinColumns = {@JoinColumn(name = "user_id")}
+    )
+    private Set<User> registeredUsers;
+
     @OneToMany(mappedBy = "challenge")
     private Set<Result> results;
 
@@ -89,12 +97,38 @@ public class Challenge extends IdentifiableEntity implements CanonicalEntity {
         this.inviteOnly = inviteOnly;
     }
 
+    public Set<User> getRegisteredUsers() {
+        if (registeredUsers == null) {
+            return null;
+        }
+        return Collections.unmodifiableSet(registeredUsers);
+    }
+
+    public void setRegisteredUsers(Set<User> registeredUsers) {
+        this.registeredUsers = registeredUsers;
+    }
+
     protected void addInvitedUser(User user) {
         if (invitedUsers == null) {
             invitedUsers = new HashSet<>();
         }
         invitedUsers.add(user);
     }
+
+    protected void addRegisteredUser(User user) {
+        if (registeredUsers == null) {
+            registeredUsers = new HashSet<>();
+        }
+        registeredUsers.add(user);
+    }
+
+    protected void removeInvitedUser(User user) {
+        if (invitedUsers == null) {
+            return;
+        }
+        invitedUsers.remove(user);
+    }
+
 
     public void addResult(Result result) {
         if (results == null) {

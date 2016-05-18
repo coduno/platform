@@ -9,8 +9,9 @@ public class RestUrls {
 
     public static final String CHALLENGES_ID = "/challenges/{id}";
     public static final String CHALLENGES = "/challenges";
+    public static final String CHALLENGES_CANONICAL_NAME_REGISTER = "/challenges/{canonicalName}/register";
     public static final String CHALLENGES_ID_INVITATIONS = "/challenges/{id}/invitations";
-
+    public static final String CHALLENGES_PUBLIC = "/challenges/public";
 
     public static final String ORGANIZATIONS = "/organizations";
     public static final String ORGANIZATIONS_ID = "/organizations/{id}";

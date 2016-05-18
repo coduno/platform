@@ -73,6 +73,16 @@ public class InvitationService {
             throw new AccessDeniedException("you are not an admin to the parent organization of the challenge");
         }
 
+        User user = userRepository.findByEmailWithChallenges(dto.getEmail());
+        if (user != null && user.getRegisteredChallenges().contains(challenge)) {
+            throw new IllegalArgumentException("user.already.registered.to.challenge");
+        }
+        if (user != null) {
+            user.addInvitedChallenge(challenge);
+            challengeRepository.save(challenge);
+            userRepository.save(user);
+        }
+
         String token = new BigInteger(130, random).toString(32);
 
         Invitation invitation = new Invitation();
@@ -107,6 +117,7 @@ public class InvitationService {
 
         /* create user if not exists */
         User user = userRepository.findByEmail(invite.getEmail());
+        Challenge challenge = invite.getChallenge();
         if (user == null) {
             UserCreateDto dto = new UserCreateDto();
             dto.setEmail(invite.getEmail());
@@ -116,14 +127,12 @@ public class InvitationService {
             userService.createFromDto(dto);
 
             user = userRepository.findByEmail(invite.getEmail());
-        }
-
-        /* invite to challenge if not already invited*/
-        Challenge challenge = invite.getChallenge();
-        if (!challenge.getInvitedUsers().contains(user)) {
-            user.addInvitedChallenge(challenge);
-            challengeRepository.save(challenge);
-            user = userRepository.save(user);
+            /* invite to challenge if not already invited*/
+            if (!challenge.getInvitedUsers().contains(user)) {
+                user.addInvitedChallenge(challenge);
+                challengeRepository.save(challenge);
+                user = userRepository.save(user);
+            }
         }
 
         /* authenticate */

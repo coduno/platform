@@ -38,15 +38,17 @@ public class ChallengeController {
         return new ResponseEntity<>(service.createFromDto(dto), HttpStatus.CREATED);
     }
 
-    @RequestMapping(value = RestUrls.CHALLENGES, method = RequestMethod.GET)
+    @RequestMapping(value = RestUrls.CHALLENGES_PUBLIC, method = RequestMethod.GET)
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<List<ChallengeDto>> getChallenges() {
-        return new ResponseEntity<>(service.findAll(), HttpStatus.CREATED);
+    public ResponseEntity<List<UserChallengeShowDto>> getPublicChallenges(@AuthenticationPrincipal User user) {
+        return new ResponseEntity<>(service.getPublicChallenges(user), HttpStatus.OK);
     }
 
-    @RequestMapping(value = RestUrls.USER_CHALLENGES, method = RequestMethod.GET)
+    @RequestMapping(value = RestUrls.CHALLENGES_CANONICAL_NAME_REGISTER, method = RequestMethod.PUT)
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<List<UserChallengeShowDto>> getUserChallenges(@AuthenticationPrincipal User user) {
-        return new ResponseEntity<>(service.getUserChallenges(user), HttpStatus.OK);
+    public ResponseEntity<String> register(@PathVariable("canonicalName") String canonicalName,
+                                           @AuthenticationPrincipal User user) {
+        service.register(user, canonicalName);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

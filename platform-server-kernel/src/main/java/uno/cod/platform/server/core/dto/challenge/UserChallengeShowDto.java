@@ -27,6 +27,8 @@ public class UserChallengeShowDto {
     public enum ChallengeStatus {
         INVITED,
         IN_PROGRESS,
+        REGISTERED,
+        OPEN,
         COMPLETED;
     }
 }

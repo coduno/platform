@@ -13,9 +13,8 @@ import uno.cod.platform.server.core.mapper.ChallengeMapper;
 import uno.cod.platform.server.core.repository.ChallengeRepository;
 import uno.cod.platform.server.core.repository.ChallengeTemplateRepository;
 import uno.cod.platform.server.core.repository.ResultRepository;
+import uno.cod.platform.server.core.repository.UserRepository;
 
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -26,14 +25,16 @@ public class ChallengeService {
     private final ChallengeRepository repository;
     private final ResultRepository resultRepository;
     private final SessionService sessionService;
+    private final UserRepository userRepository;
 
     @Autowired
     public ChallengeService(ChallengeRepository repository,
-                            ChallengeTemplateRepository challengeTemplateRepository, ResultRepository resultRepository, SessionService sessionService) {
+                            ChallengeTemplateRepository challengeTemplateRepository, ResultRepository resultRepository, SessionService sessionService, UserRepository userRepository) {
         this.repository = repository;
         this.challengeTemplateRepository = challengeTemplateRepository;
         this.resultRepository = resultRepository;
         this.sessionService = sessionService;
+        this.userRepository = userRepository;
     }
 
     public UUID createFromDto(ChallengeCreateDto dto) {
@@ -53,40 +54,58 @@ public class ChallengeService {
         return repository.save(challenge).getId();
     }
 
-    public List<ChallengeDto> findAll() {
-        UUID activeOrganization = sessionService.getActiveOrganization();
-        List<Challenge> challenges = null;
-        if (activeOrganization == null) {
-            challenges = repository.findAllByInviteOnlyAndEndDateAfter(false, ZonedDateTime.now().plusMinutes(5));
-        } else {
-            challenges = repository.findAllByOrganization(activeOrganization);
-        }
-        return challenges.stream().map(ChallengeDto::new).collect(Collectors.toList());
-    }
-
     public ChallengeDto findOneById(UUID challengeId) {
         return ChallengeMapper.map(repository.findOne(challengeId));
     }
 
-    public List<UserChallengeShowDto> getUserChallenges(User user) {
-        List<UserChallengeShowDto> dtos = new ArrayList<>();
-        List<Challenge> challenges = repository.findAllByInvitedUser(user.getId());
-        for (Challenge challenge : challenges) {
+    public void register(User user, String canonicalName) {
+        Challenge challenge = repository.findOneByCanonicalName(canonicalName);
+        if (challenge == null) {
+            throw new IllegalArgumentException("challenge.invalid");
+        }
+        user = userRepository.findOneWithChallenges(user.getId());
+        if (user.getRegisteredChallenges().contains(challenge)) {
+            throw new IllegalArgumentException("challenge.already.registered.to");
+        }
+        if (user.getInvitedChallenges().contains(challenge)) {
+            throw new IllegalArgumentException("challenge.already.invited.to");
+        }
+        user.addRegisteredChallenge(challenge);
+        repository.save(challenge);
+        userRepository.save(user);
+    }
+
+    public List<UserChallengeShowDto> getPublicChallenges(final User user) {
+        List<Challenge> challenges = repository.findAllWithOrganizationAndInvitedUsersAndRegisteredUsers();
+        return challenges.stream().map(challenge -> {
             UserChallengeShowDto dto = new UserChallengeShowDto();
             dto.setChallenge(new ChallengeDto(challenge));
-            dtos.add(dto);
-        }
-        for (UserChallengeShowDto dto : dtos) {
+            UserChallengeShowDto.ChallengeStatus status = null;
+
+            if (challenge.getInvitedUsers()!= null && challenge.getInvitedUsers().contains(user)) {
+                status = UserChallengeShowDto.ChallengeStatus.INVITED;
+            } else if (challenge.getRegisteredUsers()!= null && challenge.getRegisteredUsers().contains(user)) {
+                status = UserChallengeShowDto.ChallengeStatus.REGISTERED;
+            }
             Result result = resultRepository.findOneByUserAndChallenge(user.getId(), dto.getChallenge().getId());
             if (result != null && result.getStarted() != null) {
                 if (result.getFinished() != null) {
-                    dto.setStatus(UserChallengeShowDto.ChallengeStatus.COMPLETED);
+                    status = UserChallengeShowDto.ChallengeStatus.COMPLETED;
                 } else {
-                    dto.setStatus(UserChallengeShowDto.ChallengeStatus.IN_PROGRESS);
+                    status = UserChallengeShowDto.ChallengeStatus.IN_PROGRESS;
                 }
             }
-        }
-        return dtos;
+            dto.setStatus(status);
+            if (status != null) {
+                return dto;
+            }
+            if (challenge.isInviteOnly()) {
+                return null;
+            }
+            dto.setStatus(UserChallengeShowDto.ChallengeStatus.OPEN);
+            return dto;
+
+        }).filter(p -> p != null).collect(Collectors.toList());
     }
 
 }

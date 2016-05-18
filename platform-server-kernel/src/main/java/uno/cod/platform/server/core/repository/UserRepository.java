@@ -32,5 +32,17 @@ public interface UserRepository extends JpaRepository<User, UUID> {
             "LEFT JOIN FETCH user.teams " +
             "WHERE user.id = :id")
     User findOneWithTeams(@Param("id") UUID id);
+
+    @Query("SELECT user FROM User user " +
+            "LEFT JOIN FETCH user.invitedChallenges " +
+            "LEFT JOIN FETCH user.registeredChallenges " +
+            "WHERE user.id = :id")
+    User findOneWithChallenges(@Param("id") UUID id);
+
+    @Query("SELECT user FROM User user " +
+            "LEFT JOIN FETCH user.invitedChallenges " +
+            "LEFT JOIN FETCH user.registeredChallenges " +
+            "WHERE user.email = :email")
+    User findByEmailWithChallenges(@Param("email") String email);
 }
 
