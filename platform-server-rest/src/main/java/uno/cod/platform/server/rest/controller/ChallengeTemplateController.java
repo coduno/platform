@@ -30,15 +30,15 @@ public class ChallengeTemplateController {
     }
 
     @RequestMapping(value = RestUrls.CHALLENGE_TEMPLATES, method = RequestMethod.POST)
-    @PreAuthorize("isAuthenticated() and @securityService.isActiveOrganizationAdmin(principal)")
+    @PreAuthorize("isAuthenticated() and @securityService.isOrganizationAdmin(principal, #dto.organizationId)")
     public ResponseEntity<UUID> create(@RequestBody ChallengeTemplateCreateDto dto) {
-        return new ResponseEntity<>(service.save(dto, sessionService.getActiveOrganization()), HttpStatus.CREATED);
+        return new ResponseEntity<>(service.save(dto), HttpStatus.CREATED);
     }
 
     @RequestMapping(value = RestUrls.CHALLENGE_TEMPLATES, method = RequestMethod.GET)
-    @PreAuthorize("isAuthenticated() and @securityService.isActiveOrganizationAdmin(principal)")
-    public ResponseEntity<List<ChallengeTemplateShowDto>> list() {
-        return new ResponseEntity<>(service.findAll(sessionService.getActiveOrganization()), HttpStatus.OK);
+    @PreAuthorize("isAuthenticated() and @securityService.isOrganizationAdmin(principal, #organization)")
+    public ResponseEntity<List<ChallengeTemplateShowDto>> list(@RequestParam("organization") UUID organization) {
+        return new ResponseEntity<>(service.findAll(organization), HttpStatus.OK);
     }
 
     @RequestMapping(value = RestUrls.CHALLENGE_TEMPLATES_ID, method = RequestMethod.GET)

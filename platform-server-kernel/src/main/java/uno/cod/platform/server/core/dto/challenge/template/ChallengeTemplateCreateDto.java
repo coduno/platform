@@ -7,8 +7,17 @@ import java.util.List;
 import java.util.UUID;
 
 public class ChallengeTemplateCreateDto extends AssignmentCreateDto {
+    private UUID organizationId;
     @NotNull
     private List<UUID> tasks;
+
+    public UUID getOrganizationId() {
+        return organizationId;
+    }
+
+    public void setOrganizationId(UUID organizationId) {
+        this.organizationId = organizationId;
+    }
 
     public List<UUID> getTasks() {
         return tasks;

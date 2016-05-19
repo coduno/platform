@@ -31,14 +31,6 @@ public class Challenge extends IdentifiableEntity implements CanonicalEntity {
     )
     private Set<User> invitedUsers;
 
-    @ManyToMany
-    @JoinTable(
-            name = "challenge_registered_user",
-            joinColumns = {@JoinColumn(name = "challenge_id")},
-            inverseJoinColumns = {@JoinColumn(name = "user_id")}
-    )
-    private Set<User> registeredUsers;
-
     @OneToMany(mappedBy = "challenge")
     private Set<Result> results;
 
@@ -56,6 +48,9 @@ public class Challenge extends IdentifiableEntity implements CanonicalEntity {
      */
     @Column(name = "end_date")
     private ZonedDateTime endDate;
+
+    @OneToMany(mappedBy = "challenge")
+    private Set<Participation> participations;
 
     public Set<User> getInvitedUsers() {
         return invitedUsers;
@@ -97,12 +92,15 @@ public class Challenge extends IdentifiableEntity implements CanonicalEntity {
         this.inviteOnly = inviteOnly;
     }
 
-    public Set<User> getRegisteredUsers() {
-        return registeredUsers;
+    public Set<Participation> getParticipations() {
+        if (participations == null) {
+            return null;
+        }
+        return Collections.unmodifiableSet(participations);
     }
 
-    public void setRegisteredUsers(Set<User> registeredUsers) {
-        this.registeredUsers = registeredUsers;
+    public void setParticipations(Set<Participation> participations) {
+        this.participations = participations;
     }
 
     protected void addInvitedUser(User user) {
@@ -112,18 +110,25 @@ public class Challenge extends IdentifiableEntity implements CanonicalEntity {
         invitedUsers.add(user);
     }
 
-    protected void addRegisteredUser(User user) {
-        if (registeredUsers == null) {
-            registeredUsers = new HashSet<>();
-        }
-        registeredUsers.add(user);
-    }
-
     protected void removeInvitedUser(User user) {
         if (invitedUsers == null) {
             return;
         }
         invitedUsers.remove(user);
+    }
+
+    protected void addParticipation(Participation participation) {
+        if (participations == null) {
+            participations = new HashSet<>();
+        }
+        participations.add(participation);
+    }
+
+    protected void removeParticipation(Participation participation) {
+        if (participations == null) {
+            return;
+        }
+        participations.remove(participation);
     }
 
 

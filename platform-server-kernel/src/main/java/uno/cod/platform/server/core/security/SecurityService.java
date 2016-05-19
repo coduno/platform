@@ -111,8 +111,8 @@ public class SecurityService {
                 return true;
             }
         }
-        for (Challenge challenge : user.getRegisteredChallenges()) {
-            if (challenge.getId().equals(challengeId)) {
+        for (Participation participation: user.getParticipations()) {
+            if (participation.getChallenge().getId().equals(challengeId)) {
                 return true;
             }
         }

@@ -30,7 +30,7 @@ public interface ChallengeRepository extends JpaRepository<Challenge, UUID> {
             "LEFT JOIN FETCH challenge.challengeTemplate template " +
             "LEFT JOIN FETCH template.organization " +
             "LEFT JOIN FETCH challenge.invitedUsers " +
-            "LEFT JOIN FETCH challenge.registeredUsers ")
+            "LEFT JOIN FETCH challenge.participations ")
     List<Challenge> findAllWithOrganizationAndInvitedUsersAndRegisteredUsers();
 
     @Query("SELECT challenge FROM Challenge challenge " +
