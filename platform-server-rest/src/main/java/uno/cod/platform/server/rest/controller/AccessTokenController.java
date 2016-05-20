@@ -1,5 +1,6 @@
 package uno.cod.platform.server.rest.controller;
 
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import uno.cod.platform.server.core.domain.AccessToken;
 import uno.cod.platform.server.core.domain.User;
 import uno.cod.platform.server.core.dto.user.accesstoken.AccessTokenDto;
 import uno.cod.platform.server.core.dto.user.accesstoken.CreateAccessTokenDto;
@@ -29,6 +31,8 @@ public class AccessTokenController {
         this.accessTokenService = accessTokenService;
     }
 
+    @ApiOperation(value = "Lists all access tokens",
+            notes = "all da tokens!")
     @RequestMapping(value = RestUrls.USER_ACCCESSTOKEN, method = RequestMethod.GET)
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Set<AccessTokenDto>> list(@AuthenticationPrincipal User user) {

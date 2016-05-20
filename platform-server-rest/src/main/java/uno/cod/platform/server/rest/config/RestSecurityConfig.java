@@ -48,6 +48,12 @@ public class RestSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/organizations",
                         "/users",
                         "/ip",
+                        "/v2/api-docs",
+                        "/configuration/security",
+                        "/configuration/ui",
+                        "/swagger-resources",
+                        "/swagger-ui.html",
+                        "/webjars/**",
                         "/invite/auth/*").permitAll()
                 .anyRequest().authenticated()
                 .and()
