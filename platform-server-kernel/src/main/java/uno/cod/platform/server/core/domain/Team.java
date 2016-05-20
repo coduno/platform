@@ -36,6 +36,9 @@ public class Team extends IdentifiableEntity implements CanonicalEntity, Seriali
 
     private boolean enabled = true;
 
+    @OneToMany(mappedBy = "team")
+    private Set<Participation> participations;
+
     public String getName() {
         return name;
     }
@@ -77,6 +80,17 @@ public class Team extends IdentifiableEntity implements CanonicalEntity, Seriali
         this.enabled = enabled;
     }
 
+    public Set<Participation> getParticipations() {
+        if (participations == null) {
+            return null;
+        }
+        return Collections.unmodifiableSet(participations);
+    }
+
+    public void setParticipations(Set<Participation> participations) {
+        this.participations = participations;
+    }
+
     protected void addInvitedUser(User user) {
         if (invitedUsers == null) {
             invitedUsers = new HashSet<>();
@@ -89,6 +103,20 @@ public class Team extends IdentifiableEntity implements CanonicalEntity, Seriali
             members = new HashSet<>();
         }
         members.add(member);
+    }
+
+    protected void addParticipation(Participation participation) {
+        if (participations == null) {
+            participations = new HashSet<>();
+        }
+        participations.add(participation);
+    }
+
+    protected void removeParticipation(Participation participation) {
+        if (participations == null) {
+            return;
+        }
+        participations.remove(participation);
     }
 }
 

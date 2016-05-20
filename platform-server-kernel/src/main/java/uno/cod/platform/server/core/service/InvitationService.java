@@ -82,8 +82,10 @@ public class InvitationService {
         }
 
         User user = userRepository.findByEmailWithChallenges(dto.getEmail());
-        if (user != null && user.getRegisteredChallenges().contains(challenge)) {
-            throw new IllegalArgumentException("user.already.registered.to.challenge");
+        for(Participation participation: user.getParticipations()){
+            if(participation.getChallenge().getId().equals(challenge.getId())){
+                throw new IllegalArgumentException("user.already.registered.to.challenge");
+            }
         }
         if (user != null) {
             user.addInvitedChallenge(challenge);
