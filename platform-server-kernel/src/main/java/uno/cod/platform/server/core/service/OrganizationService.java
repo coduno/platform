@@ -37,6 +37,9 @@ public class OrganizationService {
     }
 
     public void createFromDto(OrganizationCreateDto dto, String owner) {
+        if (organizationRepository.findByNick(dto.getNick()) != null) {
+            throw new IllegalArgumentException("organization.invalid");
+        }
         Organization organization = new Organization();
         organization.setNick(dto.getNick());
         organization.setName(dto.getName());
@@ -59,8 +62,11 @@ public class OrganizationService {
         return OrganizationMapper.map(organizationRepository.findOne(id));
     }
 
-    public List<OrganizationMembershipShowDto> findUserAdminOrganizations(String username) {
+    public List<OrganizationMembershipShowDto> findUserOrganizations(String username) {
         User user = userRepository.findByUsernameOrEmail(username, username);
+        if (user == null) {
+            throw new IllegalArgumentException("user.invalid");
+        }
         if (user.getOrganizationMemberships() == null) {
             return Collections.emptyList();
         }

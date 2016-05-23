@@ -1,6 +1,5 @@
 package uno.cod.platform.server.core.dto.organization;
 
-import org.springframework.beans.BeanUtils;
 import uno.cod.platform.server.core.domain.Organization;
 
 import java.util.UUID;
@@ -11,7 +10,9 @@ public class OrganizationShowDto {
     private String nick;
 
     public OrganizationShowDto(Organization organization) {
-        BeanUtils.copyProperties(organization, this);
+        this.id = organization.getId();
+        this.name = organization.getName();
+        this.nick = organization.getCanonicalName();
     }
 
     public UUID getId() {

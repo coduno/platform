@@ -52,8 +52,8 @@ public class OrganizationMembershipService {
         organization.addOrganizationMembership(membership);
     }
 
-    public void delete(OrganizationMembershipCreateDto dto, UUID organizationId) {
-        User user = userRepository.findOne(dto.getUserId());
+    public void delete(UUID userId, UUID organizationId) {
+        User user = userRepository.findOne(userId);
         if (user == null) {
             throw new IllegalArgumentException("user.invalid");
         }

@@ -39,6 +39,9 @@ public class TemplateService {
     }
 
     public void save(UUID taskId, UUID languageId, MultipartFile file) {
+        if (file == null) {
+            throw new IllegalArgumentException("file.invalid");
+        }
         Task task = taskRepository.findOne(taskId);
         if (task == null) {
             throw new IllegalArgumentException("task.invalid");

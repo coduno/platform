@@ -51,7 +51,7 @@ public class SetupService {
     public void init() {
         if (Arrays.asList(this.environment.getActiveProfiles()).contains(Profiles.DEVELOPMENT)) {
             LOGGER.info("initializing development database");
-            this.initDevelopmentDatabase();
+//            this.initDevelopmentDatabase();
         }
     }
 

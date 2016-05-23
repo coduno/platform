@@ -32,7 +32,7 @@ public class OrganizationMemberController {
     @RequestMapping(value = RestUrls.ORGANIZATION_MEMBERS, method = RequestMethod.DELETE)
     @PreAuthorize("isAuthenticated() and @securityService.isOrganizationAdmin(principal, #id)")
     public ResponseEntity<String> delete(@PathVariable UUID id, @Valid @RequestBody OrganizationMembershipCreateDto dto) {
-        service.delete(dto, id);
+        service.delete(dto.getUserId(), id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
