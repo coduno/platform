@@ -26,7 +26,7 @@ public interface ChallengeRepository extends JpaRepository<Challenge, UUID> {
             "WHERE users.id = :user")
     List<Challenge> findAllByInvitedUser(@Param("user") UUID id);
 
-    @Query("SELECT challenge FROM Challenge challenge " +
+    @Query("SELECT DISTINCT challenge FROM Challenge challenge " +
             "LEFT JOIN FETCH challenge.challengeTemplate template " +
             "LEFT JOIN FETCH template.organization " +
             "LEFT JOIN FETCH challenge.invitedUsers " +
