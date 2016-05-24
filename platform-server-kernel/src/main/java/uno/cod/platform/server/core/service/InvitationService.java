@@ -122,7 +122,7 @@ public class InvitationService {
             throw new AccessDeniedException("invite.token.invalid");
         }
 
-        if (invite.getExpire().isAfter(ZonedDateTime.now())) {
+        if (invite.getExpire().isBefore(ZonedDateTime.now())) {
             throw new AccessDeniedException("invite.token.expired");
         }
 

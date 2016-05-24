@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class GcsStorageDriver implements PlatformStorage {
     private static final Logger LOGGER = LoggerFactory.getLogger(GcsStorageDriver.class);
@@ -54,7 +55,13 @@ public class GcsStorageDriver implements PlatformStorage {
         List<String> allItems = new LinkedList<>();
         Objects response = storage.objects().list(bucket).
                 setPrefix(path).execute();
-        for (StorageObject obj : response.getItems()) {
+
+        Iterable<StorageObject> objs = response.getItems();
+        if (objs == null) {
+            return Collections.emptyList();
+        }
+
+        for (StorageObject obj : objs) {
             allItems.add(obj.getName());
         }
 

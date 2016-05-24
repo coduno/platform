@@ -51,7 +51,7 @@ public class TemplateService {
         if (task == null) {
             throw new IllegalArgumentException("task.invalid");
         }
-        String path = task.getCanonicalName() + "/" + objectName+ "/" + file.getOriginalFilename();
+        String path = task.getCanonicalName() + "/" + objectName + "/" + file.getOriginalFilename();
         try {
             storage.upload(bucket, path, file.getInputStream(), "text/plain");
         } catch (IOException e) {

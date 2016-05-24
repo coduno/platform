@@ -20,7 +20,8 @@ import java.util.*;
                 @NamedAttributeNode("organizationMemberships"),
                 @NamedAttributeNode("teams"),
                 @NamedAttributeNode("invitedChallenges")
-        })
+        }
+)
 public class User extends IdentifiableEntity implements UserDetails, CanonicalEntity {
     private static final long serialVersionUID = 1L;
 
@@ -304,12 +305,15 @@ public class User extends IdentifiableEntity implements UserDetails, CanonicalEn
 
         User user = (User) o;
 
-        return email.equals(user.email);
+        if (email == null) {
+            return user.email == null;
+        }
 
+        return email.equals(user.email);
     }
 
     @Override
     public int hashCode() {
-        return email.hashCode();
+        return email != null ? email.hashCode() : 0;
     }
 }

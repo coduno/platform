@@ -17,7 +17,7 @@ public interface InvitationRepository extends JpaRepository<Invitation, String> 
 
     @Modifying
     @Transactional
-    @Query("delete from Invitation i where i.expire > :now")
+    @Query("delete from Invitation i where i.expire < :now")
     void deleteExpiredTokens(@Param("now") ZonedDateTime now);
 
     @Query("SELECT invitation FROM Invitation invitation " +
