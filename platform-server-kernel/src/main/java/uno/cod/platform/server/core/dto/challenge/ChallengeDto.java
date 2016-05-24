@@ -17,6 +17,7 @@ public class ChallengeDto {
     private ZonedDateTime endDate;
     private boolean inviteOnly;
     private OrganizationShowDto organization;
+    private String description;
 
     private List<UserShortShowDto> invitedUsers;
 
@@ -24,6 +25,7 @@ public class ChallengeDto {
         BeanUtils.copyProperties(challenge, this);
         if (challenge.getChallengeTemplate() != null && challenge.getChallengeTemplate().getOrganization() != null) {
             this.organization = new OrganizationShowDto(challenge.getChallengeTemplate().getOrganization());
+            this.description = challenge.getChallengeTemplate().getDescription();
         }
     }
 
@@ -89,5 +91,13 @@ public class ChallengeDto {
 
     public void setOrganization(OrganizationShowDto organization) {
         this.organization = organization;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }
