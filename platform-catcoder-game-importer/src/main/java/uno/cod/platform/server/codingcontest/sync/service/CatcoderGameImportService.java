@@ -12,6 +12,7 @@ import uno.cod.platform.server.codingcontest.sync.dto.CodingContestGameDto;
 import uno.cod.platform.server.codingcontest.sync.dto.PuzzleDto;
 import uno.cod.platform.server.codingcontest.sync.dto.PuzzleTestDto;
 import uno.cod.platform.server.core.domain.*;
+import uno.cod.platform.server.core.exception.CodunoIllegalArgumentException;
 import uno.cod.platform.server.core.repository.*;
 import uno.cod.storage.PlatformStorage;
 
@@ -130,7 +131,7 @@ public class CatcoderGameImportService {
         }
         Organization organization = organizationRepository.findOne(organizationId);
         if (organization == null) {
-            throw new IllegalArgumentException("organization.invalid");
+            throw new CodunoIllegalArgumentException("organization.invalid");
         }
 
         if (dto.getPuzzles()
@@ -138,7 +139,7 @@ public class CatcoderGameImportService {
                 .findAny()
                 .filter(puzzleDto -> puzzleDto.getValidationClass() != null)
                 .isPresent()) {
-            throw new IllegalArgumentException("ccc.game.structure.unsuported");
+            throw new CodunoIllegalArgumentException("ccc.game.structure.unsuported");
         }
 
         Runner runner = runnerRepository.findOneByPath("/io");
@@ -198,7 +199,7 @@ public class CatcoderGameImportService {
             }
         }
         if (game == null) {
-            throw new IllegalArgumentException("ccc.game.zip.invalid");
+            throw new CodunoIllegalArgumentException("ccc.game.zip.invalid");
         }
         return createChallengeTemplate(game, organizationId, files);
     }

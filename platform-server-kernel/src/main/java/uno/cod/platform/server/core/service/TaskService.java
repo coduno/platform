@@ -8,6 +8,7 @@ import uno.cod.platform.server.core.domain.Runner;
 import uno.cod.platform.server.core.domain.Task;
 import uno.cod.platform.server.core.dto.task.TaskCreateDto;
 import uno.cod.platform.server.core.dto.task.TaskShowDto;
+import uno.cod.platform.server.core.exception.CodunoIllegalArgumentException;
 import uno.cod.platform.server.core.mapper.TaskMapper;
 import uno.cod.platform.server.core.repository.EndpointRepository;
 import uno.cod.platform.server.core.repository.OrganizationRepository;
@@ -37,11 +38,11 @@ public class TaskService {
     public UUID save(TaskCreateDto dto) {
         Endpoint endpoint = endpointRepository.findOne(dto.getEndpointId());
         if (endpoint == null) {
-            throw new IllegalArgumentException("endpoint.invalid");
+            throw new CodunoIllegalArgumentException("endpoint.invalid");
         }
         Organization organization = organizationRepository.findOne(dto.getOrganizationId());
         if (organization == null) {
-            throw new IllegalArgumentException("organization.invalid");
+            throw new CodunoIllegalArgumentException("organization.invalid");
         }
         Runner runner = null;
         if (dto.getRunnerId() != null) {
@@ -52,7 +53,7 @@ public class TaskService {
             skillSum += skill;
         }
         if (skillSum != 1) {
-            throw new IllegalArgumentException("skills.invalid");
+            throw new CodunoIllegalArgumentException("skills.invalid");
         }
         Task task = new Task();
         task.setName(dto.getName());

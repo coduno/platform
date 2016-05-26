@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import uno.cod.platform.server.core.domain.Task;
+import uno.cod.platform.server.core.exception.CodunoIllegalArgumentException;
+import uno.cod.platform.server.core.exception.CodunoNoSuchElementException;
 import uno.cod.platform.server.core.repository.TaskRepository;
 import uno.cod.storage.PlatformStorage;
 
@@ -13,7 +15,6 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.time.Duration;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.UUID;
 
 /**
@@ -45,17 +46,17 @@ public class TemplateService {
 
     public void save(UUID taskId, String objectName, String readableName, MultipartFile file) {
         if (file == null) {
-            throw new IllegalArgumentException("file.invalid");
+            throw new CodunoIllegalArgumentException("file.invalid");
         }
         Task task = taskRepository.findOne(taskId);
         if (task == null) {
-            throw new IllegalArgumentException("task.invalid");
+            throw new CodunoIllegalArgumentException("task.invalid");
         }
         String path = task.getCanonicalName() + "/" + objectName + "/" + file.getOriginalFilename();
         try {
             storage.upload(bucket, path, file.getInputStream(), "text/plain");
         } catch (IOException e) {
-            throw new IllegalArgumentException("file.invalid");
+            throw new CodunoIllegalArgumentException("file.invalid");
         }
         task.putTemplate(objectName, readableName);
         taskRepository.save(task);
@@ -65,7 +66,7 @@ public class TemplateService {
         Task task = taskRepository.getOne(taskId);
 
         if (task == null) {
-            throw new NoSuchElementException("task.invalid");
+            throw new CodunoNoSuchElementException("task.invalid");
         }
 
         List<String> urls = storage.exposeFilesInFolder(
@@ -75,7 +76,7 @@ public class TemplateService {
         );
 
         if (urls.isEmpty()) {
-            throw new NoSuchElementException("template.invalid");
+            throw new CodunoNoSuchElementException("template.invalid");
         }
 
         return urls;

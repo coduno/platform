@@ -8,6 +8,7 @@ import uno.cod.platform.server.core.domain.Runner;
 import uno.cod.platform.server.core.domain.Task;
 import uno.cod.platform.server.core.dto.test.TestCreateDto;
 import uno.cod.platform.server.core.dto.test.TestShowDto;
+import uno.cod.platform.server.core.exception.CodunoIllegalArgumentException;
 import uno.cod.platform.server.core.repository.RunnerRepository;
 import uno.cod.platform.server.core.repository.TaskRepository;
 import uno.cod.platform.server.core.repository.TestRepository;
@@ -43,7 +44,7 @@ public class TestServiceTest {
         service.save(dto);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = CodunoIllegalArgumentException.class)
     public void saveInvalidTask() throws Exception {
         TestCreateDto dto = new TestCreateDto();
         dto.setTaskId(UUID.randomUUID());
@@ -55,7 +56,7 @@ public class TestServiceTest {
         service.save(dto);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = CodunoIllegalArgumentException.class)
     public void saveInvalidRunner() throws Exception {
         TestCreateDto dto = new TestCreateDto();
         dto.setTaskId(UUID.randomUUID());

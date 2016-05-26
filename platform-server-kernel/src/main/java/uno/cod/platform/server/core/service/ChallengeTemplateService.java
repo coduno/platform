@@ -7,6 +7,7 @@ import uno.cod.platform.server.core.domain.Endpoint;
 import uno.cod.platform.server.core.domain.Organization;
 import uno.cod.platform.server.core.dto.challenge.template.ChallengeTemplateCreateDto;
 import uno.cod.platform.server.core.dto.challenge.template.ChallengeTemplateShowDto;
+import uno.cod.platform.server.core.exception.CodunoIllegalArgumentException;
 import uno.cod.platform.server.core.mapper.ChallengeTemplateMapper;
 import uno.cod.platform.server.core.repository.*;
 
@@ -39,11 +40,11 @@ public class ChallengeTemplateService {
     public UUID save(ChallengeTemplateCreateDto dto) {
         Organization organization = organizationRepository.findOne(dto.getOrganizationId());
         if (organization == null) {
-            throw new IllegalArgumentException("organization.invalid");
+            throw new CodunoIllegalArgumentException("organization.invalid");
         }
         Endpoint endpoint = endpointRepository.findOne(dto.getEndpointId());
         if (endpoint == null) {
-            throw new IllegalArgumentException("endpoint.invalid");
+            throw new CodunoIllegalArgumentException("endpoint.invalid");
         }
         ChallengeTemplate challengeTemplate = new ChallengeTemplate();
         challengeTemplate.setName(dto.getName());

@@ -8,6 +8,7 @@ import uno.cod.platform.server.core.domain.Task;
 import uno.cod.platform.server.core.domain.Test;
 import uno.cod.platform.server.core.dto.test.TestCreateDto;
 import uno.cod.platform.server.core.dto.test.TestShowDto;
+import uno.cod.platform.server.core.exception.CodunoIllegalArgumentException;
 import uno.cod.platform.server.core.repository.RunnerRepository;
 import uno.cod.platform.server.core.repository.TaskRepository;
 import uno.cod.platform.server.core.repository.TestRepository;
@@ -33,11 +34,11 @@ public class TestService {
     public void save(TestCreateDto dto) {
         Task task = taskRepository.findOne(dto.getTaskId());
         if (task == null) {
-            throw new IllegalArgumentException("task.invalid");
+            throw new CodunoIllegalArgumentException("task.invalid");
         }
         Runner runner = runnerRepository.findOne(dto.getRunnerId());
         if (runner == null) {
-            throw new IllegalArgumentException("runner.invalid");
+            throw new CodunoIllegalArgumentException("runner.invalid");
         }
         Test test = new Test();
         test.setRunner(runner);
