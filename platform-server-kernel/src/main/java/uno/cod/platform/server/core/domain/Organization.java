@@ -1,5 +1,7 @@
 package uno.cod.platform.server.core.domain;
 
+import uno.cod.platform.server.core.exception.CodunoIllegalArgumentException;
+
 import javax.persistence.*;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -84,7 +86,7 @@ public class Organization extends IdentifiableEntity implements CanonicalEntity,
 
     public void addOrganizationMembership(OrganizationMembership membership) {
         if (membership == null) {
-            throw new IllegalArgumentException("organization.member.invalid");
+            throw new CodunoIllegalArgumentException("organization.member.invalid");
         }
         if (memberships == null) {
             memberships = new HashSet<>();
@@ -94,7 +96,7 @@ public class Organization extends IdentifiableEntity implements CanonicalEntity,
 
     public void addTask(Task task) {
         if (task == null) {
-            throw new IllegalArgumentException("task.invalid");
+            throw new CodunoIllegalArgumentException("task.invalid");
         }
         if (tasks == null) {
             tasks = new HashSet<>();
@@ -105,7 +107,7 @@ public class Organization extends IdentifiableEntity implements CanonicalEntity,
 
     public void addChallenge(ChallengeTemplate challengeTemplate) {
         if (challengeTemplate == null) {
-            throw new IllegalArgumentException("challenge.invalid");
+            throw new CodunoIllegalArgumentException("challenge.invalid");
         }
         if (challengeTemplates == null) {
             challengeTemplates = new HashSet<>();

@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uno.cod.platform.server.core.domain.*;
+import uno.cod.platform.server.core.exception.CodunoIllegalArgumentException;
 import uno.cod.platform.server.core.repository.ChallengeRepository;
 import uno.cod.platform.server.core.repository.ParticipationRepository;
 import uno.cod.platform.server.core.repository.TeamRepository;
@@ -35,10 +36,10 @@ public class ParticipationService {
     public void registerForChallenge(User user, String challengeName, String teamName) {
         Challenge challenge = challengeRepository.findOneByCanonicalName(challengeName);
         if (challenge == null) {
-            throw new IllegalArgumentException("challenge.invalid");
+            throw new CodunoIllegalArgumentException("challenge.invalid");
         }
         if (participationRepository.findOneByUserAndChallenge(user.getId(), challenge.getId()) != null) {
-            throw new IllegalArgumentException("participation.registered.already");
+            throw new CodunoIllegalArgumentException("participation.registered.already");
         }
         user = userRepository.getOne(user.getId());
         ParticipationKey key = new ParticipationKey();
@@ -51,7 +52,7 @@ public class ParticipationService {
         if (teamName != null && !teamName.isEmpty()) {
             Team team = teamRepository.findByCanonicalNameAndEnabledTrue(teamName);
             if (!checkUserInTeam(user, team)) {
-                throw new IllegalArgumentException("team.invalid");
+                throw new CodunoIllegalArgumentException("team.invalid");
             }
             participation.setTeam(team);
         }

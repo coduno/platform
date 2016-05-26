@@ -10,6 +10,7 @@ import uno.cod.platform.server.core.dto.challenge.LeaderboardEntryDto;
 import uno.cod.platform.server.core.dto.result.ResultInfoDto;
 import uno.cod.platform.server.core.dto.result.ResultShowDto;
 import uno.cod.platform.server.core.dto.user.UserShortShowDto;
+import uno.cod.platform.server.core.exception.CodunoIllegalArgumentException;
 import uno.cod.platform.server.core.mapper.ResultMapper;
 import uno.cod.platform.server.core.repository.ChallengeRepository;
 import uno.cod.platform.server.core.repository.ResultRepository;
@@ -39,11 +40,11 @@ public class ResultService {
     public ResultShowDto save(UUID challengeId, User user) {
         Challenge challenge = challengeRepository.findOneWithTemplate(challengeId);
         if (challenge == null) {
-            throw new IllegalArgumentException("challenge.invalid");
+            throw new CodunoIllegalArgumentException("challenge.invalid");
         }
         Result result = repository.findOneByUserAndChallenge(user.getId(), challengeId);
         if (result != null) {
-            throw new IllegalArgumentException("challenge.completed");
+            throw new CodunoIllegalArgumentException("challenge.completed");
         }
         result = new Result();
         challenge.addResult(result);

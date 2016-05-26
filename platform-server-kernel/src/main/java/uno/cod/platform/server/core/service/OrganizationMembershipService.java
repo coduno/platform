@@ -7,7 +7,8 @@ import uno.cod.platform.server.core.domain.OrganizationMembership;
 import uno.cod.platform.server.core.domain.OrganizationMembershipKey;
 import uno.cod.platform.server.core.domain.User;
 import uno.cod.platform.server.core.dto.organization.member.OrganizationMembershipCreateDto;
-import uno.cod.platform.server.core.exception.ResourceConflictException;
+import uno.cod.platform.server.core.exception.CodunoIllegalArgumentException;
+import uno.cod.platform.server.core.exception.CodunoResourceConflictException;
 import uno.cod.platform.server.core.repository.OrganizationMembershipRepository;
 import uno.cod.platform.server.core.repository.OrganizationRepository;
 import uno.cod.platform.server.core.repository.UserRepository;
@@ -32,17 +33,17 @@ public class OrganizationMembershipService {
     public void save(OrganizationMembershipCreateDto dto, UUID organizationId) {
         User user = userRepository.findOne(dto.getUserId());
         if (user == null) {
-            throw new IllegalArgumentException("user.invalid");
+            throw new CodunoIllegalArgumentException("user.invalid");
         }
         Organization organization = organizationRepository.findOne(organizationId);
         if (organization == null) {
-            throw new IllegalArgumentException("organization.invalid");
+            throw new CodunoIllegalArgumentException("organization.invalid");
         }
         OrganizationMembershipKey key = new OrganizationMembershipKey();
         key.setUser(user);
         key.setOrganization(organization);
         if (repository.findOne(key) != null) {
-            throw new ResourceConflictException("organization.member.exists");
+            throw new CodunoResourceConflictException("organization.member.exists");
         }
         OrganizationMembership membership = new OrganizationMembership();
         membership.setKey(key);
@@ -55,11 +56,11 @@ public class OrganizationMembershipService {
     public void delete(UUID userId, UUID organizationId) {
         User user = userRepository.findOne(userId);
         if (user == null) {
-            throw new IllegalArgumentException("user.invalid");
+            throw new CodunoIllegalArgumentException("user.invalid");
         }
         Organization organization = organizationRepository.findOne(organizationId);
         if (organization == null) {
-            throw new IllegalArgumentException("organization.invalid");
+            throw new CodunoIllegalArgumentException("organization.invalid");
         }
         OrganizationMembershipKey key = new OrganizationMembershipKey();
         key.setUser(user);
