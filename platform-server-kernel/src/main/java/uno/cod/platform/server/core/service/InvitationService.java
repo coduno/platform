@@ -173,6 +173,23 @@ public class InvitationService {
         }
         return dtos;
     }
+    public Set<InvitationShowDto> getByChallengeCanonicalName(String canonicalName) {
+        Set<Invitation> invitations = invitationRepository.findAllByChallengeCanonicalName(canonicalName);
+        Set<InvitationShowDto> dtos = new HashSet<>();
+        for (Invitation invitation : invitations) {
+            InvitationShowDto dto = new InvitationShowDto();
+            dto.setEmail(invitation.getEmail());
+            dto.setToken(invitation.getToken());
+            dto.setExpire(invitation.getExpire());
+            User user = userRepository.findByUsernameOrEmail(invitation.getEmail(), invitation.getEmail());
+            if (user != null) {
+                dto.setUsername(user.getUsername());
+            }
+            // TODO - Will show started and other info in get results for challenge
+            dtos.add(dto);
+        }
+        return dtos;
+    }
 
     @Scheduled(fixedRate = 5000)
     public void cleanupTokens() {

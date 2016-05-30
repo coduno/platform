@@ -13,7 +13,7 @@ import uno.cod.platform.server.rest.RestUrls;
 import javax.mail.MessagingException;
 import javax.validation.Valid;
 import java.security.Principal;
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @RestController
@@ -33,10 +33,10 @@ public class InvitationController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @RequestMapping(value = RestUrls.CHALLENGES_ID_INVITATIONS, method = RequestMethod.GET)
+    @RequestMapping(value = RestUrls.CHALLENGES_CANONICAL_NAME_INVITATIONS, method = RequestMethod.GET)
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<List<InvitationShowDto>> getByChallenge(@PathVariable UUID id) {
-        return new ResponseEntity<>(service.getByChallengeId(id), HttpStatus.OK);
+    public ResponseEntity<Set<InvitationShowDto>> getByChallenge(@PathVariable String canonicalName) {
+        return new ResponseEntity<>(service.getByChallengeCanonicalName(canonicalName), HttpStatus.OK);
     }
 
     @RequestMapping(value = RestUrls.INVITE_AUTH_TOKEN, method = RequestMethod.GET)

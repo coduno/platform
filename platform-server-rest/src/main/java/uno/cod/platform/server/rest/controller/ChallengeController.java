@@ -11,12 +11,14 @@ import uno.cod.platform.server.core.dto.challenge.ChallengeCreateDto;
 import uno.cod.platform.server.core.dto.challenge.ChallengeDto;
 import uno.cod.platform.server.core.dto.challenge.ParticipationCreateDto;
 import uno.cod.platform.server.core.dto.challenge.UserChallengeShowDto;
+import uno.cod.platform.server.core.dto.participation.ParticipationShowDto;
 import uno.cod.platform.server.core.service.ChallengeService;
 import uno.cod.platform.server.core.service.ParticipationService;
 import uno.cod.platform.server.rest.RestUrls;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @RestController
@@ -35,6 +37,12 @@ public class ChallengeController {
     @PreAuthorize("isAuthenticated() and @securityService.canAccessChallenge(principal, #canonicalName)")
     public ResponseEntity<ChallengeDto> getByCanonicalName(@PathVariable String canonicalName) {
         return new ResponseEntity<>(challengeService.findOneByCanonicalName(canonicalName), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = RestUrls.CHALLENGES_CANONICAL_NAME_PARTICIPANTS, method = RequestMethod.GET)
+    @PreAuthorize("isAuthenticated() and @securityService.canAccessChallenge(principal, #canonicalName)")
+    public ResponseEntity<Set<ParticipationShowDto>> getParticipantsByCanonicalName(@PathVariable String canonicalName) {
+        return new ResponseEntity<>(participationService.getByChallengeCanonicalName(canonicalName), HttpStatus.OK);
     }
 
     @RequestMapping(value = RestUrls.CHALLENGES, method = RequestMethod.POST)

@@ -10,6 +10,7 @@ import uno.cod.platform.server.core.domain.Invitation;
 import javax.transaction.Transactional;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Repository
@@ -24,4 +25,9 @@ public interface InvitationRepository extends JpaRepository<Invitation, String> 
             "LEFT JOIN FETCH invitation.challenge challenge " +
             "WHERE challenge.id = :challenge")
     List<Invitation> findAllByChallenge(@Param("challenge") UUID challenge);
+
+    @Query("SELECT invitation FROM Invitation invitation " +
+            "LEFT JOIN FETCH invitation.challenge challenge " +
+            "WHERE challenge.canonicalName = :challenge")
+    Set<Invitation> findAllByChallengeCanonicalName(@Param("challenge") String challenge);
 }

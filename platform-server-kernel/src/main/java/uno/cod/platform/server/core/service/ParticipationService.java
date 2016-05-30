@@ -4,10 +4,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uno.cod.platform.server.core.domain.*;
+import uno.cod.platform.server.core.dto.participation.ParticipationShowDto;
 import uno.cod.platform.server.core.repository.ChallengeRepository;
 import uno.cod.platform.server.core.repository.ParticipationRepository;
 import uno.cod.platform.server.core.repository.TeamRepository;
 import uno.cod.platform.server.core.repository.UserRepository;
+
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -57,6 +61,10 @@ public class ParticipationService {
         }
 
         participationRepository.save(participation);
+    }
+
+    public Set<ParticipationShowDto> getByChallengeCanonicalName(String canonicalName) {
+        return participationRepository.findAllByChallengeCanonicalName(canonicalName).stream().map(ParticipationShowDto::new).collect(Collectors.toSet());
     }
 
     private boolean checkUserInTeam(User user, Team team) {

@@ -8,9 +8,10 @@ public class RestUrls {
 
     public static final String CHALLENGES = "/challenges";
     public static final String CHALLENGES_CANONICAL_NAME = "/challenges/{canonicalName}";
+    public static final String CHALLENGES_CANONICAL_NAME_PARTICIPANTS = "/challenges/{canonicalName}/participants";
     public static final String CHALLENGES_CANONICAL_NAME_TEMPLATE = "/challenges/{canonicalName}/template";
     public static final String CHALLENGES_CANONICAL_NAME_REGISTER = "/challenges/{canonicalName}/register";
-    public static final String CHALLENGES_ID_INVITATIONS = "/challenges/{id}/invitations";
+    public static final String CHALLENGES_CANONICAL_NAME_INVITATIONS = "/challenges/{canonicalName}/invitations";
     public static final String CHALLENGES_PUBLIC = "/challenges/public";
 
     public static final String ORGANIZATIONS = "/organizations";
