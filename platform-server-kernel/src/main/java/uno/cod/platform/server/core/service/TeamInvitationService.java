@@ -7,6 +7,7 @@ import uno.cod.platform.server.core.domain.TeamInvitation;
 import uno.cod.platform.server.core.domain.TeamUserKey;
 import uno.cod.platform.server.core.domain.User;
 import uno.cod.platform.server.core.dto.team.invitation.TeamInvitationShowDto;
+import uno.cod.platform.server.core.exception.CodunoIllegalArgumentException;
 import uno.cod.platform.server.core.repository.TeamInvitationRepository;
 import uno.cod.platform.server.core.repository.TeamMemberRepository;
 import uno.cod.platform.server.core.repository.TeamRepository;
@@ -38,20 +39,20 @@ public class TeamInvitationService {
     public void create(User invitingUser, String usernameToInvite, String canonicalName) {
         User user = userRepository.findByUsername(usernameToInvite);
         if (user == null) {
-            throw new IllegalArgumentException("user.invalid");
+            throw new CodunoIllegalArgumentException("user.invalid");
         }
         Team team = teamRepository.findByCanonicalNameAndEnabledTrue(canonicalName);
         if (team == null) {
-            throw new IllegalArgumentException("team.invalid");
+            throw new CodunoIllegalArgumentException("team.invalid");
         }
         if (team.getInvitedUsers().contains(user)) {
-            throw new IllegalArgumentException("team.user.already.invited");
+            throw new CodunoIllegalArgumentException("team.user.already.invited");
         }
         TeamUserKey key = new TeamUserKey();
         key.setUser(user);
         key.setTeam(team);
         if (teamMemberRepository.findOne(key) != null) {
-            throw new IllegalArgumentException("team.has.member");
+            throw new CodunoIllegalArgumentException("team.has.member");
         }
         TeamInvitation invitation = new TeamInvitation();
         invitation.setKey(key);
@@ -66,7 +67,7 @@ public class TeamInvitationService {
     public void acceptInvitation(User user, String canonicalName) {
         Team team = teamRepository.findByCanonicalNameAndEnabledTrue(canonicalName);
         if (team == null) {
-            throw new IllegalArgumentException("team.invalid");
+            throw new CodunoIllegalArgumentException("team.invalid");
         }
 
         TeamUserKey key = new TeamUserKey();
@@ -74,7 +75,7 @@ public class TeamInvitationService {
         key.setUser(user);
         TeamInvitation invitation = repository.findByKey(key);
         if (invitation == null) {
-            throw new IllegalArgumentException("team.invite.notfound");
+            throw new CodunoIllegalArgumentException("team.invite.notfound");
         }
         teamService.join(user, team);
         repository.delete(invitation);
@@ -83,7 +84,7 @@ public class TeamInvitationService {
     public void declineInvitation(User user, String canonicalName) {
         Team team = teamRepository.findByCanonicalNameAndEnabledTrue(canonicalName);
         if (team == null) {
-            throw new IllegalArgumentException("team.invalid");
+            throw new CodunoIllegalArgumentException("team.invalid");
         }
 
         TeamUserKey key = new TeamUserKey();
@@ -91,7 +92,7 @@ public class TeamInvitationService {
         key.setUser(user);
         TeamInvitation invitation = repository.findByKey(key);
         if (invitation == null) {
-            throw new IllegalArgumentException("team.invite.notfound");
+            throw new CodunoIllegalArgumentException("team.invite.notfound");
         }
         repository.delete(invitation);
     }

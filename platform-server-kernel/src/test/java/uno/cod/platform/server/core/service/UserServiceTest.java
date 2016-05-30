@@ -7,13 +7,14 @@ import org.mockito.Mockito;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import uno.cod.platform.server.core.domain.User;
 import uno.cod.platform.server.core.dto.user.*;
-import uno.cod.platform.server.core.exception.ResourceConflictException;
+import uno.cod.platform.server.core.exception.CodunoIllegalArgumentException;
+import uno.cod.platform.server.core.exception.CodunoNoSuchElementException;
+import uno.cod.platform.server.core.exception.CodunoResourceConflictException;
 import uno.cod.platform.server.core.repository.UserRepository;
 import uno.cod.platform.server.core.service.util.UserTestUtil;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.UUID;
 
 public class UserServiceTest {
@@ -43,7 +44,7 @@ public class UserServiceTest {
         Assert.assertEquals(user.getUsername(), dto.getNick());
     }
 
-    @Test(expected = ResourceConflictException.class)
+    @Test(expected = CodunoResourceConflictException.class)
     public void createFromDtoAlreadyExisting() throws Exception {
         User user = UserTestUtil.getUser("user", "email");
         UserCreateDto dto = UserTestUtil.getUserCreateDto("user", "email");
@@ -70,7 +71,7 @@ public class UserServiceTest {
         Assert.assertEquals(showDto.getUsername(), user.getUsername());
     }
 
-    @Test(expected = ResourceConflictException.class)
+    @Test(expected = CodunoResourceConflictException.class)
     public void updateExistingUsername() throws Exception {
         User user = UserTestUtil.getUser("user2", "email2");
         UserUpdateProfileDetailsDto dto = UserTestUtil.getUserUpdateProfileDetailsDto("user", "email");
@@ -81,7 +82,7 @@ public class UserServiceTest {
         service.update(dto, user);
     }
 
-    @Test(expected = ResourceConflictException.class)
+    @Test(expected = CodunoResourceConflictException.class)
     public void updateExistingEmail() throws Exception {
         UserUpdateProfileDetailsDto dto = UserTestUtil.getUserUpdateProfileDetailsDto("user2", "emaila");
 
@@ -101,7 +102,7 @@ public class UserServiceTest {
         service.updatePassword(dto, user);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = CodunoIllegalArgumentException.class)
     public void updatePasswordOldInvalid() throws Exception {
         User user = UserTestUtil.getUser();
         UserPasswordChangeDto dto = UserTestUtil.getUpdatePasswordChangeDto("passwordasdf", "password");
@@ -111,7 +112,7 @@ public class UserServiceTest {
     }
 
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = CodunoIllegalArgumentException.class)
     public void updatePasswordOldNewMatching() throws Exception {
         User user = UserTestUtil.getUser();
         UserPasswordChangeDto dto = UserTestUtil.getUpdatePasswordChangeDto("password", "password");
@@ -132,7 +133,7 @@ public class UserServiceTest {
         Assert.assertEquals(showDto.getUsername(), user.getUsername());
     }
 
-    @Test(expected = NoSuchElementException.class)
+    @Test(expected = CodunoNoSuchElementException.class)
     public void findByUsernameNotExisting() throws Exception {
         Mockito.when(repository.findByUsername("user")).thenReturn(null);
 
@@ -152,7 +153,7 @@ public class UserServiceTest {
         Assert.assertEquals(showDto.getUsername(), user.getUsername());
     }
 
-    @Test(expected = NoSuchElementException.class)
+    @Test(expected = CodunoNoSuchElementException.class)
     public void findOneNotExisting() throws Exception {
         UUID id = UUID.randomUUID();
         Mockito.when(repository.findOne(id)).thenReturn(null);
@@ -188,7 +189,7 @@ public class UserServiceTest {
         Assert.assertEquals(dto.getUsername(), user.getUsername());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = CodunoIllegalArgumentException.class)
     public void listUsersByUsernameContainingSearchValueInvalid() throws Exception {
         service.listUsersByUsernameContaining("a");
     }
@@ -205,7 +206,7 @@ public class UserServiceTest {
         Assert.assertEquals(showDto.getUsername(), user.getUsername());
     }
 
-    @Test(expected = NoSuchElementException.class)
+    @Test(expected = CodunoNoSuchElementException.class)
     public void findByEmailExisting() throws Exception {
         Mockito.when(repository.findByEmail("user")).thenReturn(null);
 

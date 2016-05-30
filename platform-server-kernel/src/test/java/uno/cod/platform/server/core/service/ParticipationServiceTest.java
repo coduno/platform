@@ -7,6 +7,7 @@ import uno.cod.platform.server.core.domain.Challenge;
 import uno.cod.platform.server.core.domain.Participation;
 import uno.cod.platform.server.core.domain.Team;
 import uno.cod.platform.server.core.domain.User;
+import uno.cod.platform.server.core.exception.CodunoIllegalArgumentException;
 import uno.cod.platform.server.core.repository.ChallengeRepository;
 import uno.cod.platform.server.core.repository.ParticipationRepository;
 import uno.cod.platform.server.core.repository.TeamRepository;
@@ -55,7 +56,7 @@ public class ParticipationServiceTest {
         service.registerForChallenge(user, challenge.getCanonicalName(), team.getCanonicalName());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = CodunoIllegalArgumentException.class)
     public void registerForChallengeWithTeamNotExisting() throws Exception {
         Challenge challenge = ChallengeTestUtil.getChallenge();
         User user = UserTestUtil.getUser();
@@ -67,7 +68,7 @@ public class ParticipationServiceTest {
         service.registerForChallenge(user, challenge.getCanonicalName(), team.getCanonicalName());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = CodunoIllegalArgumentException.class)
     public void registerForChallengeWithTeamNotMember() throws Exception {
         Challenge challenge = ChallengeTestUtil.getChallenge();
         User user = UserTestUtil.getUser();
@@ -80,7 +81,7 @@ public class ParticipationServiceTest {
         service.registerForChallenge(user, challenge.getCanonicalName(), team.getCanonicalName());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = CodunoIllegalArgumentException.class)
     public void registerForChallengeNoChallenge() throws Exception {
         Challenge challenge = ChallengeTestUtil.getChallenge();
         User user = UserTestUtil.getUser();
@@ -89,7 +90,7 @@ public class ParticipationServiceTest {
         service.registerForChallenge(user, challenge.getCanonicalName());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = CodunoIllegalArgumentException.class)
     public void registerForChallengeExistingParticipation() throws Exception {
         Challenge challenge = ChallengeTestUtil.getChallenge();
         User user = UserTestUtil.getUser();

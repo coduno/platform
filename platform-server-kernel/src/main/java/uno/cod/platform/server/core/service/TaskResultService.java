@@ -1,13 +1,13 @@
 package uno.cod.platform.server.core.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uno.cod.platform.server.core.domain.Result;
 import uno.cod.platform.server.core.domain.Task;
 import uno.cod.platform.server.core.domain.TaskResult;
 import uno.cod.platform.server.core.domain.TaskResultKey;
+import uno.cod.platform.server.core.exception.CodunoAccessDeniedException;
 import uno.cod.platform.server.core.repository.ResultRepository;
 import uno.cod.platform.server.core.repository.TaskRepository;
 import uno.cod.platform.server.core.repository.TaskResultRepository;
@@ -33,20 +33,20 @@ public class TaskResultService {
         this.taskRepository = taskRepository;
     }
 
-    public void startTask(UUID resultId, UUID taskId) throws IllegalArgumentException {
+    public void startTask(UUID resultId, UUID taskId) {
         Result result = resultRepository.findOneWithChallenge(resultId);
         if (result == null) {
-            throw new AccessDeniedException("result.invalid");
+            throw new CodunoAccessDeniedException("result.invalid");
         }
         Task task = taskRepository.findOne(taskId);
         if (task == null) {
-            throw new AccessDeniedException("task.invalid");
+            throw new CodunoAccessDeniedException("task.invalid");
         }
 
         TaskResult taskResult = taskResultRepository.findOneByTaskAndResult(taskId, resultId);
         if (taskResult != null) {
             if (taskResult.getStartTime() != null) {
-                throw new AccessDeniedException("task.denied");
+                throw new CodunoAccessDeniedException("task.denied");
             }
             return;
         }

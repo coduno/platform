@@ -1,6 +1,7 @@
 package uno.cod.platform.server.core.domain;
 
 import org.hibernate.validator.constraints.NotEmpty;
+import uno.cod.platform.server.core.exception.CodunoIllegalArgumentException;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -64,7 +65,7 @@ public class ChallengeTemplate extends Assignment implements CanonicalEntity{
 
     public void addTask(Task task) {
         if (task == null) {
-            throw new IllegalArgumentException("task.invalid");
+            throw new CodunoIllegalArgumentException("task.invalid");
         }
         if (tasks == null) {
             tasks = new ArrayList<>();

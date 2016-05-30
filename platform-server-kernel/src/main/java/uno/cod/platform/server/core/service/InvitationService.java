@@ -4,7 +4,6 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -13,6 +12,8 @@ import uno.cod.platform.server.core.domain.*;
 import uno.cod.platform.server.core.dto.invitation.InvitationDto;
 import uno.cod.platform.server.core.dto.invitation.InvitationShowDto;
 import uno.cod.platform.server.core.dto.user.UserCreateDto;
+import uno.cod.platform.server.core.exception.CodunoAccessDeniedException;
+import uno.cod.platform.server.core.exception.CodunoIllegalArgumentException;
 import uno.cod.platform.server.core.repository.ChallengeRepository;
 import uno.cod.platform.server.core.repository.InvitationRepository;
 import uno.cod.platform.server.core.repository.ResultRepository;
@@ -78,14 +79,14 @@ public class InvitationService {
             }
         }
         if (!ok) {
-            throw new AccessDeniedException("you are not an admin to the parent organization of the challenge");
+            throw new CodunoAccessDeniedException("challenge.access.denied");
         }
 
         User user = userRepository.findByEmail(dto.getEmail());
         if (user != null) {
             for (Participation participation: user.getParticipations()) {
                 if (participation.getKey().getChallenge().getId().equals(challenge.getId())) {
-                    throw new IllegalArgumentException("user.already.registered.to.challenge");
+                    throw new CodunoIllegalArgumentException("user.already.registered.to.challenge");
                 }
             }
 
@@ -119,11 +120,11 @@ public class InvitationService {
     public UUID authByToken(String token) {
         Invitation invite = invitationRepository.findOne(token);
         if (invite == null) {
-            throw new AccessDeniedException("invite.token.invalid");
+            throw new CodunoAccessDeniedException("invite.token.invalid");
         }
 
         if (invite.getExpire().isBefore(ZonedDateTime.now())) {
-            throw new AccessDeniedException("invite.token.expired");
+            throw new CodunoAccessDeniedException("invite.token.expired");
         }
 
         /* create user if not exists */
