@@ -30,7 +30,7 @@ public class UserService {
     public User createFromDto(UserCreateDto dto) {
         User found = repository.findByUsernameOrEmail(dto.getNick(), dto.getEmail());
         if (found != null) {
-            throw new CodunoResourceConflictException("user.name.exists");
+            throw new CodunoResourceConflictException("user.name.exists", new String[]{dto.getNick()});
         }
         User user = new User();
         user.setUsername(dto.getNick());
@@ -42,10 +42,10 @@ public class UserService {
 
     public UserShowDto update(UserUpdateProfileDetailsDto dto, User user) {
         if (!dto.getUsername().equals(user.getUsername()) && repository.findByUsername(dto.getUsername()) != null) {
-            throw new CodunoResourceConflictException("user.name.exists");
+            throw new CodunoResourceConflictException("user.name.exists", new String[]{dto.getUsername()});
         }
         if (!dto.getEmail().equals(user.getEmail()) && repository.findByEmail(dto.getEmail()) != null) {
-            throw new CodunoResourceConflictException("email.existing");
+            throw new CodunoResourceConflictException("email.existing", new String[]{dto.getEmail()});
         }
         user.setUsername(dto.getUsername());
         user.setEmail(dto.getEmail());
@@ -55,12 +55,14 @@ public class UserService {
     }
 
     public void updatePassword(UserPasswordChangeDto dto, User user) {
-        if (dto.getOldPassword().equals(dto.getNewPassword())) {
-            throw new CodunoIllegalArgumentException("new.password.matches.old");
-        }
         if (!passwordEncoder.matches(dto.getOldPassword(), user.getPassword())) {
-            throw new CodunoIllegalArgumentException("old.password.invalid");
+            throw new CodunoIllegalArgumentException("password.old.invalid");
         }
+
+        if (dto.getOldPassword().equals(dto.getNewPassword())) {
+            throw new CodunoIllegalArgumentException("password.new.match");
+        }
+
         user.setPassword(passwordEncoder.encode(dto.getNewPassword()));
         repository.save(user);
     }

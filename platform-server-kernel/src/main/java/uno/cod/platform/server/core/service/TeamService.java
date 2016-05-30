@@ -37,6 +37,10 @@ public class TeamService {
         if (teamRepository.findByCanonicalNameAndEnabledTrue(dto.getCanonicalName()) != null) {
             throw new CodunoIllegalArgumentException("team.canonicalName.existing");
         }
+        if (teamRepository.findByNameAndEnabledTrue(dto.getName()) != null) {
+            throw new CodunoIllegalArgumentException("team.name.existing");
+        }
+
         Team team = new Team();
         team.setName(dto.getName());
         team.setCanonicalName(dto.getCanonicalName());

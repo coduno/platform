@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
 import uno.cod.platform.server.core.dto.ExceptionDto;
@@ -22,6 +23,7 @@ public class NoSuchElementAdvice extends AbstractLocalizedAdvice {
     }
 
     @ExceptionHandler(value = CodunoNoSuchElementException.class)
+    @ResponseBody
     public ResponseEntity<ExceptionDto> handleNoSuchElement(final CodunoException ex, WebRequest request) {
         return buildResponse(ex, request, HttpStatus.NOT_FOUND);
     }

@@ -13,6 +13,8 @@ import java.util.UUID;
 public interface TeamRepository extends JpaRepository<Team, UUID> {
     Team findByCanonicalNameAndEnabledTrue(String canonicalName);
 
+    Team findByNameAndEnabledTrue(String canonicalName);
+
     @Query("SELECT DISTINCT team from Team team " +
             "JOIN FETCH team.members members " +
             "JOIN FETCH team.members " +
