@@ -4,8 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uno.cod.platform.server.core.domain.*;
-import uno.cod.platform.server.core.dto.participation.ParticipationShowDto;
 import uno.cod.platform.server.core.dto.challenge.ParticipationCreateDto;
+import uno.cod.platform.server.core.dto.participation.ParticipationShowDto;
 import uno.cod.platform.server.core.exception.CodunoIllegalArgumentException;
 import uno.cod.platform.server.core.repository.*;
 
@@ -53,11 +53,11 @@ public class ParticipationService {
 
         Participation participation = new Participation();
         participation.setKey(key);
-        if (dto.getLocation() != null) {
+        if (dto != null && dto.getLocation() != null) {
             participation.setLocation(locationRepository.findOne(dto.getLocation()));
         }
         // Join as teamName
-        if (dto.getTeam() != null && !dto.getTeam().isEmpty()) {
+        if (dto != null && dto.getTeam() != null && !dto.getTeam().isEmpty()) {
             Team team = teamRepository.findByCanonicalNameAndEnabledTrue(dto.getTeam());
             if (!checkUserInTeam(user, team)) {
                 throw new CodunoIllegalArgumentException("team.invalid");

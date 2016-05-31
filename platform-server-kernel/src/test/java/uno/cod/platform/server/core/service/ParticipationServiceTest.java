@@ -8,11 +8,9 @@ import uno.cod.platform.server.core.domain.Participation;
 import uno.cod.platform.server.core.domain.Team;
 import uno.cod.platform.server.core.domain.User;
 import uno.cod.platform.server.core.exception.CodunoIllegalArgumentException;
-import uno.cod.platform.server.core.repository.ChallengeRepository;
-import uno.cod.platform.server.core.repository.ParticipationRepository;
-import uno.cod.platform.server.core.repository.TeamRepository;
-import uno.cod.platform.server.core.repository.UserRepository;
+import uno.cod.platform.server.core.repository.*;
 import uno.cod.platform.server.core.service.util.ChallengeTestUtil;
+import uno.cod.platform.server.core.service.util.ParticipationUtil;
 import uno.cod.platform.server.core.service.util.TeamTestUtil;
 import uno.cod.platform.server.core.service.util.UserTestUtil;
 
@@ -22,6 +20,7 @@ public class ParticipationServiceTest {
     private ChallengeRepository challengeRepository;
     private TeamRepository teamRepository;
     private ParticipationRepository participationRepository;
+    private LocationRepository locationRepository;
 
     @Before
     public void setUp() throws Exception {
@@ -29,7 +28,8 @@ public class ParticipationServiceTest {
         this.challengeRepository = Mockito.mock(ChallengeRepository.class);
         this.teamRepository = Mockito.mock(TeamRepository.class);
         this.participationRepository = Mockito.mock(ParticipationRepository.class);
-        this.service = new ParticipationService(userRepository, challengeRepository, teamRepository, participationRepository);
+        this.locationRepository = Mockito.mock(LocationRepository.class);
+        this.service = new ParticipationService(userRepository, challengeRepository, teamRepository, participationRepository, locationRepository);
     }
 
     @Test
@@ -53,7 +53,7 @@ public class ParticipationServiceTest {
         Mockito.when(teamRepository.findByCanonicalNameAndEnabledTrue(team.getCanonicalName())).thenReturn(team);
         Mockito.when(userRepository.getOne(user.getId())).thenReturn(user);
 
-        service.registerForChallenge(user, challenge.getCanonicalName(), team.getCanonicalName());
+        service.registerForChallenge(user, challenge.getCanonicalName(), ParticipationUtil.getCreateDto(team.getCanonicalName()));
     }
 
     @Test(expected = CodunoIllegalArgumentException.class)
@@ -65,7 +65,7 @@ public class ParticipationServiceTest {
         Mockito.when(participationRepository.findOneByUserAndChallenge(user.getId(), challenge.getId())).thenReturn(null);
         Mockito.when(teamRepository.findByCanonicalNameAndEnabledTrue(team.getCanonicalName())).thenReturn(null);
 
-        service.registerForChallenge(user, challenge.getCanonicalName(), team.getCanonicalName());
+        service.registerForChallenge(user, challenge.getCanonicalName(), ParticipationUtil.getCreateDto(team.getCanonicalName()));
     }
 
     @Test(expected = CodunoIllegalArgumentException.class)
@@ -78,7 +78,7 @@ public class ParticipationServiceTest {
         Mockito.when(teamRepository.findByCanonicalNameAndEnabledTrue(team.getCanonicalName())).thenReturn(team);
         Mockito.when(userRepository.getOne(user.getId())).thenReturn(user);
 
-        service.registerForChallenge(user, challenge.getCanonicalName(), team.getCanonicalName());
+        service.registerForChallenge(user, challenge.getCanonicalName(), ParticipationUtil.getCreateDto(team.getCanonicalName()));
     }
 
     @Test(expected = CodunoIllegalArgumentException.class)
@@ -97,6 +97,6 @@ public class ParticipationServiceTest {
         Mockito.when(challengeRepository.findOneByCanonicalName(challenge.getCanonicalName())).thenReturn(challenge);
         Mockito.when(participationRepository.findOneByUserAndChallenge(user.getId(), challenge.getId())).thenReturn(new Participation());
 
-        service.registerForChallenge(user, challenge.getCanonicalName(), "team");
+        service.registerForChallenge(user, challenge.getCanonicalName(), ParticipationUtil.getCreateDto("team"));
     }
 }

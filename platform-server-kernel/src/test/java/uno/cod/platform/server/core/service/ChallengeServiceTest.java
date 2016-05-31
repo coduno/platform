@@ -10,7 +10,10 @@ import uno.cod.platform.server.core.domain.User;
 import uno.cod.platform.server.core.dto.challenge.ChallengeCreateDto;
 import uno.cod.platform.server.core.dto.challenge.ChallengeDto;
 import uno.cod.platform.server.core.dto.challenge.UserChallengeShowDto;
-import uno.cod.platform.server.core.repository.*;
+import uno.cod.platform.server.core.repository.ChallengeRepository;
+import uno.cod.platform.server.core.repository.ChallengeTemplateRepository;
+import uno.cod.platform.server.core.repository.LocationRepository;
+import uno.cod.platform.server.core.repository.ResultRepository;
 import uno.cod.platform.server.core.service.util.ChallengeTestUtil;
 import uno.cod.platform.server.core.service.util.ResultTestUtil;
 import uno.cod.platform.server.core.service.util.UserTestUtil;
@@ -25,13 +28,15 @@ public class ChallengeServiceTest {
     private ChallengeRepository repository;
     private ChallengeTemplateRepository challengeTemplateRepository;
     private ResultRepository resultRepository;
+    private LocationRepository locationRepository;
 
     @Before
     public void setup() {
         repository = Mockito.mock(ChallengeRepository.class);
         challengeTemplateRepository = Mockito.mock(ChallengeTemplateRepository.class);
         resultRepository = Mockito.mock(ResultRepository.class);
-        service = new ChallengeService(repository, challengeTemplateRepository, resultRepository);
+        locationRepository = Mockito.mock(LocationRepository.class);
+        service = new ChallengeService(repository, challengeTemplateRepository, resultRepository, locationRepository);
     }
 
     @Test
