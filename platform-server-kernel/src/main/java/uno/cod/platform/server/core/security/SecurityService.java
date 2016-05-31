@@ -4,6 +4,7 @@ package uno.cod.platform.server.core.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uno.cod.platform.server.core.domain.*;
+import uno.cod.platform.server.core.repository.ChallengeRepository;
 import uno.cod.platform.server.core.repository.TaskRepository;
 import uno.cod.platform.server.core.repository.UserRepository;
 
@@ -19,11 +20,13 @@ import java.util.UUID;
 public class SecurityService {
     private final TaskRepository taskRepository;
     private final UserRepository userRepository;
+    private final ChallengeRepository challengeRepository;
 
     @Autowired
-    public SecurityService(TaskRepository taskRepository, UserRepository userRepository) {
+    public SecurityService(TaskRepository taskRepository, UserRepository userRepository, ChallengeRepository challengeRepository) {
         this.taskRepository = taskRepository;
         this.userRepository = userRepository;
+        this.challengeRepository = challengeRepository;
     }
 
     public boolean isTeamMember(User user, UUID teamId) {
@@ -79,9 +82,24 @@ public class SecurityService {
         return false;
     }
 
-    public boolean canAccessChallenge(User user, String canonicalName) {
-        if (user == null || canonicalName == null || canonicalName.isEmpty()) {
+    public boolean canAccessChallenge(String user, String canonicalName) {
+        if (canonicalName == null || canonicalName.isEmpty()) {
             return false;
+        }
+        if (user == null || user.equals("anonymousUser")) {
+            Challenge challenge = challengeRepository.findOneByCanonicalName(canonicalName);
+            return !challenge.isInviteOnly();
+        }
+        return canAccessChallenge(userRepository.findByUsername(user), canonicalName);
+    }
+
+    public boolean canAccessChallenge(User user, String canonicalName) {
+        if (canonicalName == null || canonicalName.isEmpty()) {
+            return false;
+        }
+        if (user == null) {
+            Challenge challenge = challengeRepository.findOneByCanonicalName(canonicalName);
+            return !challenge.isInviteOnly();
         }
         user = userRepository.findOne(user.getId());
 

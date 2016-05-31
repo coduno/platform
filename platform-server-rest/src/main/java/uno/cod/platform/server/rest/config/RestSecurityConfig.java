@@ -46,6 +46,7 @@ public class RestSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.OPTIONS).permitAll()
                 .antMatchers("/setup",
                         "/organizations",
+                        "/challenges/*",
                         "/users",
                         "/ip",
                         "/invite/auth/*").permitAll()

@@ -34,7 +34,7 @@ public class ChallengeController {
     }
 
     @RequestMapping(value = RestUrls.CHALLENGES_CANONICAL_NAME, method = RequestMethod.GET)
-    @PreAuthorize("isAuthenticated() and @securityService.canAccessChallenge(principal, #canonicalName)")
+    @PreAuthorize("@securityService.canAccessChallenge(principal, #canonicalName)")
     public ResponseEntity<ChallengeDto> getByCanonicalName(@PathVariable String canonicalName) {
         return new ResponseEntity<>(challengeService.findOneByCanonicalName(canonicalName), HttpStatus.OK);
     }
