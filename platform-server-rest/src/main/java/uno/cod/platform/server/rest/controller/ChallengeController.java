@@ -62,7 +62,7 @@ public class ChallengeController {
     public ResponseEntity<String> register(@PathVariable("canonicalName") String challengeName,
                                            @Valid @RequestBody ParticipationCreateDto dto,
                                            @AuthenticationPrincipal User user) {
-        participationService.registerForChallenge(user, challengeName, dto.getTeam());
+        participationService.registerForChallenge(user, challengeName, dto);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

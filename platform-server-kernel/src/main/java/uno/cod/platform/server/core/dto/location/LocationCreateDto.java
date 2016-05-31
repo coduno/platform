@@ -1,31 +1,17 @@
 package uno.cod.platform.server.core.dto.location;
 
-import uno.cod.platform.server.core.domain.Location;
+import org.hibernate.validator.constraints.NotEmpty;
 
-import java.util.UUID;
+import javax.validation.constraints.NotNull;
 
-public class LocationShowDto {
-    private UUID id;
+public class LocationCreateDto {
+    @NotNull
+    @NotEmpty
     private String name;
+
     private String placeId;
     private String latitude;
     private String longitude;
-
-    public LocationShowDto(Location location) {
-        this.id = location.getId();
-        this.name = location.getName();
-        this.placeId = location.getPlaceId();
-        this.latitude = location.getLatitude();
-        this.longitude = location.getLongitude();
-    }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
 
     public String getName() {
         return name;

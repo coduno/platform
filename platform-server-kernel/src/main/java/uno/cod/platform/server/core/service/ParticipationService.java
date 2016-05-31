@@ -5,11 +5,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uno.cod.platform.server.core.domain.*;
 import uno.cod.platform.server.core.dto.participation.ParticipationShowDto;
+import uno.cod.platform.server.core.dto.challenge.ParticipationCreateDto;
 import uno.cod.platform.server.core.exception.CodunoIllegalArgumentException;
-import uno.cod.platform.server.core.repository.ChallengeRepository;
-import uno.cod.platform.server.core.repository.ParticipationRepository;
-import uno.cod.platform.server.core.repository.TeamRepository;
-import uno.cod.platform.server.core.repository.UserRepository;
+import uno.cod.platform.server.core.repository.*;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -21,23 +19,26 @@ public class ParticipationService {
     private final ChallengeRepository challengeRepository;
     private final TeamRepository teamRepository;
     private final ParticipationRepository participationRepository;
+    private final LocationRepository locationRepository;
 
     @Autowired
     public ParticipationService(UserRepository userRepository,
                                 ChallengeRepository challengeRepository,
                                 TeamRepository teamRepository,
-                                ParticipationRepository participationRepository) {
+                                ParticipationRepository participationRepository,
+                                LocationRepository locationRepository) {
         this.userRepository = userRepository;
         this.challengeRepository = challengeRepository;
         this.teamRepository = teamRepository;
         this.participationRepository = participationRepository;
+        this.locationRepository = locationRepository;
     }
 
     public void registerForChallenge(User user, String challengeName) {
         this.registerForChallenge(user, challengeName, null);
     }
 
-    public void registerForChallenge(User user, String challengeName, String teamName) {
+    public void registerForChallenge(User user, String challengeName, ParticipationCreateDto dto) {
         Challenge challenge = challengeRepository.findOneByCanonicalName(challengeName);
         if (challenge == null) {
             throw new CodunoIllegalArgumentException("challenge.invalid");
@@ -52,9 +53,12 @@ public class ParticipationService {
 
         Participation participation = new Participation();
         participation.setKey(key);
+        if (dto.getLocation() != null) {
+            participation.setLocation(locationRepository.findOne(dto.getLocation()));
+        }
         // Join as teamName
-        if (teamName != null && !teamName.isEmpty()) {
-            Team team = teamRepository.findByCanonicalNameAndEnabledTrue(teamName);
+        if (dto.getTeam() != null && !dto.getTeam().isEmpty()) {
+            Team team = teamRepository.findByCanonicalNameAndEnabledTrue(dto.getTeam());
             if (!checkUserInTeam(user, team)) {
                 throw new CodunoIllegalArgumentException("team.invalid");
             }

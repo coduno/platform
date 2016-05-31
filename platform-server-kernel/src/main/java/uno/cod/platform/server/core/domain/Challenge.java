@@ -33,7 +33,9 @@ public class Challenge extends IdentifiableEntity implements CanonicalEntity {
 
     @OneToMany(mappedBy = "challenge")
     private Set<Result> results;
-
+    /**
+     * If it's null or empty, the challenge is only online
+     */
     @ManyToMany
     private Set<Location> locations;
 

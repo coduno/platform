@@ -67,8 +67,7 @@ public class ResultService {
                     }
                     r.setFinished(ZonedDateTime.now());
                     repository.save(r);
-                }
-                , setFinished);
+        }, setFinished);
 
         return ResultMapper.map(result);
     }

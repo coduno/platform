@@ -12,6 +12,7 @@ public class RestUrls {
     public static final String CHALLENGES_CANONICAL_NAME_TEMPLATE = "/challenges/{canonicalName}/template";
     public static final String CHALLENGES_CANONICAL_NAME_REGISTER = "/challenges/{canonicalName}/register";
     public static final String CHALLENGES_CANONICAL_NAME_INVITATIONS = "/challenges/{canonicalName}/invitations";
+    public static final String CHALLENGES_CANONICAL_NAME_LOCATIONS = "/challenges/{canonicalName}/locations";
     public static final String CHALLENGES_PUBLIC = "/challenges/public";
 
     public static final String ORGANIZATIONS = "/organizations";
@@ -68,6 +69,8 @@ public class RestUrls {
     public static final String TEAMS_CANONICAL_NAME_INVITATION_ACCEPT = "/teams/{canonicalName}/invitation/accept";
     public static final String TEAMS_CANONICAL_NAME_INVITATION_DECLINE = "/teams/{canonicalName}/invitation/decline";
     public static final String TEAMS_CANONICAL_NAME_INVITATIONS = "/teams/{canonicalName}/invitations";
+
+    public static final String LOCATIONS = "/locations";
 
     public static final String CATCODER_GAME_UPLOAD = "/contestgameupload";
 }

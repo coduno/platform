@@ -9,11 +9,7 @@ import uno.cod.platform.server.core.dto.challenge.ChallengeDto;
 import uno.cod.platform.server.core.dto.challenge.UserChallengeShowDto;
 import uno.cod.platform.server.core.exception.CodunoIllegalArgumentException;
 import uno.cod.platform.server.core.exception.CodunoResourceConflictException;
-import uno.cod.platform.server.core.dto.location.LocationShowDto;
 import uno.cod.platform.server.core.mapper.ChallengeMapper;
-import uno.cod.platform.server.core.repository.ChallengeRepository;
-import uno.cod.platform.server.core.repository.ChallengeTemplateRepository;
-import uno.cod.platform.server.core.repository.ResultRepository;
 import uno.cod.platform.server.core.repository.ChallengeRepository;
 import uno.cod.platform.server.core.repository.ChallengeTemplateRepository;
 import uno.cod.platform.server.core.repository.LocationRepository;
@@ -61,8 +57,8 @@ public class ChallengeService {
             challenge.setEndDate(dto.getStartDate().plus(template.getDuration()));
         }
         if (dto.getLocations() != null) {
-            for (LocationShowDto locationDto : dto.getLocations()) {
-                challenge.addLocation(locationRepository.findOne(locationDto.getId()));
+            for (UUID locationId : dto.getLocations()) {
+                challenge.addLocation(locationRepository.findOne(locationId));
             }
         }
         challenge.setInviteOnly(dto.isInviteOnly());
