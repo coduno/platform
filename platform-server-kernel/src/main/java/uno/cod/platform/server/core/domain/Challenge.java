@@ -34,6 +34,9 @@ public class Challenge extends IdentifiableEntity implements CanonicalEntity {
     @OneToMany(mappedBy = "challenge")
     private Set<Result> results;
 
+    @ManyToMany
+    private Set<Location> locations;
+
     @Column(name = "invite_only")
     private boolean inviteOnly = true;
 
@@ -167,5 +170,20 @@ public class Challenge extends IdentifiableEntity implements CanonicalEntity {
     @Override
     public int hashCode() {
         return canonicalName.hashCode();
+    }
+
+    public void addLocation(Location location) {
+        if (locations == null) {
+            locations = new HashSet<>();
+        }
+        locations.add(location);
+    }
+
+    public Set<Location> getLocations() {
+        return Collections.unmodifiableSet(locations);
+    }
+
+    public void setLocations(Set<Location> locations) {
+        this.locations = locations;
     }
 }
