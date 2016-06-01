@@ -14,8 +14,8 @@ public interface LocationRepository extends JpaRepository<Location, UUID> {
 
     Location findOneByPlaceId(String placeId);
 
-    @Query("Select location from Location location " +
-            " join location.challenges challenge" +
-            " where challenge.canonicalName=:canonicalName")
+    @Query("SELECT l FROM Location l " +
+            "JOIN l.challenges challenge " +
+            "WHERE challenge.canonicalName = :canonicalName")
     List<Location> findAllByChallengeCanonicalName(@Param("canonicalName") String canonicalName);
 }

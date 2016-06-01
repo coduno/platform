@@ -2,10 +2,7 @@ package uno.cod.platform.server.core.dto.location;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
-import javax.validation.constraints.NotNull;
-
 public class LocationCreateDto {
-    @NotNull
     @NotEmpty
     private String name;
 

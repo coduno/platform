@@ -3,9 +3,11 @@ package uno.cod.platform.server.core.domain;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
+import javax.persistence.Table;
 import java.util.Set;
 
 @Entity
+@Table(name = "location")
 public class Location extends IdentifiableEntity {
     @Column(unique = true, nullable = false)
     private String name;
