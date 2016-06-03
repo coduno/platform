@@ -41,6 +41,19 @@ public class LocationService {
         repository.save(location);
     }
 
+    public Location findOrCreate(LocationCreateDto dto) {
+        Location location = repository.findOneByPlaceId(dto.getPlaceId());
+        if (location != null) {
+            return location;
+        }
+        location = new Location();
+        location.setName(dto.getName());
+        location.setPlaceId(dto.getPlaceId());
+        location.setLatitude(dto.getLatitude());
+        location.setLongitude(dto.getLongitude());
+        return repository.save(location);
+    }
+
     public List<LocationShowDto> findLocations() {
         return repository.findAll()
                 .stream()

@@ -7,12 +7,12 @@ import uno.cod.platform.server.core.domain.*;
 import uno.cod.platform.server.core.dto.challenge.ChallengeCreateDto;
 import uno.cod.platform.server.core.dto.challenge.ChallengeDto;
 import uno.cod.platform.server.core.dto.challenge.UserChallengeShowDto;
+import uno.cod.platform.server.core.dto.location.LocationCreateDto;
 import uno.cod.platform.server.core.exception.CodunoIllegalArgumentException;
 import uno.cod.platform.server.core.exception.CodunoResourceConflictException;
 import uno.cod.platform.server.core.mapper.ChallengeMapper;
 import uno.cod.platform.server.core.repository.ChallengeRepository;
 import uno.cod.platform.server.core.repository.ChallengeTemplateRepository;
-import uno.cod.platform.server.core.repository.LocationRepository;
 import uno.cod.platform.server.core.repository.ResultRepository;
 
 import java.time.ZonedDateTime;
@@ -26,17 +26,17 @@ public class ChallengeService {
     private final ChallengeTemplateRepository challengeTemplateRepository;
     private final ChallengeRepository repository;
     private final ResultRepository resultRepository;
-    private final LocationRepository locationRepository;
+    private final LocationService locationService;
 
     @Autowired
     public ChallengeService(ChallengeRepository repository,
                             ChallengeTemplateRepository challengeTemplateRepository,
                             ResultRepository resultRepository,
-                            LocationRepository locationRepository) {
+                            LocationService locationService) {
         this.repository = repository;
         this.challengeTemplateRepository = challengeTemplateRepository;
         this.resultRepository = resultRepository;
-        this.locationRepository = locationRepository;
+        this.locationService = locationService;
     }
 
     public UUID createFromDto(ChallengeCreateDto dto) {
@@ -57,8 +57,8 @@ public class ChallengeService {
             challenge.setEndDate(dto.getStartDate().plus(template.getDuration()));
         }
         if (dto.getLocations() != null) {
-            for (UUID locationId : dto.getLocations()) {
-                challenge.addLocation(locationRepository.findOne(locationId));
+            for (LocationCreateDto locationDto : dto.getLocations()) {
+                challenge.addLocation(locationService.findOrCreate(locationDto));
             }
         }
         challenge.setInviteOnly(dto.isInviteOnly());
