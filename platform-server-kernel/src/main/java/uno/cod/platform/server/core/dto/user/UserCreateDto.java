@@ -17,6 +17,10 @@ public class UserCreateDto {
     @Email
     private String email;
 
+    private String firstName;
+
+    private String lastName;
+
     @NotNull
     @Size(min = 6, max = 40)
     private String password;
@@ -43,5 +47,21 @@ public class UserCreateDto {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 }
