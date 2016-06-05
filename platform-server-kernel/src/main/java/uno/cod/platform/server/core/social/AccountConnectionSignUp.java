@@ -78,7 +78,21 @@ public class AccountConnectionSignUp implements ConnectionSignUp {
             username = usernameFromRealname(userProfile);
         }
 
-        return (username != null && !username.isEmpty()) ? username : UsernameUtil.randomUsername();
+        if (username == null || username.isEmpty()) {
+            UsernameUtil.randomUsername();
+        }
+
+        if (userRepository.findByUsername(username) != null) {
+            for (int i = 1;; i++) {
+                String check = username + "-" + i;
+                if (userRepository.findByUsername(check) == null) {
+                    username = check;
+                    break;
+                }
+            }
+        }
+
+        return username;
     }
 
     private String normalizeString(String in) {
