@@ -12,8 +12,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 import uno.cod.platform.server.core.Profiles;
 
 @Configuration
-@ComponentScan({"uno.cod.platform.server.rest"})
+@ComponentScan(value = {"uno.cod.platform.server.rest"})
 public class RestConfig {
+
     @Value("${coduno.url}")
     private String codunoUrl;
 

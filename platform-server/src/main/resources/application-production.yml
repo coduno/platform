@@ -3,3 +3,14 @@ server:
     cookie:
       domain: .cod.uno
       secure: true
+
+spring:
+  social:
+    facebook:
+      app-id: 283080122027927
+    google:
+      app-id: 656949618208-14jf79kjfr93fnmdafq5j1pecg9c6d23.apps.googleusercontent.com
+    github:
+      app-id: b9747de1c41ae50cadfb
+    linkedin:
+      app-id: 77kzkpw5l8b4a5

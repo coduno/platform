@@ -40,6 +40,20 @@ spring:
       # TODO - check why write_dates_as_timestamps overrides write_durations_as_timestamps
       write_dates_as_timestamps: true
 
+  social:
+    facebook:
+      app-id: id
+      app-secret: secret
+    google:
+      app-id: id
+      app-secret: secret
+    github:
+      app-id: id
+      app-secret: secret
+    linkedin:
+      app-id: id
+      app-secret: secret
+
 flyway:
   sql-migration-prefix: ""
   out-of-order: true
@@ -47,3 +61,13 @@ flyway:
 multipart:
   maxFileSize: 16MB
   maxRequestSize: 16MB
+
+endpoints:
+  health:
+    path: /_ah/health
+
+# til gmail is fixed
+management:
+  health:
+    mail:
+      enabled: false

@@ -13,6 +13,9 @@ import java.util.UUID;
 @Repository
 public interface UserRepository extends JpaRepository<User, UUID> {
     @EntityGraph("User.detail")
+    User findOne(UUID uuid);
+
+    @EntityGraph("User.detail")
     User findByUsername(String username);
 
     @EntityGraph("User.detail")

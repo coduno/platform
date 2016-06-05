@@ -1,3 +1,4 @@
+apply plugin: "com.gorylenko.gradle-git-properties"
 
 dependencies {
     compile project(':platform-server-kernel')
@@ -28,27 +29,3 @@ test {
     outputs.dir snippetsDir
 }
 
-/*
-apply plugin: 'com.google.gcloud-preview'
-apply plugin: 'appengine'
-
-gcloud {
-    configurations {
-        prod {
-            args project: "platform", verbosity: "info"
-            deployArgs "http-port": "8080"
-            runArgs "admin-host": ":1995"
-            modules ":"
-        }
-        test {
-            modules ":"
-            runAsync true
-            args project: "platform"
-            descriptors "app.yaml" // same as default behavior
-        }
-        indexes {
-            modules ":"
-            descriptors "index.yaml"
-        }
-    }
-}*/

@@ -32,11 +32,19 @@ public interface ChallengeRepository extends JpaRepository<Challenge, UUID> {
     List<Challenge> findAllByInvitedUser(@Param("user") UUID id);
 
     @Query("SELECT DISTINCT challenge FROM Challenge challenge " +
+            "LEFT JOIN FETCH challenge.invitedUsers " +
+            "LEFT JOIN FETCH challenge.participations " +
+            "WHERE challenge.canonicalName = :canonicalName")
+    Challenge findOneByCanonicalNameWithInvitedUsersAndRegisteredUsers(@Param("canonicalName") String canonicalName);
+
+    @Query("SELECT DISTINCT challenge FROM Challenge challenge " +
             "LEFT JOIN FETCH challenge.challengeTemplate template " +
             "LEFT JOIN FETCH template.organization " +
-            "LEFT JOIN FETCH challenge.invitedUsers " +
-            "LEFT JOIN FETCH challenge.participations ")
-    List<Challenge> findAllWithOrganizationAndInvitedUsersAndRegisteredUsers();
+            "LEFT JOIN FETCH challenge.invitedUsers invitedUser " +
+            "LEFT JOIN FETCH challenge.participations " +
+            "WHERE (challenge.endDate IS NULL OR challenge.endDate > current_date) " +
+            "AND (challenge.inviteOnly = false OR invitedUser.id = :user)")
+    List<Challenge> findAllValidWithOrganizationAndInvitedUsersAndRegisteredUsers(@Param("user") UUID user);
 
     @Query("SELECT challenge FROM Challenge challenge " +
             "LEFT JOIN FETCH challenge.challengeTemplate challengeTemplate " +

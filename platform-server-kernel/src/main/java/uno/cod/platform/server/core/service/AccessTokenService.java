@@ -10,12 +10,12 @@ import uno.cod.platform.server.core.domain.AccessToken;
 import uno.cod.platform.server.core.domain.User;
 import uno.cod.platform.server.core.dto.user.accesstoken.AccessTokenDto;
 import uno.cod.platform.server.core.dto.user.accesstoken.CreatedAccessTokenDto;
+import uno.cod.platform.server.core.exception.CodunoNoSuchElementException;
 import uno.cod.platform.server.core.repository.AccessTokenRepository;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.time.ZonedDateTime;
-import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -53,10 +53,10 @@ public class AccessTokenService {
     public void deleteToken(UUID token, User user) {
         AccessToken accessToken = accessTokenRepository.getOne(token);
         if (accessToken == null) {
-            throw new NoSuchElementException("token.invalid");
+            throw new CodunoNoSuchElementException("token.invalid");
         }
         if (!accessToken.getUser().equals(user)) {
-            throw new NoSuchElementException("token.invalid");
+            throw new CodunoNoSuchElementException("token.invalid");
         }
         accessTokenRepository.delete(accessToken);
     }

@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
-import uno.cod.platform.server.core.exception.ResourceConflictException;
+import uno.cod.platform.server.core.dto.ExceptionDto;
+import uno.cod.platform.server.core.exception.CodunoException;
+import uno.cod.platform.server.core.exception.CodunoResourceConflictException;
 
 @ControllerAdvice(annotations = RestController.class)
 public class ResourceConflictAdvice extends AbstractLocalizedAdvice {
@@ -20,9 +22,9 @@ public class ResourceConflictAdvice extends AbstractLocalizedAdvice {
         super(messageSource);
     }
 
-    @ExceptionHandler(value = ResourceConflictException.class)
+    @ExceptionHandler(value = CodunoResourceConflictException.class)
     @ResponseBody
-    public ResponseEntity<Object> handleResourceConflict(final Exception ex, WebRequest request) {
-        return new ResponseEntity<>(getMessage(ex, request), HttpStatus.CONFLICT);
+    public ResponseEntity<ExceptionDto> handleResourceConflict(final CodunoException ex, WebRequest request) {
+        return buildResponse(ex, request, HttpStatus.CONFLICT);
     }
 }

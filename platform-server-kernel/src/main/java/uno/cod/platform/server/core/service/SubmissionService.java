@@ -4,13 +4,14 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.multipart.MultipartFile;
 import uno.cod.platform.runtime.RuntimeClient;
 import uno.cod.platform.server.core.domain.*;
+import uno.cod.platform.server.core.exception.CodunoAccessDeniedException;
+import uno.cod.platform.server.core.exception.CodunoIllegalArgumentException;
 import uno.cod.platform.server.core.repository.*;
 import uno.cod.storage.PlatformStorage;
 
@@ -119,17 +120,17 @@ public class SubmissionService {
     private Submission create(UUID resultId, UUID taskId) {
         Result result = resultRepository.findOne(resultId);
         if (result == null) {
-            throw new IllegalArgumentException("result.invalid");
+            throw new CodunoIllegalArgumentException("result.invalid");
         }
 
         Challenge challenge = result.getChallenge();
         if (challenge.getEndDate() != null && challenge.getEndDate().isBefore(ZonedDateTime.now())) {
-            throw new AccessDeniedException("challenge.ended");
+            throw new CodunoAccessDeniedException("challenge.ended");
         }
 
         Task task = taskRepository.findOneWithTests(taskId);
         if (task == null) {
-            throw new IllegalArgumentException("task.invalid");
+            throw new CodunoIllegalArgumentException("task.invalid");
         }
 
         TaskResult taskResult = taskResultService.findByTaskAndResult(taskId, resultId);
@@ -190,7 +191,7 @@ public class SubmissionService {
     public void run(User user, UUID taskId, MultipartFile[] files, String language) throws IOException {
         Task task = taskRepository.findOneWithRunner(taskId);
         if (task == null) {
-            throw new IllegalArgumentException("task.invalid");
+            throw new CodunoIllegalArgumentException("task.invalid");
         }
 
         MultiValueMap<String, Object> form = createForm(task.getParams());

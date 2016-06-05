@@ -9,6 +9,7 @@ import uno.cod.platform.server.core.domain.User;
 import uno.cod.platform.server.core.dto.organization.OrganizationCreateDto;
 import uno.cod.platform.server.core.dto.organization.OrganizationShowDto;
 import uno.cod.platform.server.core.dto.organization.member.OrganizationMembershipShowDto;
+import uno.cod.platform.server.core.exception.CodunoIllegalArgumentException;
 import uno.cod.platform.server.core.repository.OrganizationMembershipRepository;
 import uno.cod.platform.server.core.repository.OrganizationRepository;
 import uno.cod.platform.server.core.repository.UserRepository;
@@ -47,7 +48,7 @@ public class OrganizationServiceTest {
         service.createFromDto(dto, user.getUsername());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = CodunoIllegalArgumentException.class)
     public void createFromDtoInvalidCanonicalName() throws Exception {
         User user = UserTestUtil.getUser();
         OrganizationCreateDto dto = new OrganizationCreateDto();
@@ -83,7 +84,7 @@ public class OrganizationServiceTest {
         Assert.assertEquals(dtos.get(0).getNick(), organization.getCanonicalName());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = CodunoIllegalArgumentException.class)
     public void findUserOrganizationsNullUser() throws Exception {
         User user = UserTestUtil.getUser();
         Mockito.when(userRepository.findByUsernameOrEmail(user.getUsername(), user.getUsername())).thenReturn(null);

@@ -1,6 +1,7 @@
 package uno.cod.platform.server.rest.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,6 +17,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint;
 import org.springframework.session.web.http.CookieHttpSessionStrategy;
 import org.springframework.session.web.http.HttpSessionStrategy;
+import org.springframework.social.security.SpringSocialConfigurer;
 import uno.cod.platform.server.core.filter.AccessTokenAuthenticationFilter;
 import uno.cod.platform.server.core.service.AccessTokenService;
 
@@ -29,7 +31,10 @@ import java.io.IOException;
 @Order(SecurityProperties.ACCESS_OVERRIDE_ORDER)
 public class RestSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
-    AccessTokenService accessTokenService;
+    private AccessTokenService accessTokenService;
+
+    @Value("${coduno.url}")
+    private String appUrl;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -46,10 +51,17 @@ public class RestSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.OPTIONS).permitAll()
                 .antMatchers("/setup",
                         "/organizations",
+                        "/challenges/*",
                         "/users",
                         "/ip",
+                        "/auth/**",
                         "/invite/auth/*").permitAll()
                 .anyRequest().authenticated()
+                .and()
+                .apply(new SpringSocialConfigurer()
+                        .postLoginUrl(appUrl)
+                        .signupUrl(appUrl)
+                        .defaultFailureUrl(appUrl))
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED);

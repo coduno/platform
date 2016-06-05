@@ -8,9 +8,11 @@ public class RestUrls {
 
     public static final String CHALLENGES = "/challenges";
     public static final String CHALLENGES_CANONICAL_NAME = "/challenges/{canonicalName}";
+    public static final String CHALLENGES_CANONICAL_NAME_PARTICIPANTS = "/challenges/{canonicalName}/participants";
     public static final String CHALLENGES_CANONICAL_NAME_TEMPLATE = "/challenges/{canonicalName}/template";
     public static final String CHALLENGES_CANONICAL_NAME_REGISTER = "/challenges/{canonicalName}/register";
-    public static final String CHALLENGES_ID_INVITATIONS = "/challenges/{id}/invitations";
+    public static final String CHALLENGES_CANONICAL_NAME_INVITATIONS = "/challenges/{canonicalName}/invitations";
+    public static final String CHALLENGES_CANONICAL_NAME_LOCATIONS = "/challenges/{canonicalName}/locations";
     public static final String CHALLENGES_PUBLIC = "/challenges/public";
 
     public static final String ORGANIZATIONS = "/organizations";
@@ -27,6 +29,7 @@ public class RestUrls {
     public static final String USERS_USERNAME_TEAMS = "/users/{username}/teams";
 
     public static final String USER = "/user";
+    public static final String USER_CHALLENGE_CANONICAL_NAME_STATUS = "/user/challenge/{canonicalName}/status";
     public static final String USER_PASSWORD = "/user/password";
     public static final String USER_ORGANIZATIONS = "/user/organizations";
     public static final String USER_TEAMS = "/user/teams";
@@ -67,5 +70,11 @@ public class RestUrls {
     public static final String TEAMS_CANONICAL_NAME_INVITATION_DECLINE = "/teams/{canonicalName}/invitation/decline";
     public static final String TEAMS_CANONICAL_NAME_INVITATIONS = "/teams/{canonicalName}/invitations";
 
+    public static final String LOCATIONS = "/locations";
+
     public static final String CATCODER_GAME_UPLOAD = "/contestgameupload";
+
+    public static final String CONNECT = "/connect";
+    public static final String CONNECT_PROVIDERID = "/connect/{providerId}";
+    public static final String CONNECT_PROVIDERID_USERID = "/connect/{providerId}/{providerUserId}";
 }

@@ -4,3 +4,14 @@ coduno:
   codingcontest_url: https://codingcontest.lab.catalysts.cc
   submission:
     bucket: coduno-submissions-lab
+
+spring:
+  social:
+    facebook:
+      app-id: 284005035268769
+    google:
+      app-id: 959528656572-qlgn92rbcarf72r23ti6si0msf7i4hn1.apps.googleusercontent.com
+    github:
+      app-id: 297bb858f9a0913ffbeb
+    linkedin:
+      app-id: 77ucyddpyo237x

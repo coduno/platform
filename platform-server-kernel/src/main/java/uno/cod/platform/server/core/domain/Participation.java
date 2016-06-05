@@ -26,6 +26,12 @@ public class Participation {
     @ManyToOne
     private Team team;
 
+    /**
+     * If null, the team/user participates online
+     */
+    @ManyToOne
+    private Location location;
+
     @Column(nullable = false, updatable = false)
     private Date created = new Date();
 
@@ -51,5 +57,13 @@ public class Participation {
 
     public void setCreated(Date registerDate) {
         this.created = registerDate;
+    }
+
+    public Location getLocation() {
+        return location;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
     }
 }

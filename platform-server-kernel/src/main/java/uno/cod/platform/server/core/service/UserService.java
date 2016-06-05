@@ -5,12 +5,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import uno.cod.platform.server.core.domain.User;
 import uno.cod.platform.server.core.dto.user.*;
-import uno.cod.platform.server.core.exception.ResourceConflictException;
+import uno.cod.platform.server.core.exception.CodunoIllegalArgumentException;
+import uno.cod.platform.server.core.exception.CodunoNoSuchElementException;
+import uno.cod.platform.server.core.exception.CodunoResourceConflictException;
 import uno.cod.platform.server.core.repository.UserRepository;
 
 import javax.transaction.Transactional;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -29,11 +30,13 @@ public class UserService {
     public User createFromDto(UserCreateDto dto) {
         User found = repository.findByUsernameOrEmail(dto.getNick(), dto.getEmail());
         if (found != null) {
-            throw new ResourceConflictException("user.name.exists");
+            throw new CodunoResourceConflictException("user.name.exists", new String[]{dto.getNick()});
         }
         User user = new User();
         user.setUsername(dto.getNick());
         user.setEmail(dto.getEmail());
+        user.setFirstName(dto.getFirstName());
+        user.setLastName(dto.getLastName());
         user.setPassword(passwordEncoder.encode(dto.getPassword()));
         user.setEnabled(true);
         return repository.save(user);
@@ -41,10 +44,10 @@ public class UserService {
 
     public UserShowDto update(UserUpdateProfileDetailsDto dto, User user) {
         if (!dto.getUsername().equals(user.getUsername()) && repository.findByUsername(dto.getUsername()) != null) {
-            throw new ResourceConflictException("user.name.exists");
+            throw new CodunoResourceConflictException("user.name.exists", new String[]{dto.getUsername()});
         }
         if (!dto.getEmail().equals(user.getEmail()) && repository.findByEmail(dto.getEmail()) != null) {
-            throw new ResourceConflictException("email.existing");
+            throw new CodunoResourceConflictException("email.existing", new String[]{dto.getEmail()});
         }
         user.setUsername(dto.getUsername());
         user.setEmail(dto.getEmail());
@@ -54,12 +57,14 @@ public class UserService {
     }
 
     public void updatePassword(UserPasswordChangeDto dto, User user) {
-        if (dto.getOldPassword().equals(dto.getNewPassword())) {
-            throw new IllegalArgumentException("new.password.matches.old");
-        }
         if (!passwordEncoder.matches(dto.getOldPassword(), user.getPassword())) {
-            throw new IllegalArgumentException("old.password.invalid");
+            throw new CodunoIllegalArgumentException("password.old.invalid");
         }
+
+        if (dto.getOldPassword().equals(dto.getNewPassword())) {
+            throw new CodunoIllegalArgumentException("password.new.match");
+        }
+
         user.setPassword(passwordEncoder.encode(dto.getNewPassword()));
         repository.save(user);
     }
@@ -67,7 +72,7 @@ public class UserService {
     public UserShowDto findByUsername(String username) {
         User user = repository.findByUsername(username);
         if (user == null) {
-            throw new NoSuchElementException("user.invalid");
+            throw new CodunoNoSuchElementException("user.invalid");
         }
         return new UserShowDto(user);
     }
@@ -75,7 +80,7 @@ public class UserService {
     public CurrentUserDto findCurrentUser(UUID id) {
         User user = repository.findOne(id);
         if (user == null) {
-            throw new NoSuchElementException("user.invalid");
+            throw new CodunoNoSuchElementException("user.invalid");
         }
         return new CurrentUserDto(user);
     }
@@ -83,7 +88,7 @@ public class UserService {
     public UserShowDto findOne(UUID id) {
         User user = repository.findOne(id);
         if (user == null) {
-            throw new NoSuchElementException("user.invalid");
+            throw new CodunoNoSuchElementException("user.invalid");
         }
         return new UserShowDto(user);
     }
@@ -94,7 +99,7 @@ public class UserService {
 
     public List<UserShortShowDto> listUsersByUsernameContaining(String searchValue) {
         if (searchValue.length() <= 3) {
-            throw new IllegalArgumentException("user.search.length.invalid");
+            throw new CodunoIllegalArgumentException("user.search.length.invalid");
         }
 
         return repository.findByUsernameContaining(searchValue)
@@ -106,7 +111,7 @@ public class UserService {
     public UserShortShowDto findByEmail(String email) {
         User user = repository.findByEmail(email);
         if (user == null) {
-            throw new NoSuchElementException("user.invalid");
+            throw new CodunoNoSuchElementException("user.invalid");
         }
         return new UserShortShowDto(user);
     }

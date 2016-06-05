@@ -10,11 +10,15 @@ import uno.cod.platform.server.core.domain.User;
 import uno.cod.platform.server.core.dto.challenge.ChallengeCreateDto;
 import uno.cod.platform.server.core.dto.challenge.ChallengeDto;
 import uno.cod.platform.server.core.dto.challenge.UserChallengeShowDto;
-import uno.cod.platform.server.core.repository.*;
+import uno.cod.platform.server.core.repository.ChallengeRepository;
+import uno.cod.platform.server.core.repository.ChallengeTemplateRepository;
+import uno.cod.platform.server.core.repository.LocationRepository;
+import uno.cod.platform.server.core.repository.ResultRepository;
 import uno.cod.platform.server.core.service.util.ChallengeTestUtil;
 import uno.cod.platform.server.core.service.util.ResultTestUtil;
 import uno.cod.platform.server.core.service.util.UserTestUtil;
 
+import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -24,13 +28,15 @@ public class ChallengeServiceTest {
     private ChallengeRepository repository;
     private ChallengeTemplateRepository challengeTemplateRepository;
     private ResultRepository resultRepository;
+    private LocationRepository locationRepository;
 
     @Before
     public void setup() {
         repository = Mockito.mock(ChallengeRepository.class);
         challengeTemplateRepository = Mockito.mock(ChallengeTemplateRepository.class);
         resultRepository = Mockito.mock(ResultRepository.class);
-        service = new ChallengeService(repository, challengeTemplateRepository, resultRepository);
+        locationRepository = Mockito.mock(LocationRepository.class);
+        service = new ChallengeService(repository, challengeTemplateRepository, resultRepository, locationRepository);
     }
 
     @Test
@@ -66,11 +72,12 @@ public class ChallengeServiceTest {
     @Test
     public void getUserChallenges() throws Exception {
         Challenge challenge = ChallengeTestUtil.getChallenge();
+        challenge.setEndDate(ZonedDateTime.now().plusDays(5));
         Result result = ResultTestUtil.getResult();
         result.setFinished(null);
         User user = UserTestUtil.getUser();
 
-        Mockito.when(repository.findAllWithOrganizationAndInvitedUsersAndRegisteredUsers()).thenReturn(Collections.singletonList(challenge));
+        Mockito.when(repository.findAllValidWithOrganizationAndInvitedUsersAndRegisteredUsers(user.getId())).thenReturn(Collections.singletonList(challenge));
         Mockito.when(resultRepository.findOneByUserAndChallenge(user.getId(), challenge.getId())).thenReturn(result);
 
         List<UserChallengeShowDto> dtos = service.getPublicChallenges(user);

@@ -2,6 +2,7 @@ package uno.cod.platform.server.core.dto.challenge;
 
 import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
+import java.util.Set;
 import java.util.UUID;
 
 public class ChallengeCreateDto {
@@ -14,6 +15,8 @@ public class ChallengeCreateDto {
     private String canonicalName;
     private boolean inviteOnly;
     private ZonedDateTime startDate;
+
+    private Set<UUID> locations;
 
     public String getName() {
         return name;
@@ -53,5 +56,13 @@ public class ChallengeCreateDto {
 
     public void setTemplateId(UUID templateId) {
         this.templateId = templateId;
+    }
+
+    public Set<UUID> getLocations() {
+        return locations;
+    }
+
+    public void setLocations(Set<UUID> locations) {
+        this.locations = locations;
     }
 }

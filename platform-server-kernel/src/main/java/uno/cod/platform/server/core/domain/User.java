@@ -2,7 +2,7 @@ package uno.cod.platform.server.core.domain;
 
 import org.hibernate.validator.constraints.Email;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.social.security.SocialUserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -22,7 +22,7 @@ import java.util.*;
                 @NamedAttributeNode("invitedChallenges")
         }
 )
-public class User extends IdentifiableEntity implements UserDetails, CanonicalEntity {
+public class User extends IdentifiableEntity implements SocialUserDetails, CanonicalEntity {
     private static final long serialVersionUID = 1L;
 
     @Column(unique = true, nullable = false)
@@ -247,7 +247,11 @@ public class User extends IdentifiableEntity implements UserDetails, CanonicalEn
     }
 
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return new ArrayList<>();
+        ArrayList<GrantedAuthority> ga = new ArrayList<>();
+        if (isAdmin()) {
+            ga.add(() -> "ROLE_ADMIN");
+        }
+        return ga;
     }
 
     public void addOrganizationMembership(OrganizationMembership membership) {
@@ -315,5 +319,10 @@ public class User extends IdentifiableEntity implements UserDetails, CanonicalEn
     @Override
     public int hashCode() {
         return email != null ? email.hashCode() : 0;
+    }
+
+    @Override
+    public String getUserId() {
+        return getId().toString();
     }
 }

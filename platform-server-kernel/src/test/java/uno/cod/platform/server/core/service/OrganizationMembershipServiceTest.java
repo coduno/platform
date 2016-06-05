@@ -8,7 +8,8 @@ import uno.cod.platform.server.core.domain.OrganizationMembership;
 import uno.cod.platform.server.core.domain.OrganizationMembershipKey;
 import uno.cod.platform.server.core.domain.User;
 import uno.cod.platform.server.core.dto.organization.member.OrganizationMembershipCreateDto;
-import uno.cod.platform.server.core.exception.ResourceConflictException;
+import uno.cod.platform.server.core.exception.CodunoIllegalArgumentException;
+import uno.cod.platform.server.core.exception.CodunoResourceConflictException;
 import uno.cod.platform.server.core.repository.OrganizationMembershipRepository;
 import uno.cod.platform.server.core.repository.OrganizationRepository;
 import uno.cod.platform.server.core.repository.UserRepository;
@@ -48,7 +49,7 @@ public class OrganizationMembershipServiceTest {
         service.save(createDto, organization.getId());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = CodunoIllegalArgumentException.class)
     public void saveUserInvalid() throws Exception {
         User user = UserTestUtil.getUser();
         Organization organization = OrganizationTestUtil.getOrganization();
@@ -66,7 +67,7 @@ public class OrganizationMembershipServiceTest {
         service.save(createDto, organization.getId());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = CodunoIllegalArgumentException.class)
     public void saveOrganizationInvalid() throws Exception {
         User user = UserTestUtil.getUser();
         Organization organization = OrganizationTestUtil.getOrganization();
@@ -84,7 +85,7 @@ public class OrganizationMembershipServiceTest {
         service.save(createDto, organization.getId());
     }
 
-    @Test(expected = ResourceConflictException.class)
+    @Test(expected = CodunoResourceConflictException.class)
     public void saveMembershipExisting() throws Exception {
         User user = UserTestUtil.getUser();
         Organization organization = OrganizationTestUtil.getOrganization();
@@ -113,7 +114,7 @@ public class OrganizationMembershipServiceTest {
         service.delete(user.getId(), organization.getId());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = CodunoIllegalArgumentException.class)
     public void deleteUserInvalid() throws Exception {
         User user = UserTestUtil.getUser();
         Organization organization = OrganizationTestUtil.getOrganization();
@@ -124,7 +125,7 @@ public class OrganizationMembershipServiceTest {
         service.delete(user.getId(), organization.getId());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = CodunoIllegalArgumentException.class)
     public void deleteOrganizationInvalid() throws Exception {
         User user = UserTestUtil.getUser();
         Organization organization = OrganizationTestUtil.getOrganization();

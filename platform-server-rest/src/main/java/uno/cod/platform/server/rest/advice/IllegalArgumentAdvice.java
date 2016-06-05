@@ -7,8 +7,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
+import uno.cod.platform.server.core.dto.ExceptionDto;
+import uno.cod.platform.server.core.exception.CodunoException;
+import uno.cod.platform.server.core.exception.CodunoIllegalArgumentException;
 
 @ControllerAdvice(annotations = RestController.class)
 public class IllegalArgumentAdvice extends AbstractLocalizedAdvice {
@@ -18,8 +22,9 @@ public class IllegalArgumentAdvice extends AbstractLocalizedAdvice {
         super(messageSource);
     }
 
-    @ExceptionHandler(value = IllegalArgumentException.class)
-    public ResponseEntity<Object> handleIllegalArgument(final Exception ex, WebRequest request) {
-        return new ResponseEntity<>(getMessage(ex, request), HttpStatus.BAD_REQUEST);
+    @ExceptionHandler(value = CodunoIllegalArgumentException.class)
+    @ResponseBody
+    public ResponseEntity<ExceptionDto> handleIllegalArgument(final CodunoException ex, WebRequest request) {
+        return buildResponse(ex, request, HttpStatus.BAD_REQUEST);
     }
 }

@@ -9,6 +9,7 @@ import uno.cod.platform.server.core.domain.User;
 import uno.cod.platform.server.core.dto.organization.OrganizationCreateDto;
 import uno.cod.platform.server.core.dto.organization.OrganizationShowDto;
 import uno.cod.platform.server.core.dto.organization.member.OrganizationMembershipShowDto;
+import uno.cod.platform.server.core.exception.CodunoIllegalArgumentException;
 import uno.cod.platform.server.core.mapper.OrganizationMapper;
 import uno.cod.platform.server.core.repository.OrganizationMembershipRepository;
 import uno.cod.platform.server.core.repository.OrganizationRepository;
@@ -38,7 +39,7 @@ public class OrganizationService {
 
     public void createFromDto(OrganizationCreateDto dto, String owner) {
         if (organizationRepository.findByNick(dto.getNick()) != null) {
-            throw new IllegalArgumentException("organization.invalid");
+            throw new CodunoIllegalArgumentException("organization.invalid");
         }
         Organization organization = new Organization();
         organization.setNick(dto.getNick());
@@ -65,7 +66,7 @@ public class OrganizationService {
     public List<OrganizationMembershipShowDto> findUserOrganizations(String username) {
         User user = userRepository.findByUsernameOrEmail(username, username);
         if (user == null) {
-            throw new IllegalArgumentException("user.invalid");
+            throw new CodunoIllegalArgumentException("user.invalid");
         }
         if (user.getOrganizationMemberships() == null) {
             return Collections.emptyList();
