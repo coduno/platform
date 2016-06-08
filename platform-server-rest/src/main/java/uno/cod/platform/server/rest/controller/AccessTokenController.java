@@ -47,5 +47,4 @@ public class AccessTokenController {
         accessTokenService.deleteToken(dto.getId(), user);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
 }

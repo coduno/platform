@@ -77,4 +77,7 @@ public class RestUrls {
     public static final String CONNECT = "/connect";
     public static final String CONNECT_PROVIDERID = "/connect/{providerId}";
     public static final String CONNECT_PROVIDERID_USERID = "/connect/{providerId}/{providerUserId}";
+
+    public static final String TERMS = "/terms";
+    public static final String TERMS_ACCEPT = "/terms/accept";
 }

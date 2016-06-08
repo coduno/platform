@@ -18,8 +18,10 @@ import java.util.Map;
 public class MailService {
     private final SpringTemplateEngine templateEngine;
     private final JavaMailSender mailSender;
+
     @Value("${coduno.url}")
     private String url;
+
     @Value("${coduno.mail.from}")
     private String fromMail;
 

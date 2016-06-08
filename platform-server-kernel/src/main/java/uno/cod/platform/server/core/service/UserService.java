@@ -11,6 +11,7 @@ import uno.cod.platform.server.core.exception.CodunoResourceConflictException;
 import uno.cod.platform.server.core.repository.UserRepository;
 
 import javax.transaction.Transactional;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -115,5 +116,9 @@ public class UserService {
         }
         return new UserShortShowDto(user);
     }
-}
 
+    public void acceptTerms(User user) {
+        user.setTermsAccepted(ZonedDateTime.now());
+        repository.save(user);
+    }
+}
