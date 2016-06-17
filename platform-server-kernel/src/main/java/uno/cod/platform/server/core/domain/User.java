@@ -129,6 +129,11 @@ public class User extends IdentifiableEntity implements SocialUserDetails, Canon
         this.lastName = lastName;
     }
 
+    @Transient
+    public String getFullName() {
+        return firstName + " " + lastName;
+    }
+
     public Set<AccessToken> getAccessTokens() {
         return Collections.unmodifiableSet(accessTokens);
     }
