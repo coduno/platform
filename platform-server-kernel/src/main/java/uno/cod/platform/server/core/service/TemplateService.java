@@ -76,7 +76,11 @@ public class TemplateService {
         );
 
         if (urls.isEmpty()) {
-            throw new CodunoNoSuchElementException("template.invalid");
+            urls = storage.exposeFilesInFolder(
+                    bucket,
+                    "default" + "/" + objectName,
+                    (System.currentTimeMillis() / 1000) + expiryDuration.getSeconds()
+            );
         }
 
         return urls;
