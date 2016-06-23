@@ -11,7 +11,7 @@ import java.util.*;
 
 /**
  * A user, can be a coder, an organization employee, lecturer, or all of them
- * The role of the user is defined by the profile, teams and organizationMemberships he belongs
+ * The role of the user is defined by the profile, teams and organizations he belongs to.
  */
 @Entity
 @Table(name = "user")
@@ -35,6 +35,7 @@ public class User extends IdentifiableEntity implements SocialUserDetails, Canon
 
     @Column(name = "first_name")
     private String firstName;
+
     @Column(name = "last_name")
     private String lastName;
 
@@ -49,27 +50,35 @@ public class User extends IdentifiableEntity implements SocialUserDetails, Canon
     private boolean admin;
 
     /**
-     * The current coding profile, represents his skills
+     * Set when the user accepts "Terms and Conditions" to use our software.
+     * If this is null, the user has not accepted any terms, so we should be
+     * careful.
+     */
+    @Column(name = "terms_accepted")
+    private ZonedDateTime termsAccepted;
+
+    /**
+     * The current coding profile, represents his skills.
      */
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "coder_profile")
     private CoderProfile coderProfile;
 
     /**
-     * Organizations he belongs to, like github organizationMemberships
+     * Organizations he belongs to, like GitHub organization memberships.
      */
     @OneToMany(mappedBy = "key.user")
     private Set<OrganizationMembership> organizationMemberships;
 
     /**
      * Teams he belongs to, can be used across multiple
-     * challenges
+     * challenges.
      */
     @OneToMany(mappedBy = "key.user")
     private Set<TeamMember> teams;
 
     /**
-     * Private (company) challenges he is invited
+     * Private (company) challenges he is invited to do.
      */
     @ManyToMany(mappedBy = "invitedUsers")
     private Set<Challenge> invitedChallenges;
@@ -296,6 +305,14 @@ public class User extends IdentifiableEntity implements SocialUserDetails, Canon
         }
         team.addInvitedUser(this);
         invitedTeams.add(team);
+    }
+
+    public ZonedDateTime getTermsAccepted() {
+        return termsAccepted;
+    }
+
+    public void setTermsAccepted(ZonedDateTime termsAccepted) {
+        this.termsAccepted = termsAccepted;
     }
 
     @Override

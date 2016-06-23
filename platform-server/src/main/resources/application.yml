@@ -18,6 +18,8 @@ coduno:
     bucket: coduno-tests
   instructions:
     bucket: coduno
+  geolocation:
+    url: http://geolite.maxmind.com/download/geoip/database/GeoLite2-Country.mmdb.gz
 
 spring:
   application.name: Coduno Platform

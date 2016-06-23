@@ -13,7 +13,6 @@ dependencies {
     compile "org.springframework.social:spring-social-github:1.0.0.M4"
     compile "org.springframework.social:spring-social-google:1.0.0.RELEASE"
 
-
     compile "org.springframework.session:spring-session"
 
     compile "org.hibernate:hibernate-entitymanager"
@@ -28,4 +27,6 @@ dependencies {
 
     compile "com.h2database:h2"
     compile "org.mariadb.jdbc:mariadb-java-client"
+
+    compile "com.maxmind.geoip2:geoip2:2.7.0"
 }
