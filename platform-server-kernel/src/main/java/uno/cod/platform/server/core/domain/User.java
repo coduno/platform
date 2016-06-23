@@ -131,7 +131,14 @@ public class User extends IdentifiableEntity implements SocialUserDetails, Canon
 
     @Transient
     public String getFullName() {
-        return firstName + " " + lastName;
+        String name = "";
+        if (firstName != null) {
+            name = firstName + " ";
+        }
+        if (lastName != null) {
+            name += lastName;
+        }
+        return name;
     }
 
     public Set<AccessToken> getAccessTokens() {

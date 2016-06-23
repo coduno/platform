@@ -36,23 +36,27 @@ public class TeamInvitationService {
         this.teamService = teamService;
     }
 
-    public void create(User invitingUser, String usernameToInvite, String canonicalName) {
-        User user = userRepository.findByUsername(usernameToInvite);
+    public void create(User invitingUser, User user, Team team, boolean existingCheck) {
         if (user == null) {
             throw new CodunoIllegalArgumentException("user.invalid");
         }
-        Team team = teamRepository.findByCanonicalNameAndEnabledTrue(canonicalName);
         if (team == null) {
             throw new CodunoIllegalArgumentException("team.invalid");
         }
         if (team.getInvitedUsers().contains(user)) {
-            throw new CodunoIllegalArgumentException("team.user.already.invited");
+            if (existingCheck) {
+                throw new CodunoIllegalArgumentException("team.user.already.invited");
+            }
+            return;
         }
         TeamUserKey key = new TeamUserKey();
         key.setUser(user);
         key.setTeam(team);
         if (teamMemberRepository.findOne(key) != null) {
-            throw new CodunoIllegalArgumentException("team.has.member");
+            if (existingCheck) {
+                throw new CodunoIllegalArgumentException("team.has.member");
+            }
+            return;
         }
         TeamInvitation invitation = new TeamInvitation();
         invitation.setKey(key);
@@ -62,6 +66,12 @@ public class TeamInvitationService {
         user.addInvitedTeam(team);
         teamRepository.save(team);
         userRepository.save(user);
+    }
+
+    public void create(User invitingUser, String usernameToInvite, String canonicalName) {
+        User user = userRepository.findByUsername(usernameToInvite);
+        Team team = teamRepository.findByCanonicalNameAndEnabledTrue(canonicalName);
+        create(invitingUser, user, team, true);
     }
 
     public void acceptInvitation(User user, String canonicalName) {

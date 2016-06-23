@@ -5,12 +5,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import uno.cod.platform.server.core.domain.Participation;
+import uno.cod.platform.server.core.domain.ParticipationKey;
 
 import java.util.Set;
 import java.util.UUID;
 
 @Repository
-public interface ParticipationRepository extends JpaRepository<Participation, UUID> {
+public interface ParticipationRepository extends JpaRepository<Participation, ParticipationKey> {
     @Query("SELECT participation FROM Participation      participation " +
             "LEFT JOIN FETCH participation.key.challenge challenge " +
             "LEFT JOIN FETCH participation.key.user      user " +

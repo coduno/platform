@@ -20,6 +20,7 @@ public class ParticipationService {
     private final ChallengeRepository challengeRepository;
     private final TeamRepository teamRepository;
     private final ParticipationRepository participationRepository;
+    private final ParticipationInvitationRepository participationInvitationRepository;
     private final LocationRepository locationRepository;
 
     @Autowired
@@ -27,11 +28,12 @@ public class ParticipationService {
                                 ChallengeRepository challengeRepository,
                                 TeamRepository teamRepository,
                                 ParticipationRepository participationRepository,
-                                LocationRepository locationRepository) {
+                                ParticipationInvitationRepository participationInvitationRepository, LocationRepository locationRepository) {
         this.userRepository = userRepository;
         this.challengeRepository = challengeRepository;
         this.teamRepository = teamRepository;
         this.participationRepository = participationRepository;
+        this.participationInvitationRepository = participationInvitationRepository;
         this.locationRepository = locationRepository;
     }
 
@@ -74,6 +76,12 @@ public class ParticipationService {
         }
 
         participationRepository.save(participation);
+
+        ParticipationInvitation invitation = participationInvitationRepository.findOneByChallengeAndEmailsContaining(challenge.getId(), user.getEmail());
+        if (invitation != null) {
+            invitation.getEmails().remove(user.getEmail());
+            participationInvitationRepository.save(invitation);
+        }
     }
 
     public void unregisterFromChallenge(User user, String challengeCanonicalName) {

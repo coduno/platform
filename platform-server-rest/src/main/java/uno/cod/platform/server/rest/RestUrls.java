@@ -25,7 +25,6 @@ public class RestUrls {
     public static final String INVITE = "/invite";
     public static final String INVITE_AUTH_TOKEN = "/invite/auth/{token}";
 
-
     public static final String USERS = "/users";
     public static final String USERS_USERNAME = "/users/{username}";
     public static final String USERS_USERNAME_TEAMS = "/users/{username}/teams";
@@ -80,4 +79,6 @@ public class RestUrls {
     public static final String CONNECT = "/connect";
     public static final String CONNECT_PROVIDERID = "/connect/{providerId}";
     public static final String CONNECT_PROVIDERID_USERID = "/connect/{providerId}/{providerUserId}";
+
+    public static final String PARTICIPATION_INVITATIONS = "/participation/invitations";
 }
