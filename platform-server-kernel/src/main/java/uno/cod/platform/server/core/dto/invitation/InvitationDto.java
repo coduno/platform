@@ -1,14 +1,13 @@
 package uno.cod.platform.server.core.dto.invitation;
 
 import javax.validation.constraints.NotNull;
-import java.util.UUID;
 
 public class InvitationDto {
     @NotNull
     private String email;
 
     @NotNull
-    private UUID challengeId;
+    private String canonicalName;
 
     public String getEmail() {
         return email;
@@ -18,11 +17,11 @@ public class InvitationDto {
         this.email = email;
     }
 
-    public UUID getChallengeId() {
-        return challengeId;
+    public String getCanonicalName() {
+        return canonicalName;
     }
 
-    public void setChallengeId(UUID challengeId) {
-        this.challengeId = challengeId;
+    public void setCanonicalName(String canonicalName) {
+        this.canonicalName = canonicalName;
     }
 }

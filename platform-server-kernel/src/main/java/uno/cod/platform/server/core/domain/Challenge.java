@@ -181,6 +181,12 @@ public class Challenge extends IdentifiableEntity implements CanonicalEntity {
         locations.add(location);
     }
 
+    public void removeLocation(Location location) {
+        if (location != null) {
+            locations.remove(location);
+        }
+    }
+
     public Set<Location> getLocations() {
         return Collections.unmodifiableSet(locations);
     }

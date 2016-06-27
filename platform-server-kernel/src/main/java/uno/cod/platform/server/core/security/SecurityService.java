@@ -93,6 +93,30 @@ public class SecurityService {
         return canAccessChallenge(userRepository.findByUsername(user), canonicalName);
     }
 
+    public boolean canEditChallenge(User user, String canonicalName) {
+        if (canonicalName == null || canonicalName.isEmpty()) {
+            return false;
+        }
+        if (user == null) {
+            return false;
+        }
+        user = userRepository.findOne(user.getId());
+
+        Challenge challenge = challengeRepository.findOneByCanonicalNameWithTemplate(canonicalName);
+        if (challenge == null) {
+            return false;
+        }
+
+        if (user.getOrganizationMemberships() != null) {
+            for (OrganizationMembership membership : user.getOrganizationMemberships()) {
+                if (membership.getKey().getOrganization().equals(challenge.getChallengeTemplate().getOrganization())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     public boolean canAccessChallenge(User user, String canonicalName) {
         if (canonicalName == null || canonicalName.isEmpty()) {
             return false;

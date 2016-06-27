@@ -14,7 +14,6 @@ import javax.mail.MessagingException;
 import javax.validation.Valid;
 import java.security.Principal;
 import java.util.Set;
-import java.util.UUID;
 
 @RestController
 public class InvitationController {
@@ -40,7 +39,7 @@ public class InvitationController {
     }
 
     @RequestMapping(value = RestUrls.INVITE_AUTH_TOKEN, method = RequestMethod.GET)
-    public ResponseEntity<UUID> authByToken(@PathVariable String token) {
+    public ResponseEntity<String> authByToken(@PathVariable String token) {
         return new ResponseEntity<>(service.authByToken(token), HttpStatus.OK);
     }
 

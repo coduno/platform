@@ -7,6 +7,8 @@ import java.util.UUID;
 public class LocationShowDto {
     private UUID id;
     private String name;
+    private String description;
+    private String address;
     private String placeId;
     private Float latitude;
     private Float longitude;
@@ -14,6 +16,8 @@ public class LocationShowDto {
     public LocationShowDto(Location location) {
         this.id = location.getId();
         this.name = location.getName();
+        this.description = location.getDescription();
+        this.address = location.getAddress();
         this.placeId = location.getPlaceId();
         this.latitude = location.getLatitude();
         this.longitude = location.getLongitude();
@@ -57,5 +61,21 @@ public class LocationShowDto {
 
     public void setLongitude(Float longitude) {
         this.longitude = longitude;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 }

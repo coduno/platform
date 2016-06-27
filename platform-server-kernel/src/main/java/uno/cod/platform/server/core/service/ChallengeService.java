@@ -6,7 +6,10 @@ import org.springframework.transaction.annotation.Transactional;
 import uno.cod.platform.server.core.domain.*;
 import uno.cod.platform.server.core.dto.challenge.ChallengeCreateDto;
 import uno.cod.platform.server.core.dto.challenge.ChallengeDto;
+import uno.cod.platform.server.core.dto.challenge.ChallengeUpdateDto;
 import uno.cod.platform.server.core.dto.challenge.UserChallengeShowDto;
+import uno.cod.platform.server.core.dto.location.LocationShowDto;
+import uno.cod.platform.server.core.dto.location.LocationUpdateDto;
 import uno.cod.platform.server.core.exception.CodunoIllegalArgumentException;
 import uno.cod.platform.server.core.exception.CodunoResourceConflictException;
 import uno.cod.platform.server.core.mapper.ChallengeMapper;
@@ -16,6 +19,7 @@ import uno.cod.platform.server.core.repository.LocationRepository;
 import uno.cod.platform.server.core.repository.ResultRepository;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -39,7 +43,30 @@ public class ChallengeService {
         this.locationRepository = locationRepository;
     }
 
-    public UUID createFromDto(ChallengeCreateDto dto) {
+    public String updateChallengeInfo(ChallengeUpdateDto dto) {
+        Challenge challenge = repository.findOne(dto.getId());
+        if (challenge == null) {
+            throw new CodunoIllegalArgumentException("challenge.invalid");
+        }
+
+        Challenge duplicate = repository.findOneByCanonicalName(dto.getCanonicalName());
+        if (duplicate != null && !duplicate.getId().equals(challenge.getId())) {
+            throw new CodunoResourceConflictException("challenge.canonicalName.existing", new String[]{dto.getCanonicalName()});
+        }
+
+        challenge.setName(dto.getName());
+        challenge.setCanonicalName(dto.getCanonicalName());
+        challenge.setStartDate(dto.getStartDate());
+        if (dto.getStartDate() != null) {
+            challenge.setEndDate(dto.getStartDate().plus(challenge.getChallengeTemplate().getDuration()));
+        } else {
+            challenge.setEndDate(null);
+        }
+        challenge.setInviteOnly(dto.isInviteOnly());
+        return repository.save(challenge).getCanonicalName();
+    }
+
+    public String createFromDto(ChallengeCreateDto dto) {
         ChallengeTemplate template = challengeTemplateRepository.findOne(dto.getTemplateId());
         if (template == null) {
             throw new CodunoIllegalArgumentException("challenge.invalid");
@@ -57,12 +84,64 @@ public class ChallengeService {
             challenge.setEndDate(dto.getStartDate().plus(template.getDuration()));
         }
         if (dto.getLocations() != null) {
-            for (UUID locationId : dto.getLocations()) {
-                challenge.addLocation(locationRepository.findOne(locationId));
+            for (LocationUpdateDto locationDto : dto.getLocations()) {
+                challenge.addLocation(createLocationFromDto(locationDto));
             }
         }
         challenge.setInviteOnly(dto.isInviteOnly());
-        return repository.save(challenge).getId();
+        return repository.save(challenge).getCanonicalName();
+    }
+
+    public void updateLocations(String canonicalName, List<LocationUpdateDto> locations) {
+        Challenge challenge = repository.findOneByCanonicalName(canonicalName);
+        if (challenge == null) {
+            throw new CodunoIllegalArgumentException("challenge.invalid");
+        }
+
+        List<Location> locationsToRemove = new ArrayList<>();
+
+        for (Location location : challenge.getLocations()) {
+            boolean found = false;
+            for (LocationUpdateDto dto : locations) {
+                if (location.getId().equals(dto.getId())) {
+                    found = true;
+                }
+            }
+            if (!found) {
+                locationsToRemove.add(location);
+            }
+        }
+        for (Location location : locationsToRemove) {
+            challenge.removeLocation(location);
+        }
+        repository.save(challenge);
+
+        for (LocationUpdateDto dto : locations) {
+            if (dto.getId() != null) {
+                updateLocation(dto);
+            } else {
+                challenge.addLocation(createLocationFromDto(dto));
+            }
+        }
+        repository.save(challenge);
+    }
+
+    private void updateLocation(LocationUpdateDto dto) {
+        Location location = locationRepository.findOne(dto.getId());
+        location.setName(dto.getName());
+        location.setDescription(dto.getDescription());
+        locationRepository.save(location);
+    }
+
+    private Location createLocationFromDto(LocationUpdateDto dto) {
+        Location location = new Location();
+        location.setName(dto.getName());
+        location.setDescription(dto.getDescription());
+        location.setAddress(dto.getAddress());
+        location.setPlaceId(dto.getPlaceId());
+        location.setLatitude(dto.getLatitude());
+        location.setLongitude(dto.getLongitude());
+        return locationRepository.save(location);
     }
 
     public ChallengeDto findOneByCanonicalName(String canonicalName) {
@@ -76,7 +155,7 @@ public class ChallengeService {
     public UserChallengeShowDto getChallengeStatusForUser(String name, User user) {
         UserChallengeShowDto dto = new UserChallengeShowDto();
         Challenge challenge = repository.findOneByCanonicalNameWithInvitedUsersAndRegisteredUsers(name);
-        addStatus(dto, challenge, user);
+        addStatusAndLocation(dto, challenge, user);
         return dto;
     }
 
@@ -85,14 +164,14 @@ public class ChallengeService {
         return challenges.stream().map(challenge -> {
             UserChallengeShowDto dto = new UserChallengeShowDto();
             dto.setChallenge(new ChallengeDto(challenge));
-            addStatus(dto, challenge, user);
+            addStatusAndLocation(dto, challenge, user);
 
             return dto;
 
         }).filter(p -> p != null).collect(Collectors.toList());
     }
 
-    private void addStatus(UserChallengeShowDto dto, Challenge challenge, User user) {
+    private void addStatusAndLocation(UserChallengeShowDto dto, Challenge challenge, User user) {
         UserChallengeShowDto.ChallengeStatus status = null;
 
         if (challenge.getInvitedUsers() != null && challenge.getInvitedUsers().contains(user)) {
@@ -101,6 +180,9 @@ public class ChallengeService {
             for (Participation participation : challenge.getParticipations()) {
                 if (participation.getKey().getUser().equals(user)) {
                     status = UserChallengeShowDto.ChallengeStatus.REGISTERED;
+                    if (participation.getLocation() != null) {
+                        dto.setLocation(new LocationShowDto(participation.getLocation()));
+                    }
                     if (participation.getTeam() != null) {
                         dto.setRegisteredAs(participation.getTeam().getName());
                     } else {

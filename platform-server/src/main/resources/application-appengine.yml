@@ -8,24 +8,14 @@ spring:
   profiles.active: appengine
 
   mail:
-    host: smtp.gmail.com
+    host: smtp.mailgun.org
+    port: 2525
     username: x
-    # http://code.google.com/p/google-mail-oauth2-tools/wiki/JavaSampleCode => python/oauth2.py
-    # oauth2.py --user=jakob.englisch@cod.uno \
-    #      --client_id=*.apps.googleusercontent.com \
-    #      --client_secret=* \
-    #      --generate_oauth2_token
-    # => access token == password
     password: x
-    # https://java.net/projects/javamail/pages/OAuth2 - can be simplified with 1.5.5
-    properties:
-      mail.smtp.ssl.enable: true
-      mail.smtp.sasl.enable: true
-      mail.smtp.sasl.mechanisms: "XOAUTH2"
-      mail.smtp.auth.plain.disable: true
-      mail.smtp.auth.login.disable: true
-
     test-connection: false
+    properties:
+      mail.smtp.starttls.enable: true
+
 
   datasource:
     driverClassName: org.mariadb.jdbc.Driver

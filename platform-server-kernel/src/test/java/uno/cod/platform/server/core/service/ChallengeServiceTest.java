@@ -46,12 +46,13 @@ public class ChallengeServiceTest {
         ChallengeCreateDto dto = ChallengeTestUtil.getChallengeCreateDto();
         Challenge challenge = ChallengeTestUtil.getChallenge(dto);
         challenge.setId(UUID.randomUUID());
+        challenge.setCanonicalName(UUID.randomUUID().toString());
 
         Mockito.when(challengeTemplateRepository.findOne(dto.getTemplateId())).thenReturn(challenge.getChallengeTemplate());
         Mockito.when(repository.save(Mockito.any(Challenge.class))).thenReturn(challenge);
 
-        UUID id = service.createFromDto(dto);
-        Assert.assertEquals(id, challenge.getId());
+        String canonicalName = service.createFromDto(dto);
+        Assert.assertEquals(canonicalName, challenge.getCanonicalName());
     }
 
     @Test

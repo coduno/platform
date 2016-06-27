@@ -25,7 +25,7 @@ public class RestConfig {
     public ResourceBundleMessageSource exceptionMessageSource() {
         ResourceBundleMessageSource bean = new ResourceBundleMessageSource();
         bean.setFallbackToSystemLocale(false);
-        bean.setBasename("i18n/exceptions");
+        bean.setBasenames("i18n/exceptions", "i18n/validation");
         return bean;
     }
 

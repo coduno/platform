@@ -7,10 +7,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import uno.cod.platform.server.core.domain.User;
-import uno.cod.platform.server.core.dto.challenge.ChallengeCreateDto;
-import uno.cod.platform.server.core.dto.challenge.ChallengeDto;
-import uno.cod.platform.server.core.dto.challenge.ParticipationCreateDto;
-import uno.cod.platform.server.core.dto.challenge.UserChallengeShowDto;
+import uno.cod.platform.server.core.dto.NameDto;
+import uno.cod.platform.server.core.dto.challenge.*;
+import uno.cod.platform.server.core.dto.location.LocationUpdateDto;
 import uno.cod.platform.server.core.dto.participation.ParticipationShowDto;
 import uno.cod.platform.server.core.service.ChallengeService;
 import uno.cod.platform.server.core.service.ParticipationService;
@@ -19,7 +18,6 @@ import uno.cod.platform.server.rest.RestUrls;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
 @RestController
 public class ChallengeController {
@@ -47,8 +45,8 @@ public class ChallengeController {
 
     @RequestMapping(value = RestUrls.CHALLENGES, method = RequestMethod.POST)
     @PreAuthorize("isAuthenticated() and @securityService.canAccessChallengeTemplate(principal, #dto.templateId)")
-    public ResponseEntity<UUID> createChallenge(@Valid @RequestBody ChallengeCreateDto dto) {
-        return new ResponseEntity<>(challengeService.createFromDto(dto), HttpStatus.CREATED);
+    public ResponseEntity<NameDto> createChallenge(@Valid @RequestBody ChallengeCreateDto dto) {
+        return new ResponseEntity<>(new NameDto(challengeService.createFromDto(dto)), HttpStatus.CREATED);
     }
 
     @RequestMapping(value = RestUrls.CHALLENGES_PUBLIC, method = RequestMethod.GET)
@@ -63,6 +61,20 @@ public class ChallengeController {
                                            @Valid @RequestBody ParticipationCreateDto dto,
                                            @AuthenticationPrincipal User user) {
         participationService.registerForChallenge(user, challengeName, dto);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @RequestMapping(value = RestUrls.CHALLENGES, method = RequestMethod.PUT)
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<NameDto> updateChallengeInfo(@Valid @RequestBody ChallengeUpdateDto dto) {
+        return new ResponseEntity<>(new NameDto(challengeService.updateChallengeInfo(dto)), HttpStatus.OK);
+    }
+
+
+    @RequestMapping(value = RestUrls.CHALLENGES_CANONICAL_NAME_LOCATIONS, method = RequestMethod.PUT)
+    @PreAuthorize("isAuthenticated() and @securityService.canEditChallenge(principal, #canonicalName)")
+    public ResponseEntity<String> updateChallengeLocations(@PathVariable String canonicalName, @Valid @RequestBody List<LocationUpdateDto> locations) {
+        challengeService.updateLocations(canonicalName, locations);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

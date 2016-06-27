@@ -3,8 +3,7 @@ language: java
 notifications:
   email: false
   slack:
-    secure: "TU6gN0h07a/+H8I3EzNLuMv9UljB/c5MasRIB32ZiFni+eEj8III6C3Xf0m+uGKx5FeA/22CItE6K7PkeD1R4erb77uruhSn9Ngh1C5m+hs5+2Uj4Ocpf4PkFYKTysxMNT+0pblD0qFzTb6NQiict/3H01HZxlCuXuCVw0rJ/fuTEhQ33MLAqNCPBTj6XlAEuZfxsVLq49tXXW5sTaD7kBf+yHvAuws81UYdLmQKaRrqtH8PT5DfICRGQsz9lrh4gxiupURGusg1xldjIwjnK9BsQRxnjVD4hHurAEWvx4wwYBL816JJNXaSiyKUkYx7pqshjtqw8PtI5R6E59JP/fgGc2dS0tE6Ar/Y2CT3R5eHhI2OGbD90y3GIAgceFCHGYsWbuc5Bx89C0205CEY6S0o4DDKnb/OATS1wkoeObdkbpPpDO46qumJ6gFweMqhVphGR9VDRbpph4VWsb7FVLF1xsd40J8uQp/FN/FDslGLjKqhAvCG26tH2bbjlyG/AQyShujLwx3mvYLZwppyBkFdh8IjmsXTxRydrB4K88W/JCQDsJBru5jsWmPYQxqqpOyXvo5JSY75I0Ya4IJgxdTveu8pnLLjlCpY7eNUDPIYA84X+BlOrO7B82HCoMU0ABs4JWgFh+szXzwOMrtbfekX0NE3VonK6TVMI92uBkg="
-
+    secure: "nuX1zHeDPx3rEYb3gGhFgGWKggYug1OFaUZxV+lK74YIi/4pFynWIuvfuzfgInEb5Qj5mrKrc5OTRWcYBKCjJDHUTqU11crhalAyVrTMTKAYw3kIQqE21mBphKqDVRChMXutU9w5MOWMSDV5LLX9f2kU4yNy05eaTcr8YGTlS3l+UWOM/3Pcw6ZrRSGJJws2JyxtWXPsftIqWAmCuVJVS2gsZGU9IE1dJXwDx2Fiypeyuh4AtmByKOsKgDgLmUi/bV6lFAuQofFCOJpO7mBu4QwySolajnQQlT78KNQjvToo/IfiiasO81GoP1+mVZbZyCLw92kIfoYqWI6yDZzya96lM8Eba6F2y5D+CfDuSI5nhKR9t8U+BJvsz0yxCamu2mQNY/jl/zUZUTgZHLHp33HKloZOZggxCMTQNs5YOlKItCvES5q1k2YHWzw6oJTnhWNa5fdjcLDdiJHd5gIEBVraLWHsM9btQvASgcewMGoe52vV3GmsAF43U/mtsON0H54OsTij/x2QWlPIxPlRtdOFnZgo1LDWDDsYpmjfXjUGRik3D9ggLQKkSfj8Mpu/EFGYzT7MGqkNsCgfzMIYqRBelPqAtpiHkgxdTXTRiYZ0l0Q36krktFHtKdhxqQ2lSz2bn9c16Q7aDFdtl2w2pZCokvPezGpLRQ2pHmGlGcs="
 jdk:
   - oraclejdk8
 
@@ -32,11 +31,13 @@ before_deploy: ./gradlew bootRepackage
 deploy:
   - provider: gae
     project: coduno
+    version: "${TRAVIS_COMMIT:0:7}-${TRAVIS_BUILD_NUMBER}"
     skip_cleanup: true
     on:
       branch: master
   - provider: gae
     project: coduno-lab
+    version: "${TRAVIS_COMMIT:0:7}-${TRAVIS_BUILD_NUMBER}"
     skip_cleanup: true
     on:
       branch: dev

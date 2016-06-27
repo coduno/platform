@@ -18,6 +18,9 @@ public interface TeamInvitationRepository extends JpaRepository<TeamInvitation, 
 
     TeamInvitation findByKey(TeamUserKey key);
 
+    @Query("SELECT i FROM TeamInvitation i WHERE i.key.team=:team")
+    List<TeamInvitation> findAllByTeam(@Param("team") Team team);
+
     @Modifying
     @Query("DELETE FROM TeamInvitation i WHERE i.key.team = :team")
     List<TeamInvitation> deleteAllForTeam(@Param("team") Team team);

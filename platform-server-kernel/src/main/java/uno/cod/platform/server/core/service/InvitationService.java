@@ -68,7 +68,7 @@ public class InvitationService {
 
     public void invite(InvitationDto dto, String from) throws MessagingException {
         User invitingUser = userRepository.findByUsername(from);
-        Challenge challenge = challengeRepository.findOne(dto.getChallengeId());
+        Challenge challenge = challengeRepository.findOneByCanonicalName(dto.getCanonicalName());
 
         Organization organization = challenge.getChallengeTemplate().getOrganization();
         boolean ok = false;
@@ -117,7 +117,7 @@ public class InvitationService {
         mailService.sendMail("user", dto.getEmail(), "Challenge invitation", "challenge-invite.html", params, Locale.ENGLISH);
     }
 
-    public UUID authByToken(String token) {
+    public String authByToken(String token) {
         Invitation invite = invitationRepository.findOne(token);
         if (invite == null) {
             throw new CodunoAccessDeniedException("invite.token.invalid");
@@ -151,7 +151,7 @@ public class InvitationService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         httpSession.setAttribute(SPRING_SECURITY_CONTEXT_KEY, SecurityContextHolder.getContext());
 
-        return challenge.getId();
+        return challenge.getCanonicalName();
     }
 
     public List<InvitationShowDto> getByChallengeId(UUID challengeId) {

@@ -9,11 +9,15 @@ import java.util.Set;
 @Entity
 @Table(name = "location")
 public class Location extends IdentifiableEntity {
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     private String name;
 
-    @Column(name = "place_id", unique = true)
+    @Column(name = "place_id")
     private String placeId;
+
+    private String description;
+    private String address;
+
     private Float latitude;
     private Float longitude;
 
@@ -58,5 +62,21 @@ public class Location extends IdentifiableEntity {
 
     public void setChallenges(Set<Challenge> challenges) {
         this.challenges = challenges;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 }

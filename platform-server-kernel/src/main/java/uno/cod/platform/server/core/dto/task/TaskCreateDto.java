@@ -3,6 +3,7 @@ package uno.cod.platform.server.core.dto.task;
 import org.hibernate.validator.constraints.NotEmpty;
 import uno.cod.platform.server.core.domain.CodingSkill;
 import uno.cod.platform.server.core.dto.assignment.AssignmentCreateDto;
+import uno.cod.platform.server.core.util.constraints.CanonicalName;
 
 import javax.validation.constraints.NotNull;
 import java.util.Map;
@@ -12,8 +13,7 @@ import java.util.UUID;
 public class TaskCreateDto extends AssignmentCreateDto {
     private boolean isPublic;
 
-    @NotNull
-    @NotEmpty
+    @CanonicalName
     private String canonicalName;
 
     @NotNull

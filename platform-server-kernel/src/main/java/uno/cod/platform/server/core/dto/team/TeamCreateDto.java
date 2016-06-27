@@ -1,11 +1,14 @@
 package uno.cod.platform.server.core.dto.team;
 
+import uno.cod.platform.server.core.util.constraints.CanonicalName;
+
 import javax.validation.constraints.NotNull;
 
 public class TeamCreateDto {
     @NotNull
     private String name;
-    @NotNull
+
+    @CanonicalName
     private String canonicalName;
 
     public String getName() {

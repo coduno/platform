@@ -45,6 +45,9 @@ public class RestSecurityConfig extends WebSecurityConfigurerAdapter {
                 .exceptionHandling().authenticationEntryPoint(authenticationEntryPoint())
                 .and()
                 .logout()
+                    .clearAuthentication(false) // spring session bug - https://jira.spring.io/browse/SEC-3070
+                    .invalidateHttpSession(true)
+                    .logoutSuccessUrl(appUrl)
                 .and()
                 .addFilterBefore(new AccessTokenAuthenticationFilter(accessTokenService), UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
@@ -54,6 +57,7 @@ public class RestSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/challenges/*",
                         "/users",
                         "/ip",
+                        "/user/password/reset",
                         "/auth/**",
                         "/invite/auth/*").permitAll()
                 .anyRequest().authenticated()

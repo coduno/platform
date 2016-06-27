@@ -20,10 +20,10 @@ import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.Signature;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class GcsStorageDriver implements PlatformStorage {
     private static final Logger LOGGER = LoggerFactory.getLogger(GcsStorageDriver.class);
@@ -116,22 +116,25 @@ public class GcsStorageDriver implements PlatformStorage {
 
     @Override
     public List<String> exposeFilesInFolder(String bucket, String folderName, Long expiration) throws GeneralSecurityException, IOException {
-        if (!folderName.endsWith("/")) {
-            folderName = folderName.concat("/");
-        }
-        List<String> files = listFiles(bucket, folderName);
-        files.remove(folderName);
+        List<String> result = listFiles(bucket, folderName)
+                .parallelStream()
+                .filter(f -> !f.endsWith("/"))
+                .map(f -> {
+                    try {
+                        return exposeFile(bucket, f, expiration);
+                    } catch (GeneralSecurityException | IOException e) {
+                        LOGGER.warn("Could not expose file {} (bucket {})", f, bucket, e);
+                        return null;
+                    }
+                })
+                .filter(java.util.Objects::nonNull)
+                .collect(Collectors.toList());
 
-        if (files.isEmpty()) {
+        if (result.isEmpty()) {
             LOGGER.debug("Was asked to expose files in folder {} (bucket {}) but there are no objects inside?", folderName, bucket);
-            return Collections.emptyList();
         }
 
-        List<String> exposedFiles = new ArrayList<>(files.size());
-        for (String file : files) {
-            exposedFiles.add(exposeFile(bucket, file, expiration));
-        }
-        return exposedFiles;
+        return result;
     }
 
     @Override
