@@ -1,5 +1,5 @@
 coduno:
-  url: http://localhost:6060
+  url: http://localhost:5000
   runtime:
     url: http://localhost:8081
   codingcontest_url: https://codingcontest.lab.catalysts.cc
