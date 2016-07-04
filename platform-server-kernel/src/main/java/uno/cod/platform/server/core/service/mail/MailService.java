@@ -55,7 +55,7 @@ public class MailService {
         message.setTo(recipientEmail);
 
         // Create the HTML body using Thymeleaf
-        final String htmlContent = this.templateEngine.process(template, ctx).replaceAll("&amp;", "&");
+        final String htmlContent = this.templateEngine.process(template, ctx);
         message.setText(htmlContent, true); // true = isHtml
 
         // Send mail
