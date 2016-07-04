@@ -4,10 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+import uno.cod.platform.server.core.domain.User;
+import uno.cod.platform.server.core.dto.participation.ParticipationShowDto;
 import uno.cod.platform.server.core.dto.participation.invitation.ParticipationInvitationCreateDto;
 import uno.cod.platform.server.core.service.ParticipationInvitationService;
 import uno.cod.platform.server.rest.RestUrls;
@@ -28,5 +28,21 @@ public class ParticipationInvitationController {
     public ResponseEntity<String> createInvitation(@Valid @RequestBody ParticipationInvitationCreateDto dto) {
         service.save(dto);
         return new ResponseEntity<String>(HttpStatus.CREATED);
+    }
+
+    @RequestMapping(value = RestUrls.PARTICIPATION_INVITATIONS, method = RequestMethod.GET)
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<ParticipationShowDto> getByKey(@RequestParam("username") String username,
+                                                         @RequestParam("challenge") String challenge) {
+        return new ResponseEntity<>(service.get(username, challenge), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = RestUrls.PARTICIPATION_INVITATIONS_ACCEPT, method = RequestMethod.POST)
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<String> acceptInvitation(@RequestParam("username") String username,
+                                                   @RequestParam("challenge") String challenge,
+                                                   @AuthenticationPrincipal User user) {
+        service.accept(user, username, challenge);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

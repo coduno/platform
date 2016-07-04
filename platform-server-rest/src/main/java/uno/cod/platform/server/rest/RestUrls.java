@@ -81,4 +81,5 @@ public class RestUrls {
     public static final String CONNECT_PROVIDERID_USERID = "/connect/{providerId}/{providerUserId}";
 
     public static final String PARTICIPATION_INVITATIONS = "/participation/invitations";
+    public static final String PARTICIPATION_INVITATIONS_ACCEPT = "/participation/invitations/accept";
 }

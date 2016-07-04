@@ -2,6 +2,7 @@ package uno.cod.platform.server.core.dto.participation;
 
 import uno.cod.platform.server.core.domain.Participation;
 import uno.cod.platform.server.core.dto.challenge.ChallengeShortShowDto;
+import uno.cod.platform.server.core.dto.location.LocationShowDto;
 
 import java.util.Date;
 
@@ -11,6 +12,7 @@ public class ParticipationShowDto {
     private String teamCanonicalName;
     private ChallengeShortShowDto challenge;
     private Date created;
+    private LocationShowDto location;
 
     public ParticipationShowDto(Participation participation) {
         if (participation.getKey().getUser() != null) {
@@ -22,6 +24,9 @@ public class ParticipationShowDto {
         }
         if (participation.getKey().getChallenge() != null) {
             this.challenge = new ChallengeShortShowDto(participation.getKey().getChallenge());
+        }
+        if (participation.getLocation() != null) {
+            this.location = new LocationShowDto(participation.getLocation());
         }
         this.created = participation.getCreated();
     }
@@ -64,5 +69,13 @@ public class ParticipationShowDto {
 
     public void setTeamCanonicalName(String teamCanonicalName) {
         this.teamCanonicalName = teamCanonicalName;
+    }
+
+    public LocationShowDto getLocation() {
+        return location;
+    }
+
+    public void setLocation(LocationShowDto location) {
+        this.location = location;
     }
 }

@@ -26,6 +26,15 @@ public interface ParticipationRepository extends JpaRepository<Participation, Pa
             "LEFT JOIN FETCH participation.key.user      user " +
             "LEFT JOIN FETCH participation.team          team " +
             "LEFT JOIN FETCH team.members                teamMember " +
+            "WHERE participation.key.user.username      = :user " +
+            "AND   participation.key.challenge.canonicalName = :challenge")
+    Participation findOneByUsernameAndChallengeCanonicalName(@Param("user") String user, @Param("challenge") String challenge);
+
+    @Query("SELECT participation FROM Participation      participation " +
+            "LEFT JOIN FETCH participation.key.challenge challenge " +
+            "LEFT JOIN FETCH participation.key.user      user " +
+            "LEFT JOIN FETCH participation.team          team " +
+            "LEFT JOIN FETCH team.members                teamMember " +
             "WHERE  participation.key.challenge.canonicalName = :challenge " +
             "ORDER BY participation.created")
     Set<Participation> findAllByChallengeCanonicalName(@Param("challenge") String challenge);

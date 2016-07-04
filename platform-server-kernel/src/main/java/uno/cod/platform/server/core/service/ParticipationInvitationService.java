@@ -5,6 +5,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uno.cod.platform.server.core.domain.*;
+import uno.cod.platform.server.core.dto.challenge.ParticipationCreateDto;
+import uno.cod.platform.server.core.dto.participation.ParticipationShowDto;
 import uno.cod.platform.server.core.dto.participation.invitation.ParticipationInvitationCreateDto;
 import uno.cod.platform.server.core.exception.CodunoIllegalArgumentException;
 import uno.cod.platform.server.core.repository.ChallengeRepository;
@@ -27,15 +29,17 @@ public class ParticipationInvitationService {
 
     private final MailService mailService;
     private final TeamInvitationService teamInvitationService;
+    private final ParticipationService participationService;
 
     @Autowired
-    public ParticipationInvitationService(ParticipationInvitationRepository repository, ParticipationRepository participationRepository, UserRepository userRepository, ChallengeRepository challengeRepository, MailService mailService, TeamInvitationService teamInvitationService) {
+    public ParticipationInvitationService(ParticipationInvitationRepository repository, ParticipationRepository participationRepository, UserRepository userRepository, ChallengeRepository challengeRepository, MailService mailService, TeamInvitationService teamInvitationService, ParticipationService participationService) {
         this.repository = repository;
         this.participationRepository = participationRepository;
         this.userRepository = userRepository;
         this.challengeRepository = challengeRepository;
         this.mailService = mailService;
         this.teamInvitationService = teamInvitationService;
+        this.participationService = participationService;
     }
 
     public void save(ParticipationInvitationCreateDto dto) {
@@ -90,6 +94,34 @@ public class ParticipationInvitationService {
             invitation.setKey(participation.getKey());
         }
         invitation.addEmails(toInvite);
+        repository.save(invitation);
+    }
+
+    public ParticipationShowDto get(String username, String challenge) {
+        Participation participation = participationRepository.findOneByUsernameAndChallengeCanonicalName(username, challenge);
+        if (participation == null) {
+            throw new CodunoIllegalArgumentException("participation.invalid");
+        }
+        return new ParticipationShowDto(participation);
+    }
+
+    public void accept(User user, String username, String challenge) {
+        Participation participation = participationRepository.findOneByUsernameAndChallengeCanonicalName(username, challenge);
+        if (participation == null) {
+            throw new CodunoIllegalArgumentException("participation.invalid");
+        }
+        ParticipationInvitation invitation = repository.findOne(participation.getKey());
+        if (invitation == null || !invitation.getEmails().contains(user.getEmail())) {
+            throw new CodunoIllegalArgumentException("participation.invitation.invalid");
+        }
+        teamInvitationService.acceptInvitation(user, participation.getTeam().getCanonicalName());
+
+        ParticipationCreateDto dto = new ParticipationCreateDto();
+        dto.setLocation(participation.getLocation() != null ? participation.getLocation().getId() : null);
+        dto.setTeam(participation.getTeam().getCanonicalName());
+        participationService.registerForChallenge(user, challenge, dto);
+
+        invitation.getEmails().remove(user.getEmail());
         repository.save(invitation);
     }
 }
