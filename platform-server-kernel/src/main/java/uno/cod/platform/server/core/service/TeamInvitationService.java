@@ -75,6 +75,10 @@ public class TeamInvitationService {
     }
 
     public void acceptInvitation(User user, String canonicalName) {
+        acceptInvitation(user, canonicalName, true);
+    }
+
+    public void acceptInvitation(User user, String canonicalName, boolean invitationCheck) {
         Team team = teamRepository.findByCanonicalNameAndEnabledTrue(canonicalName);
         if (team == null) {
             throw new CodunoIllegalArgumentException("team.invalid");
@@ -83,12 +87,14 @@ public class TeamInvitationService {
         TeamUserKey key = new TeamUserKey();
         key.setTeam(team);
         key.setUser(user);
-        TeamInvitation invitation = repository.findByKey(key);
-        if (invitation == null) {
-            throw new CodunoIllegalArgumentException("team.invite.notfound");
+        if (invitationCheck) {
+            TeamInvitation invitation = repository.findByKey(key);
+            if (invitation == null) {
+                throw new CodunoIllegalArgumentException("team.invite.notfound");
+            }
+            repository.delete(invitation);
         }
         teamService.join(user, team);
-        repository.delete(invitation);
     }
 
     public void declineInvitation(User user, String canonicalName) {

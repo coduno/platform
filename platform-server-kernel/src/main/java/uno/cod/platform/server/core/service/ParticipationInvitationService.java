@@ -59,7 +59,6 @@ public class ParticipationInvitationService {
             throw new CodunoIllegalArgumentException("participation.invalid");
         }
 
-        Set<String> toInvite = new HashSet<>();
         if (dto.getEmails() == null || dto.getEmails().isEmpty()) {
             throw new CodunoIllegalArgumentException("participation.invitation.invalid");
         }
@@ -75,7 +74,6 @@ public class ParticipationInvitationService {
             User invitedUser = userRepository.findByEmail(email);
             if (invitedUser == null) {
                 params.put("name", email);
-                toInvite.add(email);
             } else {
                 params.put("name", invitedUser.getFullName().isEmpty() ? user.getUsername() : user.getFullName());
                 teamInvitationService.create(user, invitedUser, participation.getTeam(), false);
@@ -93,7 +91,7 @@ public class ParticipationInvitationService {
             invitation = new ParticipationInvitation();
             invitation.setKey(participation.getKey());
         }
-        invitation.addEmails(toInvite);
+        invitation.addEmails(dto.getEmails());
         repository.save(invitation);
     }
 
@@ -114,7 +112,7 @@ public class ParticipationInvitationService {
         if (invitation == null || !invitation.getEmails().contains(user.getEmail())) {
             throw new CodunoIllegalArgumentException("participation.invitation.invalid");
         }
-        teamInvitationService.acceptInvitation(user, participation.getTeam().getCanonicalName());
+        teamInvitationService.acceptInvitation(user, participation.getTeam().getCanonicalName(), false);
 
         ParticipationCreateDto dto = new ParticipationCreateDto();
         dto.setLocation(participation.getLocation() != null ? participation.getLocation().getId() : null);
