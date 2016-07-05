@@ -70,6 +70,7 @@ public class ParticipationInvitationService {
             params.put("teamCanonicalName", participation.getTeam().getCanonicalName());
             params.put("invitedBy", user.getFullName().isEmpty() ? user.getUsername() : user.getFullName());
             params.put("invitedByUsername", user.getUsername());
+            params.put("invitedUser", email);
 
             User invitedUser = userRepository.findByEmail(email);
             if (invitedUser == null) {
