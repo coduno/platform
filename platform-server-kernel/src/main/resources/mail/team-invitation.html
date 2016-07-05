@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:remove="all">Invitation to challenge on Coduno</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+<p> Hello, <span th:text="${name}"> name </span>!</p>
+<p>
+    <span th:text="${invitedByFull}"> user </span> invited you to join the team
+    <span th:text="${teamName}"> team </span>
+    In order to accept the invitation, click
+    <a th:href="${url + '/u/' + name + '?invitedby=' + invitedBy + '&amp;teamname=' + teamName + ''}">here</a>.
+</p>
+<p>The Coduno Team</p>
+</body>
+</html>

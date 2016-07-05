@@ -55,7 +55,7 @@ public class MailService {
         message.setTo(recipientEmail);
 
         // Create the HTML body using Thymeleaf
-        final String htmlContent = this.templateEngine.process(template, ctx);
+        final String htmlContent = this.templateEngine.process(template, ctx).replaceAll("&amp;", "&"); //TODO: fix that '&' signs can be in mails without replacing, see https://github.com/coduno/platform/pull/182/files#diff-837c6ec864b6a87765e5d4365df669adR58
         message.setText(htmlContent, true); // true = isHtml
 
         // Send mail

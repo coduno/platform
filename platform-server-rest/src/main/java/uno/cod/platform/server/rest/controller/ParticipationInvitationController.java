@@ -12,6 +12,7 @@ import uno.cod.platform.server.core.dto.participation.invitation.ParticipationIn
 import uno.cod.platform.server.core.service.ParticipationInvitationService;
 import uno.cod.platform.server.rest.RestUrls;
 
+import javax.mail.MessagingException;
 import javax.validation.Valid;
 
 @RestController
@@ -25,7 +26,7 @@ public class ParticipationInvitationController {
 
     @RequestMapping(value = RestUrls.PARTICIPATION_INVITATIONS, method = RequestMethod.POST)
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<String> createInvitation(@Valid @RequestBody ParticipationInvitationCreateDto dto) {
+    public ResponseEntity<String> createInvitation(@Valid @RequestBody ParticipationInvitationCreateDto dto) throws MessagingException {
         service.save(dto);
         return new ResponseEntity<String>(HttpStatus.CREATED);
     }

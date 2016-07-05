@@ -42,7 +42,7 @@ public class ParticipationInvitationService {
         this.participationService = participationService;
     }
 
-    public void save(ParticipationInvitationCreateDto dto) {
+    public void save(ParticipationInvitationCreateDto dto) throws MessagingException {
         User user = userRepository.findOne(dto.getUserId());
         if (user == null) {
             throw new CodunoIllegalArgumentException("user.invalid");

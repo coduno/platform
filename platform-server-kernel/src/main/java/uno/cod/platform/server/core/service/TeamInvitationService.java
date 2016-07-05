@@ -12,10 +12,11 @@ import uno.cod.platform.server.core.repository.TeamInvitationRepository;
 import uno.cod.platform.server.core.repository.TeamMemberRepository;
 import uno.cod.platform.server.core.repository.TeamRepository;
 import uno.cod.platform.server.core.repository.UserRepository;
+import uno.cod.platform.server.core.service.mail.MailService;
 
+import javax.mail.MessagingException;
 import javax.transaction.Transactional;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,17 +27,19 @@ public class TeamInvitationService {
     private final TeamMemberRepository teamMemberRepository;
     private final UserRepository userRepository;
     private final TeamService teamService;
+    private final MailService mailService;
 
     @Autowired
-    public TeamInvitationService(TeamInvitationRepository repository, TeamRepository teamRepository, TeamMemberRepository teamMemberRepository, UserRepository userRepository, TeamService teamService) {
+    public TeamInvitationService(TeamInvitationRepository repository, TeamRepository teamRepository, TeamMemberRepository teamMemberRepository, UserRepository userRepository, TeamService teamService, MailService mailService) {
         this.repository = repository;
         this.teamRepository = teamRepository;
         this.teamMemberRepository = teamMemberRepository;
         this.userRepository = userRepository;
         this.teamService = teamService;
+        this.mailService = mailService;
     }
 
-    public void create(User invitingUser, User user, Team team, boolean existingCheck) {
+    public void create(User invitingUser, User user, Team team, boolean existingCheck) throws MessagingException {
         if (user == null) {
             throw new CodunoIllegalArgumentException("user.invalid");
         }
@@ -66,9 +69,18 @@ public class TeamInvitationService {
         user.addInvitedTeam(team);
         teamRepository.save(team);
         userRepository.save(user);
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("teamCanonicalName", team.getCanonicalName());
+        params.put("teamName", team.getName());
+        params.put("invitedByFull", invitingUser.getFullName().isEmpty() ? invitingUser.getUsername() : invitingUser.getFullName());
+        params.put("invitedBy", invitingUser.getUsername());
+        params.put("nameFull", user.getFullName().isEmpty() ? user.getUsername() : user.getFullName());
+        params.put("name", user.getUsername());
+        mailService.sendMail(user.getFullName(), user.getEmail(), "Team invitation", "team-invitation.html", params, Locale.ENGLISH);
     }
 
-    public void create(User invitingUser, String usernameToInvite, String canonicalName) {
+    public void create(User invitingUser, String usernameToInvite, String canonicalName) throws MessagingException {
         User user = userRepository.findByUsername(usernameToInvite);
         Team team = teamRepository.findByCanonicalNameAndEnabledTrue(canonicalName);
         create(invitingUser, user, team, true);
