@@ -9,8 +9,8 @@
 <p>You were invited to join <span th:text="${challenge}"> challenge </span> alongside <span th:text="${invitedBy}"> user </span>
     as part of the team <span th:text="${team}"> team </span> . The location of the challenge is
     <span th:text="${location}"> location </span>. If you are up for the challenge,
-    click <a th:href="${url + '/contest/' + challengeCanonicalName + '/register?invitingUser=' + invitedByUsername}">to accept invitation</a>.
-    To find out more, check <a th:href="${url + '/contest/' + challengeCanonicalName + '/info'}">this out</a></p>
+    click <a th:href="@{${url} + '/contest/{challenge}/register'(challenge=${challengeCanonicalName},invitingUser=${invitedByUsername})">to accept invitation</a>.
+    To find out more, check <a th:href="@{${url} + '/contest/{challenge}/info'(challenge=${challengeCanonicalName})}">this out</a></p>
 <p>The Coduno Team</p>
 </body>
 </html>
