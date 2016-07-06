@@ -83,7 +83,7 @@ public class SubmissionService {
             for (MultipartFile file : files) {
                 form.add("files", bucket + "/" + submission.filePath() + file.getOriginalFilename());
             }
-            successful = runAndSendResults(form, key.getResult().getUser(), submission, test) && successful;
+            successful = runAndSendResults(form, getClientEndpoint(key.getResult()), submission, test) && successful;
         }
 
         if (successful) {
@@ -108,13 +108,20 @@ public class SubmissionService {
             form.add("files", new FileMessageResource(file.getBytes(), file.getOriginalFilename()));
             form.add("validate", "true");
 
-            successful = runAndSendResults(form, key.getResult().getUser(), submission, test) && successful;
+            successful = runAndSendResults(form, getClientEndpoint(key.getResult()), submission, test) && successful;
         }
         successful = files.length == testRepository.findByTaskIdOrderByIndex(key.getTask().getId()).size() && successful;
 
         if (successful) {
             success(submission);
         }
+    }
+
+    private CanonicalEntity getClientEndpoint(Result result) {
+        if (result.getTeam() != null) {
+            return result.getTeam();
+        }
+        return result.getUser();
     }
 
     private Submission create(UUID resultId, UUID taskId) {
@@ -166,7 +173,7 @@ public class SubmissionService {
         }
     }
 
-    private boolean runAndSendResults(MultiValueMap<String, Object> form, User user, Submission submission, Test test) throws IOException {
+    private boolean runAndSendResults(MultiValueMap<String, Object> form, CanonicalEntity user, Submission submission, Test test) throws IOException {
         JsonNode obj = runtimeClient.postToRuntime(test.getRunner().getPath(), form);
         ((ObjectNode) obj).put("test", test.getId().toString());
 
