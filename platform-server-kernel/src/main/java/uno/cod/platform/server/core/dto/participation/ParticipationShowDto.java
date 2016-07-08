@@ -9,6 +9,7 @@ import java.util.Date;
 public class ParticipationShowDto {
     private String username;
     private String teamName;
+    private String email;
     private String teamCanonicalName;
     private ChallengeShortShowDto challenge;
     private Date created;
@@ -17,6 +18,7 @@ public class ParticipationShowDto {
     public ParticipationShowDto(Participation participation) {
         if (participation.getKey().getUser() != null) {
             this.username = participation.getKey().getUser().getUsername();
+            this.email = participation.getKey().getUser().getEmail();
         }
         if (participation.getTeam() != null) {
             this.teamName = participation.getTeam().getName();
@@ -77,5 +79,13 @@ public class ParticipationShowDto {
 
     public void setLocation(LocationShowDto location) {
         this.location = location;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }
