@@ -105,7 +105,7 @@ public class ParticipationInvitationService {
         return new ParticipationShowDto(participation);
     }
 
-    public void accept(User user, String username, String challenge) {
+    public void accept(User user, String username, String challenge) throws MessagingException {
         Participation participation = participationRepository.findOneByUsernameAndChallengeCanonicalName(username, challenge);
         if (participation == null) {
             throw new CodunoIllegalArgumentException("participation.invalid");

@@ -9,7 +9,12 @@ import uno.cod.platform.server.core.dto.participation.ParticipationShowDto;
 import uno.cod.platform.server.core.exception.CodunoIllegalArgumentException;
 import uno.cod.platform.server.core.exception.CodunoNoSuchElementException;
 import uno.cod.platform.server.core.repository.*;
+import uno.cod.platform.server.core.service.mail.MailService;
 
+import javax.mail.MessagingException;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -22,26 +27,30 @@ public class ParticipationService {
     private final ParticipationRepository participationRepository;
     private final ParticipationInvitationRepository participationInvitationRepository;
     private final LocationRepository locationRepository;
+    private final MailService mailService;
 
     @Autowired
     public ParticipationService(UserRepository userRepository,
                                 ChallengeRepository challengeRepository,
                                 TeamRepository teamRepository,
                                 ParticipationRepository participationRepository,
-                                ParticipationInvitationRepository participationInvitationRepository, LocationRepository locationRepository) {
+                                ParticipationInvitationRepository participationInvitationRepository,
+                                LocationRepository locationRepository,
+                                MailService mailService) {
         this.userRepository = userRepository;
         this.challengeRepository = challengeRepository;
         this.teamRepository = teamRepository;
         this.participationRepository = participationRepository;
         this.participationInvitationRepository = participationInvitationRepository;
         this.locationRepository = locationRepository;
+        this.mailService = mailService;
     }
 
-    public void registerForChallenge(User user, String challengeName) {
+    public void registerForChallenge(User user, String challengeName) throws MessagingException {
         this.registerForChallenge(user, challengeName, null);
     }
 
-    public void registerForChallenge(User user, String challengeName, ParticipationCreateDto dto) {
+    public void registerForChallenge(User user, String challengeName, ParticipationCreateDto dto) throws MessagingException {
         Challenge challenge = challengeRepository.findOneByCanonicalName(challengeName);
         if (challenge == null) {
             throw new CodunoIllegalArgumentException("challenge.invalid");
@@ -56,6 +65,11 @@ public class ParticipationService {
 
             participation = new Participation();
             participation.setKey(key);
+
+            Map<String, Object> params = new HashMap<>();
+            params.put("challengeCanonicalName", challenge.getCanonicalName());
+            params.put("challengeName", challenge.getName());
+            mailService.sendMail(user.getFullName(), user.getEmail(), "Confirm Registration", "registration-confirmation", params, Locale.ENGLISH);
         }
 
 

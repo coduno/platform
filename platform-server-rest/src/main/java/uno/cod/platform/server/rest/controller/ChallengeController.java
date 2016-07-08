@@ -15,6 +15,7 @@ import uno.cod.platform.server.core.service.ChallengeService;
 import uno.cod.platform.server.core.service.ParticipationService;
 import uno.cod.platform.server.rest.RestUrls;
 
+import javax.mail.MessagingException;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Set;
@@ -59,7 +60,7 @@ public class ChallengeController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<String> register(@PathVariable("canonicalName") String challengeName,
                                            @Valid @RequestBody ParticipationCreateDto dto,
-                                           @AuthenticationPrincipal User user) {
+                                           @AuthenticationPrincipal User user) throws MessagingException {
         participationService.registerForChallenge(user, challengeName, dto);
         return new ResponseEntity<>(HttpStatus.OK);
     }
