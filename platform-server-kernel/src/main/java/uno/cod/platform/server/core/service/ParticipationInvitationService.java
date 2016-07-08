@@ -16,7 +16,9 @@ import uno.cod.platform.server.core.repository.UserRepository;
 import uno.cod.platform.server.core.service.mail.MailService;
 
 import javax.mail.MessagingException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
 @Service
 public class ParticipationInvitationService {
@@ -80,7 +82,7 @@ public class ParticipationInvitationService {
             }
             try {
                 mailService.sendMail(email, email, "Invitation to " + challenge.getName() + " on Coduno",
-                        "participation-invitation.html", params, Locale.ENGLISH);
+                        "participation-invitation", params, Locale.ENGLISH);
             } catch (MessagingException e) {
                 LOG.error("invitation mail for not registered user could not be sent", e);
             }

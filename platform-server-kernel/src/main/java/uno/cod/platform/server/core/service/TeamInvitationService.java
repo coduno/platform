@@ -77,7 +77,7 @@ public class TeamInvitationService {
         params.put("invitedBy", invitingUser.getUsername());
         params.put("nameFull", user.getFullName().isEmpty() ? user.getUsername() : user.getFullName());
         params.put("name", user.getUsername());
-        mailService.sendMail(user.getFullName(), user.getEmail(), "Team invitation", "team-invitation.html", params, Locale.ENGLISH);
+        mailService.sendMail(user.getFullName(), user.getEmail(), "Team invitation", "team-invitation", params, Locale.ENGLISH);
     }
 
     public void create(User invitingUser, String usernameToInvite, String canonicalName) throws MessagingException {

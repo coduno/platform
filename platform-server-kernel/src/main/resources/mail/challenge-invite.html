@@ -1,30 +1,34 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:cod="http://cod.uno"
+      xmlns:layout="http://www.thymeleaf.org/xsd/thymeleaf-extras-dialect-2.1.xsd"
+      layout:decorator="layout/main">
 <head>
-    <title th:remove="all">Coduno Invite </title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Coduno Email Notification Service</title>
 </head>
+
 <body>
-    <p> Hello, <span th:text="${name}"> name </span></p>
-    <p>You are invited to test a preview version of Coduno for
-        <span th:text="${organization}">Coduno</span>.
-    </p>
-    <p>This means you are asked to do a coding assessment that will require a range of skill
-        in connection with software engineering. You might want to brush up your skills before taking up the challenge.
-    </p>
+<div id="textcontent" layout:fragment="textcontent">
+    You are invited to test a preview version of Coduno for
+    <b><span th:text="${organization}">Coduno</span></b>.
+    This means you are asked to do a coding assessment that will require a range of skill
+    in connection with software engineering. You might want to brush up your skills before taking up the challenge.
     <div th:if="${startDate} != null">
-        <p>The challenge will start at <span th:text="${startDate}"> startDate </span> and will take <span th:text="${duration}"> duration </span>.
-            You can access it via:
+        <p>The challenge will start at <b><span th:text="${startDate}"> startDate </span></b> and will take <b><span th:text="${duration}"> duration </span></b>.
         </p>
     </div>
     <div th:if="${startDate} == null">
-        <p>Once you feel confident and have at least an hour of spare time, you can access the challenge via:</p>
+        <p>Once you feel confident and have at least an hour of spare time, you can access the challenge via the button below.</p>
     </div>
-    <a th:href="@{${url} + '/token/{token}'(token=${token})}">this link</a>
     <p>As soon as you point your browser there, the challenge is on!</p>
     <p>Further instructions are provided there.</p>
     <p>If you have trouble, contact the Coduno team at +43 680 3031228.</p>
     <p>Good luck!</p>
-    <p>Coduno</p>
+</div>
+
+<div id="buttoncontent" layout:fragment="buttoncontent">
+    <a cod:href="@{/token/{token}(token=${token})}"
+       class="btn btn primary" style="color: white;">Start Challenge</a>
+</div>
 </body>
 </html>

@@ -12,3 +12,4 @@ include ':platform-storage-api'
 include ':platform-storage-gcs'
 include ':platform-storage-nyi'
 
+include ':coduno-thymeleaf-dialect'

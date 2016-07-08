@@ -1,17 +1,22 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:cod="http://cod.uno"
+      xmlns:layout="http://www.thymeleaf.org/xsd/thymeleaf-extras-dialect-2.1.xsd"
+      layout:decorator="layout/main">
 <head>
-    <title th:remove="all">Invitation to challenge on Coduno</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Coduno Email Notification Service</title>
 </head>
+
 <body>
-<p> Hello, <span th:text="${name}"> name </span>!</p>
-<p>
-    <span th:text="${invitedByFull}"> user </span> invited you to join the team
-    <span th:text="${teamName}"> team </span>
-    In order to accept the invitation, click
-    <a th:href="@{${url} + '/u/{user}'(user=${name},invitedby=${invitedBy},teamname=${teamName})}">here</a>.
-</p>
-<p>The Coduno Team</p>
+<div id="textcontent" layout:fragment="textcontent">
+    <b><span th:text="${invitedByFull}">user </span></b> invited you to join the team
+    <b><span th:text="${teamName}"> team </span></b>.
+    In order to accept the invitation, click the button below.
+</div>
+
+<div id="buttoncontent" layout:fragment="buttoncontent">
+    <a cod:href="@{/u/{user}(user=${name},invitedby=${invitedBy},teamname=${teamName})}"
+       class="btn btn primary" style="color: white;">Accept team invitation</a>
+</div>
 </body>
 </html>
