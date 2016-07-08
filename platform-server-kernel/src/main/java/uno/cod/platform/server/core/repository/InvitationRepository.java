@@ -15,7 +15,6 @@ import java.util.UUID;
 
 @Repository
 public interface InvitationRepository extends JpaRepository<Invitation, String> {
-
     @Modifying
     @Transactional
     @Query("delete from Invitation i where i.expire < :now")

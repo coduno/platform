@@ -9,7 +9,8 @@ import org.springframework.web.bind.annotation.*;
 import uno.cod.platform.server.core.domain.User;
 import uno.cod.platform.server.core.dto.NameDto;
 import uno.cod.platform.server.core.dto.challenge.*;
-import uno.cod.platform.server.core.dto.location.LocationUpdateDto;
+import uno.cod.platform.server.core.dto.location.LocationDetailShowDto;
+import uno.cod.platform.server.core.dto.location.LocationDetailUpdateDto;
 import uno.cod.platform.server.core.dto.participation.ParticipationShowDto;
 import uno.cod.platform.server.core.service.ChallengeService;
 import uno.cod.platform.server.core.service.ParticipationService;
@@ -82,7 +83,7 @@ public class ChallengeController {
 
     @RequestMapping(value = RestUrls.CHALLENGES_CANONICAL_NAME_LOCATIONS, method = RequestMethod.PUT)
     @PreAuthorize("isAuthenticated() and @securityService.canEditChallenge(principal, #canonicalName)")
-    public ResponseEntity<String> updateChallengeLocations(@PathVariable String canonicalName, @Valid @RequestBody List<LocationUpdateDto> locations) {
+    public ResponseEntity<String> updateChallengeLocations(@PathVariable String canonicalName, @Valid @RequestBody List<LocationDetailUpdateDto> locations) {
         challengeService.updateLocations(canonicalName, locations);
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -92,5 +93,11 @@ public class ChallengeController {
     public ResponseEntity<UserChallengeShowDto> getUserStatusByCanonicalName(@PathVariable String canonicalName,
                                                                              @AuthenticationPrincipal User user) {
         return new ResponseEntity<>(challengeService.getChallengeStatusForUser(canonicalName, user), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = RestUrls.CHALLENGES_CANONICAL_NAME_LOCATIONS, method = RequestMethod.GET)
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<List<LocationDetailShowDto>> getLocationsForChallenge(@PathVariable String canonicalName) {
+        return new ResponseEntity<>(challengeService.findOneByCanonicalName(canonicalName).getLocations(), HttpStatus.OK);
     }
 }

@@ -80,7 +80,6 @@ public class ParticipationService {
             mailService.sendMail(user.getFullName(), user.getEmail(), "Confirm Registration", "registration-confirmation", params, Locale.ENGLISH);
         }
 
-
         if (dto != null && dto.getLocation() != null) {
             participation.setLocation(locationRepository.findOne(dto.getLocation()));
         } else {

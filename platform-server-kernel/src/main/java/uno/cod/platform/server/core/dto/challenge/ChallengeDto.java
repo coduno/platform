@@ -2,6 +2,7 @@ package uno.cod.platform.server.core.dto.challenge;
 
 import org.springframework.beans.BeanUtils;
 import uno.cod.platform.server.core.domain.Challenge;
+import uno.cod.platform.server.core.dto.location.LocationDetailShowDto;
 import uno.cod.platform.server.core.dto.organization.OrganizationShowDto;
 import uno.cod.platform.server.core.dto.user.UserShortShowDto;
 
@@ -20,6 +21,7 @@ public class ChallengeDto {
     private String description;
 
     private List<UserShortShowDto> invitedUsers;
+    private List<LocationDetailShowDto> locations;
 
     public ChallengeDto(Challenge challenge) {
         BeanUtils.copyProperties(challenge, this);
@@ -99,5 +101,13 @@ public class ChallengeDto {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public List<LocationDetailShowDto> getLocations() {
+        return locations;
+    }
+
+    public void setLocations(List<LocationDetailShowDto> locations) {
+        this.locations = locations;
     }
 }

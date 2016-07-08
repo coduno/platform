@@ -23,4 +23,3 @@ public interface TeamRepository extends JpaRepository<Team, UUID> {
             "WHERE team.enabled = true AND members.key.user.username = :username")
     List<Team> findAllByUsername(@Param("username") String username);
 }
-

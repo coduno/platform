@@ -20,15 +20,9 @@ public class Participation {
     @EmbeddedId
     private ParticipationKey key = new ParticipationKey();
 
-    /**
-     * If not null, user participates within a team
-     */
     @ManyToOne
     private Team team;
 
-    /**
-     * If null, the team/user participates online
-     */
     @ManyToOne
     private Location location;
 
@@ -65,5 +59,15 @@ public class Participation {
 
     public void setLocation(Location location) {
         this.location = location;
+    }
+
+    @Transient
+    public boolean isOnline() {
+        return this.location == null;
+    }
+
+    @Transient
+    public boolean isTeam() {
+        return this.team != null;
     }
 }

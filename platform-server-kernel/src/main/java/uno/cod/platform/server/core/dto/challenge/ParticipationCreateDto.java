@@ -1,10 +1,12 @@
 package uno.cod.platform.server.core.dto.challenge;
 
-import java.util.UUID;
-
 public class ParticipationCreateDto {
     private String team;
-    private UUID location;
+
+    /**
+     * Maps to {@link uno.cod.platform.server.core.domain.Location#id}.
+     */
+    private String location;
 
     public String getTeam() {
         return team;
@@ -14,11 +16,11 @@ public class ParticipationCreateDto {
         this.team = team;
     }
 
-    public UUID getLocation() {
+    public String getLocation() {
         return location;
     }
 
-    public void setLocation(UUID location) {
+    public void setLocation(String location) {
         this.location = location;
     }
 }
