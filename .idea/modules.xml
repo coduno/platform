@@ -2,6 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/coduno-thymeleaf-dialect/coduno-thymeleaf-dialect.iml" filepath="$PROJECT_DIR$/.idea/modules/coduno-thymeleaf-dialect/coduno-thymeleaf-dialect.iml" group="coduno-thymeleaf-dialect" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/coduno-thymeleaf-dialect/coduno-thymeleaf-dialect_main.iml" filepath="$PROJECT_DIR$/.idea/modules/coduno-thymeleaf-dialect/coduno-thymeleaf-dialect_main.iml" group="coduno-thymeleaf-dialect" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/coduno-thymeleaf-dialect/coduno-thymeleaf-dialect_test.iml" filepath="$PROJECT_DIR$/.idea/modules/coduno-thymeleaf-dialect/coduno-thymeleaf-dialect_test.iml" group="coduno-thymeleaf-dialect" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/platform.iml" filepath="$PROJECT_DIR$/.idea/modules/platform.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/platform-catcoder-game-importer/platform-catcoder-game-importer.iml" filepath="$PROJECT_DIR$/.idea/modules/platform-catcoder-game-importer/platform-catcoder-game-importer.iml" group="platform-catcoder-game-importer" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/platform-catcoder-game-importer/platform-catcoder-game-importer_main.iml" filepath="$PROJECT_DIR$/.idea/modules/platform-catcoder-game-importer/platform-catcoder-game-importer_main.iml" group="platform-catcoder-game-importer" />

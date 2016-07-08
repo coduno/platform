@@ -19,6 +19,8 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="coduno-thymeleaf-dialect_main" target="1.8" />
+      <module name="coduno-thymeleaf-dialect_test" target="1.8" />
       <module name="platform-catcoder-game-importer_main" target="1.8" />
       <module name="platform-catcoder-game-importer_test" target="1.8" />
       <module name="platform-codingcontest-sync_main" target="1.8" />
