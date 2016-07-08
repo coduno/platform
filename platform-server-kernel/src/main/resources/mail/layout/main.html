@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:layout="http://www.thymeleaf.org/xsd/thymeleaf-extras-dialect-2.1.xsd"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:remove="all">Coduno E-Mail Notification Service </title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Raleway" />
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Open+Sans" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.css"/>
+    <style>
+        .socialiconscolor {
+            color: gray;
+        }
+
+        .contact {
+            text-align: center;
+        }
+
+        .greetings {
+            font-size: 24px;
+        }
+
+        .emailtext {
+            text-align: justify;
+            line-height: 180%;
+        }
+
+        .signature {
+            line-height: 180%;
+        }
+
+        .actionbutton {
+            background-color: #c7216e;
+            border-radius: 3px;
+        }
+
+        .actionbuttonwrap {
+            text-align: center;
+            padding: 30px;
+        }
+
+        .mainback {
+            background-color: #ffffff;
+            font-family: Open Sans;
+        }
+
+        .logopos {
+            margin: 0 auto;
+            padding: 10px;
+            padding-top: 100px;
+            text-align: center;
+        }
+
+        .logotext {
+            text-align: center;
+            font-family: Raleway;
+            font-size: 32px;
+            margin: 0 auto;
+            padding: 5px;
+            padding-bottom: 30px;
+        }
+
+        .mailcontent {
+            width: 70%;
+            margin: 0 auto;
+            padding-bottom: 40px;
+            padding-top: 30px;
+        }
+
+        .contactwrap {
+            margin: 0 auto;
+            padding-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+
+<div th:include="fragment/header :: headerFragment"></div>
+
+<div class="mailcontent">
+    <p class="greetings" >
+        Hi <span th:text="${name}"></span>!
+    </p>
+
+    <div class="emailtext" >
+        <div id="textcontent" layout:fragment="textcontent"></div>
+    </div>
+
+    <div class="actionbuttonwrap">
+        <button type="button" class="btn actionbutton" >
+            <div id="buttoncontent" layout:fragment="buttoncontent"></div>
+        </button>
+    </div>
+
+    <p class="signature" >
+        Cheers, <br/> The Coduno Team
+    </p>
+</div>
+
+<div th:include="fragment/footer :: footerFragment"></div>
+
+</body>
+
+</html>

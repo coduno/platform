@@ -1,5 +1,6 @@
 package uno.cod.platform.server.core.config;
 
+import nz.net.ultraq.thymeleaf.LayoutDialect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -27,6 +28,7 @@ public class MailConfig {
         SpringTemplateEngine templateEngine = new SpringTemplateEngine();
         templateEngine.addTemplateResolver(emailTemplateResolver());
         templateEngine.addDialect(new CodunoDialect(appUrl));
+        templateEngine.addDialect(new LayoutDialect());
         return templateEngine;
     }
 
@@ -36,6 +38,7 @@ public class MailConfig {
     private TemplateResolver emailTemplateResolver() {
         TemplateResolver templateResolver = new ClassLoaderTemplateResolver();
         templateResolver.setPrefix("mail/");
+        templateResolver.setSuffix(".html");
         templateResolver.setTemplateMode("HTML5");
         templateResolver.setOrder(1);
         if (env.acceptsProfiles(DEVELOPMENT)) {

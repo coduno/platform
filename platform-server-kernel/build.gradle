@@ -26,6 +26,7 @@ dependencies {
 
     compile "org.springframework.boot:spring-boot-starter-mail"
     compile "org.thymeleaf:thymeleaf-spring4"
+    compile "nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect"
 
     compile "com.h2database:h2"
     compile "org.mariadb.jdbc:mariadb-java-client"
