@@ -42,7 +42,7 @@ public class ParticipationInvitationController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<String> acceptInvitation(@RequestParam("username") String username,
                                                    @RequestParam("challenge") String challenge,
-                                                   @AuthenticationPrincipal User user) {
+                                                   @AuthenticationPrincipal User user) throws MessagingException {
         service.accept(user, username, challenge);
         return new ResponseEntity<>(HttpStatus.OK);
     }
