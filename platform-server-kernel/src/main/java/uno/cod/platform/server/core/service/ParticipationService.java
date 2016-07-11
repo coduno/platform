@@ -51,7 +51,7 @@ public class ParticipationService {
     }
 
     public void registerForChallenge(User user, String challengeName, ParticipationCreateDto dto) throws MessagingException {
-        if(user == null) {
+        if (user == null) {
             throw new CodunoIllegalArgumentException("user.invalid");
         }
 
@@ -67,7 +67,7 @@ public class ParticipationService {
             key.setChallenge(challenge);
             key.setUser(user);
 
-            if(user == null) {
+            if (user == null) {
                 throw new CodunoIllegalArgumentException("user.invalid");
             }
 
