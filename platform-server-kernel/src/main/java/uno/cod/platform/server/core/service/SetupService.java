@@ -74,11 +74,11 @@ public class SetupService {
         Runner testRunner = createRunner("/drones/test");
         Runner normalRunner = createRunner("/drones/run");
         initCCC(catalysts, cccLanguages, cccChallengeEndpoint, cccTaskEndpoint, ccc, cccTaskNames,
-                Duration.ofHours(4), "Drones", testRunner, normalRunner);
+                Duration.ofHours(4), "drones", testRunner, normalRunner);
         Runner schoolTestRunner = createRunner("/drones-2d/test");
         Runner schoolNormalRunner = createRunner("/drones-2d/run");
         initCCC(catalysts, cccLanguages, cccChallengeEndpoint, cccTaskEndpoint, schoolCCC, schoolCCCTaskNames,
-                Duration.ofHours(2), "Drones 2D", schoolTestRunner, schoolNormalRunner);
+                Duration.ofHours(2), "drones-2d", schoolTestRunner, schoolNormalRunner);
     }
 
     private Organization initCatalystsWithUsers() {

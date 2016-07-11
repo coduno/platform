@@ -48,7 +48,7 @@ public class ChallengeServiceTest {
         challenge.setId(UUID.randomUUID());
         challenge.setCanonicalName(UUID.randomUUID().toString());
 
-        Mockito.when(challengeTemplateRepository.findOne(dto.getTemplateId())).thenReturn(challenge.getChallengeTemplate());
+        Mockito.when(challengeTemplateRepository.findOneByCanonicalName(dto.getTemplateCanonicalName())).thenReturn(challenge.getChallengeTemplate());
         Mockito.when(repository.save(Mockito.any(Challenge.class))).thenReturn(challenge);
 
         String canonicalName = service.createFromDto(dto);

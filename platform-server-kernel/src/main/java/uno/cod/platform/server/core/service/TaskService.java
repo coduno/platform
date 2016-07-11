@@ -82,7 +82,7 @@ public class TaskService {
         return TaskMapper.map(repository.findAllWithAll());
     }
 
-    public List<TaskShowDto> findAllForChallengeTemplate(UUID challengeTemplateId) {
-        return TaskMapper.map(repository.findAllByChallengeTemplatesId(challengeTemplateId));
+    public List<TaskShowDto> findAllForChallengeTemplate(String canonicalName) {
+        return TaskMapper.map(repository.findAllByChallengeTemplatesCanonicalName(canonicalName));
     }
 }

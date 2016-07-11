@@ -18,8 +18,6 @@ import java.util.Map;
 public class MailService {
     private final SpringTemplateEngine templateEngine;
     private final JavaMailSender mailSender;
-    @Value("${coduno.url}")
-    private String url;
     @Value("${coduno.mail.from}")
     private String fromMail;
 
@@ -41,7 +39,6 @@ public class MailService {
         // Prepare the evaluation context
         final Context ctx = new Context(locale);
         ctx.setVariable("name", recipientName);
-        ctx.setVariable("url", url);
         for (String key : attributes.keySet()) {
             ctx.setVariable(key, attributes.get(key));
         }
@@ -55,6 +52,8 @@ public class MailService {
         message.setTo(recipientEmail);
 
         // Create the HTML body using Thymeleaf
+        // TODO: Fix that '&' signs can be in mails without replacing, see
+        // https://github.com/coduno/platform/pull/182/files#diff-837c6ec864b6a87765e5d4365df669adR58
         final String htmlContent = this.templateEngine.process(template, ctx);
         message.setText(htmlContent, true); // true = isHtml
 

@@ -29,6 +29,14 @@ public interface ChallengeTemplateRepository extends JpaRepository<ChallengeTemp
             "WHERE challengeTemplate.id = :id")
     ChallengeTemplate findOneWithEndpointAndTasksAndChallenges(@Param("id") UUID id);
 
+    @Query("SELECT challengeTemplate FROM ChallengeTemplate challengeTemplate " +
+            "LEFT JOIN FETCH challengeTemplate.endpoint " +
+            "LEFT JOIN FETCH challengeTemplate.tasks task " +
+            "LEFT JOIN FETCH challengeTemplate.challenges challenge " +
+            "LEFT JOIN FETCH task.endpoint " +
+            "WHERE challengeTemplate.canonicalName = :canonicalName")
+    ChallengeTemplate findOneByCanonicalNameWithEndpointAndTasksAndChallenges(@Param("canonicalName") String canonicalName);
+
     @Query("SELECT distinct challenge FROM ChallengeTemplate challenge " +
             "JOIN FETCH challenge.organization organization " +
             "JOIN FETCH challenge.tasks tasks " +

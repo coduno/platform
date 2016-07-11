@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:cod="http://cod.uno"
+      xmlns:layout="http://www.thymeleaf.org/xsd/thymeleaf-extras-dialect-2.1.xsd"
+      layout:decorator="layout/main">
+<head>
+    <title>Registration Confirmation</title>
+</head>
+
+<body>
+<div id="textcontent" layout:fragment="textcontent">
+
+    You are now registered to the challenge <b><span th:text="${challengeName}">Coduno</span></b>.
+    Have fun and good luck!
+
+</div>
+
+<div id="buttoncontent" layout:fragment="buttoncontent">
+    <a cod:href="@{/challenge/{challengeCanoncialName}/info(challengeCanoncialName=${challengeCanonicalName})}"
+       class="btn btn primary" style="color: white;">View Challenge Info</a>
+</div>
+</body>
+</html>

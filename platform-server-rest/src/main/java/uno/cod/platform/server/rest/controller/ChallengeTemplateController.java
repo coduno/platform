@@ -38,16 +38,16 @@ public class ChallengeTemplateController {
         return new ResponseEntity<>(service.findAll(organization), HttpStatus.OK);
     }
 
-    @RequestMapping(value = RestUrls.CHALLENGE_TEMPLATES_ID, method = RequestMethod.GET)
-    @PreAuthorize("isAuthenticated() and @securityService.canAccessChallengeTemplate(principal, #id)")
-    public ResponseEntity<ChallengeTemplateShowDto> get(@PathVariable UUID id) {
-        return new ResponseEntity<>(service.findById(id), HttpStatus.OK);
+    @RequestMapping(value = RestUrls.CHALLENGE_TEMPLATES_CANONICAL_NAME, method = RequestMethod.GET)
+    @PreAuthorize("isAuthenticated() and @securityService.canAccessChallengeTemplate(principal, #canonicalName)")
+    public ResponseEntity<ChallengeTemplateShowDto> get(@PathVariable String canonicalName) {
+        return new ResponseEntity<>(service.findByCanonicalName(canonicalName), HttpStatus.OK);
     }
 
-    @RequestMapping(value = RestUrls.CHALLENGE_TEMPLATES_ID_TASKS, method = RequestMethod.GET)
-    @PreAuthorize("isAuthenticated() and @securityService.canAccessChallengeTemplate(principal, #id)")
-    public ResponseEntity<List<TaskShowDto>> getTasksForChallengeTemplate(@PathVariable UUID id) {
-        return new ResponseEntity<>(taskService.findAllForChallengeTemplate(id), HttpStatus.OK);
+    @RequestMapping(value = RestUrls.CHALLENGE_TEMPLATES_CANONICAL_NAME_TASKS, method = RequestMethod.GET)
+    @PreAuthorize("isAuthenticated() and @securityService.canAccessChallengeTemplate(principal, #canonicalName)")
+    public ResponseEntity<List<TaskShowDto>> getTasksForChallengeTemplate(@PathVariable String canonicalName) {
+        return new ResponseEntity<>(taskService.findAllForChallengeTemplate(canonicalName), HttpStatus.OK);
     }
 
     @RequestMapping(value = RestUrls.CHALLENGES_CANONICAL_NAME_TEMPLATE, method = RequestMethod.GET)

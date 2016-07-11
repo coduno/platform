@@ -9,6 +9,7 @@ import uno.cod.platform.server.core.domain.Team;
 import uno.cod.platform.server.core.domain.User;
 import uno.cod.platform.server.core.exception.CodunoIllegalArgumentException;
 import uno.cod.platform.server.core.repository.*;
+import uno.cod.platform.server.core.service.mail.MailService;
 import uno.cod.platform.server.core.service.util.ChallengeTestUtil;
 import uno.cod.platform.server.core.service.util.ParticipationUtil;
 import uno.cod.platform.server.core.service.util.TeamTestUtil;
@@ -20,7 +21,9 @@ public class ParticipationServiceTest {
     private ChallengeRepository challengeRepository;
     private TeamRepository teamRepository;
     private ParticipationRepository participationRepository;
+    private ParticipationInvitationRepository participationInvitationRepository;
     private LocationRepository locationRepository;
+    private MailService mailService;
 
     @Before
     public void setUp() throws Exception {
@@ -28,8 +31,10 @@ public class ParticipationServiceTest {
         this.challengeRepository = Mockito.mock(ChallengeRepository.class);
         this.teamRepository = Mockito.mock(TeamRepository.class);
         this.participationRepository = Mockito.mock(ParticipationRepository.class);
+        this.participationInvitationRepository = Mockito.mock(ParticipationInvitationRepository.class);
         this.locationRepository = Mockito.mock(LocationRepository.class);
-        this.service = new ParticipationService(userRepository, challengeRepository, teamRepository, participationRepository, locationRepository);
+        this.mailService = Mockito.mock(MailService.class);
+        this.service = new ParticipationService(userRepository, challengeRepository, teamRepository, participationRepository, participationInvitationRepository, locationRepository, mailService);
     }
 
     @Test

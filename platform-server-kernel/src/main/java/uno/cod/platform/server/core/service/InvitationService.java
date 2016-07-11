@@ -114,7 +114,7 @@ public class InvitationService {
         params.put("token", token);
         params.put("startDate", challenge.getStartDate());
         params.put("duration", challenge.getChallengeTemplate().getDuration());
-        mailService.sendMail("user", dto.getEmail(), "Challenge invitation", "challenge-invite.html", params, Locale.ENGLISH);
+        mailService.sendMail("user", dto.getEmail(), "Challenge invitation", "challenge-invite", params, Locale.ENGLISH);
     }
 
     public String authByToken(String token) {

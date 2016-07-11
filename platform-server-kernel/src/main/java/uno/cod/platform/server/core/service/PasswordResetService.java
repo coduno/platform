@@ -78,7 +78,7 @@ public class PasswordResetService {
         params.put("token", token);
 
         try {
-            mailService.sendMail(user.getUsername(), user.getEmail(), "Reset your Coduno password", "password-reset.html", params, Locale.ENGLISH);
+            mailService.sendMail(user.getUsername(), user.getEmail(), "Reset your Coduno password", "password-reset", params, Locale.ENGLISH);
         } catch (MessagingException e) {
             LOG.error("password reset mail could not be sent", e);
         }

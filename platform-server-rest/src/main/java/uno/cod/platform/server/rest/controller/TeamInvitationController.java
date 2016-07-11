@@ -12,6 +12,7 @@ import uno.cod.platform.server.core.dto.team.invitation.TeamInvitationShowDto;
 import uno.cod.platform.server.core.service.TeamInvitationService;
 import uno.cod.platform.server.rest.RestUrls;
 
+import javax.mail.MessagingException;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -28,7 +29,7 @@ public class TeamInvitationController {
     @PreAuthorize("isAuthenticated() and @securityService.isTeamAdmin(principal, #canonicalName)")
     public ResponseEntity<String> create(@Valid @RequestBody TeamInvitationCreateDto dto,
                                          @PathVariable("canonicalName") String canonicalName,
-                                         @AuthenticationPrincipal User user) {
+                                         @AuthenticationPrincipal User user) throws MessagingException {
         service.create(user, dto.getUsername(), canonicalName);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }

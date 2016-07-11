@@ -44,5 +44,5 @@ public interface TaskRepository extends JpaRepository<Task, UUID> {
             "WHERE task.id = :id")
     Task findOneWithOrganization(@Param("id") UUID id);
 
-    List<Task> findAllByChallengeTemplatesId(UUID challengeTemplate);
+    List<Task> findAllByChallengeTemplatesCanonicalName(String canonicalName);
 }

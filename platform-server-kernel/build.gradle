@@ -1,4 +1,5 @@
 dependencies {
+    compile project(":coduno-thymeleaf-dialect")
     compile project(":platform-storage-gcs")
     compile project(":platform-storage-nyi")
     compile project(":platform-runtime-client")
@@ -25,6 +26,7 @@ dependencies {
 
     compile "org.springframework.boot:spring-boot-starter-mail"
     compile "org.thymeleaf:thymeleaf-spring4"
+    compile "nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect"
 
     compile "com.h2database:h2"
     compile "org.mariadb.jdbc:mariadb-java-client"

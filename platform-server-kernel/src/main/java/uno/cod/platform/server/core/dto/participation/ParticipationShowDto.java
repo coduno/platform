@@ -2,19 +2,23 @@ package uno.cod.platform.server.core.dto.participation;
 
 import uno.cod.platform.server.core.domain.Participation;
 import uno.cod.platform.server.core.dto.challenge.ChallengeShortShowDto;
+import uno.cod.platform.server.core.dto.location.LocationShowDto;
 
 import java.util.Date;
 
 public class ParticipationShowDto {
     private String username;
     private String teamName;
+    private String email;
     private String teamCanonicalName;
     private ChallengeShortShowDto challenge;
     private Date created;
+    private LocationShowDto location;
 
     public ParticipationShowDto(Participation participation) {
         if (participation.getKey().getUser() != null) {
             this.username = participation.getKey().getUser().getUsername();
+            this.email = participation.getKey().getUser().getEmail();
         }
         if (participation.getTeam() != null) {
             this.teamName = participation.getTeam().getName();
@@ -22,6 +26,9 @@ public class ParticipationShowDto {
         }
         if (participation.getKey().getChallenge() != null) {
             this.challenge = new ChallengeShortShowDto(participation.getKey().getChallenge());
+        }
+        if (participation.getLocation() != null) {
+            this.location = new LocationShowDto(participation.getLocation());
         }
         this.created = participation.getCreated();
     }
@@ -64,5 +71,21 @@ public class ParticipationShowDto {
 
     public void setTeamCanonicalName(String teamCanonicalName) {
         this.teamCanonicalName = teamCanonicalName;
+    }
+
+    public LocationShowDto getLocation() {
+        return location;
+    }
+
+    public void setLocation(LocationShowDto location) {
+        this.location = location;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

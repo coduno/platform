@@ -8,9 +8,18 @@ import java.util.UUID;
 
 public class ChallengeTemplateCreateDto extends AssignmentCreateDto {
     private UUID organizationId;
-
+    @NotNull
+    private String canonicalName;
     @NotNull
     private List<UUID> tasks;
+
+    public String getCanonicalName() {
+        return canonicalName;
+    }
+
+    public void setCanonicalName(String canonicalName) {
+        this.canonicalName = canonicalName;
+    }
 
     public UUID getOrganizationId() {
         return organizationId;

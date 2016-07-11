@@ -16,4 +16,10 @@ public class ChallengeTemplateTestUtil {
         template.setDuration(Duration.ofMinutes(50));
         return template;
     }
+
+    public static ChallengeTemplate getChallengeTemplate(String canonicalName) {
+        ChallengeTemplate template = getChallengeTemplate();
+        template.setCanonicalName(canonicalName);
+        return template;
+    }
 }

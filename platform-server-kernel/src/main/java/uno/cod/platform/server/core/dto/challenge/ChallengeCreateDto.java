@@ -6,12 +6,11 @@ import uno.cod.platform.server.core.util.constraints.CanonicalName;
 import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
 import java.util.Set;
-import java.util.UUID;
 
 public class ChallengeCreateDto {
 
-    @NotNull
-    private UUID templateId;
+    @CanonicalName
+    private String templateCanonicalName;
 
     @NotNull
     private String name;
@@ -54,12 +53,12 @@ public class ChallengeCreateDto {
         this.canonicalName = canonicalName;
     }
 
-    public UUID getTemplateId() {
-        return templateId;
+    public String getTemplateCanonicalName() {
+        return templateCanonicalName;
     }
 
-    public void setTemplateId(UUID templateId) {
-        this.templateId = templateId;
+    public void setTemplateCanonicalName(String templateCanonicalName) {
+        this.templateCanonicalName = templateCanonicalName;
     }
 
     public Set<LocationUpdateDto> getLocations() {

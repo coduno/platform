@@ -23,7 +23,7 @@ public class ChallengeTestUtil {
         Challenge challenge = new Challenge();
         challenge.setName(dto.getName());
         challenge.setCanonicalName(dto.getCanonicalName());
-        challenge.setChallengeTemplate(ChallengeTemplateTestUtil.getChallengeTemplate(dto.getTemplateId()));
+        challenge.setChallengeTemplate(ChallengeTemplateTestUtil.getChallengeTemplate(dto.getCanonicalName()));
         challenge.setInviteOnly(dto.isInviteOnly());
         challenge.setStartDate(dto.getStartDate());
         return challenge;
@@ -33,7 +33,7 @@ public class ChallengeTestUtil {
         ChallengeCreateDto dto = new ChallengeCreateDto();
         dto.setName("name");
         dto.setCanonicalName("canonical-name");
-        dto.setTemplateId(UUID.randomUUID());
+        dto.setTemplateCanonicalName("template-canonical-name");
         dto.setInviteOnly(true);
         dto.setStartDate(ZonedDateTime.now());
         return dto;

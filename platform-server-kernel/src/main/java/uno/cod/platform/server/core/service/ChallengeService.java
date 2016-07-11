@@ -67,7 +67,7 @@ public class ChallengeService {
     }
 
     public String createFromDto(ChallengeCreateDto dto) {
-        ChallengeTemplate template = challengeTemplateRepository.findOne(dto.getTemplateId());
+        ChallengeTemplate template = challengeTemplateRepository.findOneByCanonicalName(dto.getTemplateCanonicalName());
         if (template == null) {
             throw new CodunoIllegalArgumentException("challenge.invalid");
         }

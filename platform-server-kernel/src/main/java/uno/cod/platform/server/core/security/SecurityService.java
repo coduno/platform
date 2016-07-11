@@ -146,8 +146,8 @@ public class SecurityService {
         return false;
     }
 
-    public boolean canAccessChallengeTemplate(User user, UUID templateId) {
-        if (user == null || templateId == null) {
+    public boolean canAccessChallengeTemplate(User user, String canonicalName) {
+        if (user == null || canonicalName == null) {
             return false;
         }
         user = userRepository.findOne(user.getId());

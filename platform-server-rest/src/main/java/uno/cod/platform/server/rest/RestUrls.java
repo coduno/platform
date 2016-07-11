@@ -3,15 +3,15 @@ package uno.cod.platform.server.rest;
 
 public class RestUrls {
     public static final String CHALLENGE_TEMPLATES = "/challenges/templates";
-    public static final String CHALLENGE_TEMPLATES_ID = "/challenges/templates/{id}";
-    public static final String CHALLENGE_TEMPLATES_ID_TASKS = "/challenges/templates/{id}/tasks";
+    public static final String CHALLENGE_TEMPLATES_CANONICAL_NAME = "/challenge-templates/{canonicalName}";
+    public static final String CHALLENGE_TEMPLATES_CANONICAL_NAME_TASKS = "/challenge-templates/{canonicalName}/tasks";
 
     public static final String CHALLENGES = "/challenges";
-    public static final String CHALLENGES_ID = "/challenges/{id}";
     public static final String CHALLENGES_CANONICAL_NAME = "/challenges/{canonicalName}";
     public static final String CHALLENGES_CANONICAL_NAME_PARTICIPANTS = "/challenges/{canonicalName}/participants";
     public static final String CHALLENGES_CANONICAL_NAME_TEMPLATE = "/challenges/{canonicalName}/template";
     public static final String CHALLENGES_CANONICAL_NAME_REGISTER = "/challenges/{canonicalName}/register";
+    public static final String CHALLENGES_CANONICAL_NAME_PARTICIPATION = "/challenges/{canonicalName}/participation";
     public static final String CHALLENGES_CANONICAL_NAME_INVITATIONS = "/challenges/{canonicalName}/invitations";
     public static final String CHALLENGES_CANONICAL_NAME_LOCATIONS = "/challenges/{canonicalName}/locations";
     public static final String CHALLENGES_PUBLIC = "/challenges/public";
@@ -23,7 +23,6 @@ public class RestUrls {
 
     public static final String INVITE = "/invite";
     public static final String INVITE_AUTH_TOKEN = "/invite/auth/{token}";
-
 
     public static final String USERS = "/users";
     public static final String USERS_USERNAME = "/users/{username}";
@@ -79,4 +78,7 @@ public class RestUrls {
     public static final String CONNECT = "/connect";
     public static final String CONNECT_PROVIDERID = "/connect/{providerId}";
     public static final String CONNECT_PROVIDERID_USERID = "/connect/{providerId}/{providerUserId}";
+
+    public static final String PARTICIPATION_INVITATIONS = "/participation/invitations";
+    public static final String PARTICIPATION_INVITATIONS_ACCEPT = "/participation/invitations/accept";
 }

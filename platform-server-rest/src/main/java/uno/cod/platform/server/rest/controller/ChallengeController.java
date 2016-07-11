@@ -15,6 +15,7 @@ import uno.cod.platform.server.core.service.ChallengeService;
 import uno.cod.platform.server.core.service.ParticipationService;
 import uno.cod.platform.server.rest.RestUrls;
 
+import javax.mail.MessagingException;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Set;
@@ -44,7 +45,7 @@ public class ChallengeController {
     }
 
     @RequestMapping(value = RestUrls.CHALLENGES, method = RequestMethod.POST)
-    @PreAuthorize("isAuthenticated() and @securityService.canAccessChallengeTemplate(principal, #dto.templateId)")
+    @PreAuthorize("isAuthenticated() and @securityService.canAccessChallengeTemplate(principal, #dto.templateCanonicalName)")
     public ResponseEntity<NameDto> createChallenge(@Valid @RequestBody ChallengeCreateDto dto) {
         return new ResponseEntity<>(new NameDto(challengeService.createFromDto(dto)), HttpStatus.CREATED);
     }
@@ -59,8 +60,16 @@ public class ChallengeController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<String> register(@PathVariable("canonicalName") String challengeName,
                                            @Valid @RequestBody ParticipationCreateDto dto,
-                                           @AuthenticationPrincipal User user) {
+                                           @AuthenticationPrincipal User user) throws MessagingException {
         participationService.registerForChallenge(user, challengeName, dto);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @RequestMapping(value = RestUrls.CHALLENGES_CANONICAL_NAME_PARTICIPATION, method = RequestMethod.DELETE)
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<String> unregister(@PathVariable("canonicalName") String challengeName,
+                                             @AuthenticationPrincipal User user) {
+        participationService.unregisterFromChallenge(user, challengeName);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

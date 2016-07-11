@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:cod="http://cod.uno"
+      xmlns:layout="http://www.thymeleaf.org/xsd/thymeleaf-extras-dialect-2.1.xsd"
+      layout:decorator="layout/main">
+<head>
+    <title>Coduno Email Notification Service</title>
+</head>
+
+<body>
+<div id="textcontent" layout:fragment="textcontent">
+    <b><span th:text="${invitedByFull}">user </span></b> invited you to join the team
+    <b><span th:text="${teamName}"> team </span></b>.
+    In order to accept the invitation, click the button below.
+</div>
+
+<div id="buttoncontent" layout:fragment="buttoncontent">
+    <a cod:href="@{/u/{user}(user=${name},invitedby=${invitedBy},teamname=${teamName})}"
+       class="btn btn primary" style="color: white;">Accept team invitation</a>
+</div>
+</body>
+</html>
