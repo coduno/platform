@@ -12,6 +12,7 @@ import uno.cod.platform.server.core.service.PasswordResetService;
 import uno.cod.platform.server.core.service.UserService;
 import uno.cod.platform.server.rest.RestUrls;
 
+import javax.mail.MessagingException;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -28,10 +29,18 @@ public class UserController {
     }
 
     @RequestMapping(value = RestUrls.USERS, method = RequestMethod.POST)
-    public ResponseEntity<String> create(@Valid @RequestBody UserCreateDto dto) {
+    public ResponseEntity<String> create(@Valid @RequestBody UserCreateDto dto) throws MessagingException {
         userService.createFromDto(dto);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
+
+    /*@RequestMapping(value = RestUrls.USERS, method = RequestMethod.GET)
+    public ResponseEntity<String> create(@PathVariable("username") String username) throws MessagingException {
+
+        // TODO: call correct method in service
+
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }*/
 
     @RequestMapping(value = RestUrls.USERS_USERNAME, method = RequestMethod.GET)
     public ResponseEntity<UserShowDto> querySingleUser(@PathVariable("username") String username) {
