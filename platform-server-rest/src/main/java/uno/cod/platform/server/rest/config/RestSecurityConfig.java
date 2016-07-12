@@ -59,7 +59,8 @@ public class RestSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/ip",
                         "/user/password/reset",
                         "/auth/**",
-                        "/invite/auth/*").permitAll()
+                        "/invite/auth/*",
+                        "/invite/self").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .apply(new SpringSocialConfigurer()

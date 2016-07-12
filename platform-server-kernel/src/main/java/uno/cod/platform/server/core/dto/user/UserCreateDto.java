@@ -17,14 +17,13 @@ public class UserCreateDto {
     @Email
     private String email;
 
-    private String firstName;
-
-    private String lastName;
-
     @NotNull
     @Size(min = 6, max = 40)
     private String password;
 
+    private String challengeCanonicalName;
+
+    // Firstname and Lastname can be set later, but not when initially creating the account
     public String getNick() {
         return nick;
     }
@@ -49,19 +48,11 @@ public class UserCreateDto {
         this.password = password;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public String getChallengeCanonicalName() {
+        return challengeCanonicalName;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setChallengeCanonicalName(String challengeCanonicalName) {
+        this.challengeCanonicalName = challengeCanonicalName;
     }
 }

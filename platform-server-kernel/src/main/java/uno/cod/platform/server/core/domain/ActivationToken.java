@@ -1,7 +1,9 @@
 package uno.cod.platform.server.core.domain;
 
+import org.hibernate.validator.constraints.Email;
+
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -14,27 +16,23 @@ import java.time.ZonedDateTime;
  * the the challenge
  */
 @Entity
-@Table(name = "invitation")
-public class Invitation {
-    @Id
-    private String token;
-
-    @NotNull
+@Table(name = "activation_token")
+public class ActivationToken extends IdentifiableEntity {
+    @Column(unique = true, nullable = false)
+    @Email
     private String email;
 
-    @ManyToOne(optional = false)
+    @ManyToOne
     private Challenge challenge;
 
     @NotNull
     private ZonedDateTime expire;
 
-    public String getToken() {
-        return token;
-    }
+    @Column(unique = true, nullable = false)
+    private String username;
 
-    public void setToken(String token) {
-        this.token = token;
-    }
+    @Column(nullable = false)
+    private String password;
 
     public String getEmail() {
         return email;
@@ -59,4 +57,12 @@ public class Invitation {
     public void setExpire(ZonedDateTime expire) {
         this.expire = expire;
     }
+
+    public String getUsername() { return username; }
+
+    public void setUsername(String username) { this.username = username; }
+
+    public String getPassword() { return password; }
+
+    public void setPassword(String password) { this.password = password; }
 }

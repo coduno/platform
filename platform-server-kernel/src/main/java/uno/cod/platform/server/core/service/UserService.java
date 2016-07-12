@@ -1,59 +1,104 @@
 package uno.cod.platform.server.core.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import uno.cod.platform.server.core.domain.Challenge;
 import uno.cod.platform.server.core.domain.User;
 import uno.cod.platform.server.core.dto.user.*;
 import uno.cod.platform.server.core.exception.CodunoIllegalArgumentException;
 import uno.cod.platform.server.core.exception.CodunoNoSuchElementException;
 import uno.cod.platform.server.core.exception.CodunoResourceConflictException;
+import uno.cod.platform.server.core.repository.ChallengeRepository;
 import uno.cod.platform.server.core.repository.UserRepository;
+import uno.cod.platform.server.core.service.mail.MailService;
 
+import javax.mail.MessagingException;
 import javax.transaction.Transactional;
-import java.util.List;
-import java.util.UUID;
+import java.time.Duration;
+import java.time.ZonedDateTime;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 @Transactional
 public class UserService {
     private final PasswordEncoder passwordEncoder;
-    private final UserRepository repository;
+    private final UserRepository userRepository;
+    private final ActivationTokenService activationTokenService;
+    private final ChallengeRepository challengeRepository;
+    private final MailService mailService;
+
+    @Value("#{T(java.time.Duration).parse('${coduno.register.expire}')}")
+    private Duration duration;
 
     @Autowired
-    public UserService(UserRepository repository, PasswordEncoder passwordEncoder) {
-        this.repository = repository;
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder,
+                       ActivationTokenService activationTokenService,
+                       ChallengeRepository challengeRepository,
+                       MailService mailService) {
+        this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.activationTokenService = activationTokenService;
+        this.challengeRepository = challengeRepository;
+        this.mailService = mailService;
     }
 
-    public User createFromDto(UserCreateDto dto) {
-        User found = repository.findByUsernameOrEmail(dto.getNick(), dto.getEmail());
+    public void createFromDto(UserCreateDto dto) throws MessagingException {
+        User found = userRepository.findByUsernameOrEmail(dto.getNick(), dto.getEmail());
         if (found != null) {
             throw new CodunoResourceConflictException("user.name.exists", new String[]{dto.getNick()});
         }
+
+        Challenge challenge = null;
+        if(!dto.getChallengeCanonicalName().isEmpty()) {
+            challenge = challengeRepository.findOneByCanonicalName(dto.getChallengeCanonicalName());
+            if (challenge == null) {
+                throw new CodunoNoSuchElementException("challenge.invalid");
+            }
+        }
+
+        UUID token = activationTokenService.createToken(dto.getEmail(), dto.getNick(),
+                passwordEncoder.encode(dto.getPassword()), challenge, ZonedDateTime.now().plus(duration));
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("token", token.toString());
+        params.put("challengeCanonicalName", challenge == null ? "" : challenge.getCanonicalName());
+        mailService.sendMail(dto.getNick(), dto.getEmail(), "Account verification", "account-verification", params, Locale.ENGLISH);
+
+
+    }
+
+    public void confirm(UUID token) {
+
+        /*ActivationToken activationToken = activationTokenService.findTokenById(token);
+        String firstName = "";
+        String lastName = "";
+
         User user = new User();
-        user.setUsername(dto.getNick());
-        user.setEmail(dto.getEmail());
+        user.setUsername(activationToken.getUsername());
+        user.setEmail(activationToken.getEmail());
+
         user.setFirstName(dto.getFirstName());
         user.setLastName(dto.getLastName());
         user.setPassword(passwordEncoder.encode(dto.getPassword()));
         user.setEnabled(true);
-        return repository.save(user);
+        return userRepository.save(user);*/
     }
 
     public UserShowDto update(UserUpdateProfileDetailsDto dto, User user) {
-        if (!dto.getUsername().equals(user.getUsername()) && repository.findByUsername(dto.getUsername()) != null) {
+        if (!dto.getUsername().equals(user.getUsername()) && userRepository.findByUsername(dto.getUsername()) != null) {
             throw new CodunoResourceConflictException("user.name.exists", new String[]{dto.getUsername()});
         }
-        if (!dto.getEmail().equals(user.getEmail()) && repository.findByEmail(dto.getEmail()) != null) {
+        if (!dto.getEmail().equals(user.getEmail()) && userRepository.findByEmail(dto.getEmail()) != null) {
             throw new CodunoResourceConflictException("email.existing", new String[]{dto.getEmail()});
         }
         user.setUsername(dto.getUsername());
         user.setEmail(dto.getEmail());
         user.setFirstName(dto.getFirstName());
         user.setLastName(dto.getLastName());
-        return new UserShowDto(repository.save(user));
+        return new UserShowDto(userRepository.save(user));
     }
 
     public void updatePassword(UserPasswordChangeDto dto, User user) {
@@ -66,11 +111,11 @@ public class UserService {
         }
 
         user.setPassword(passwordEncoder.encode(dto.getNewPassword()));
-        repository.save(user);
+        userRepository.save(user);
     }
 
     public UserShowDto findByUsername(String username) {
-        User user = repository.findByUsername(username);
+        User user = userRepository.findByUsername(username);
         if (user == null) {
             throw new CodunoNoSuchElementException("user.invalid");
         }
@@ -78,7 +123,7 @@ public class UserService {
     }
 
     public CurrentUserDto findCurrentUser(UUID id) {
-        User user = repository.findOne(id);
+        User user = userRepository.findOne(id);
         if (user == null) {
             throw new CodunoNoSuchElementException("user.invalid");
         }
@@ -86,7 +131,7 @@ public class UserService {
     }
 
     public UserShowDto findOne(UUID id) {
-        User user = repository.findOne(id);
+        User user = userRepository.findOne(id);
         if (user == null) {
             throw new CodunoNoSuchElementException("user.invalid");
         }
@@ -94,7 +139,7 @@ public class UserService {
     }
 
     public List<UserShortShowDto> listUsers() {
-        return repository.findAll().stream().map(UserShortShowDto::new).collect(Collectors.toList());
+        return userRepository.findAll().stream().map(UserShortShowDto::new).collect(Collectors.toList());
     }
 
     public List<UserShortShowDto> listUsersByUsernameContaining(String searchValue) {
@@ -102,14 +147,14 @@ public class UserService {
             throw new CodunoIllegalArgumentException("user.search.length.invalid");
         }
 
-        return repository.findByUsernameContaining(searchValue)
+        return userRepository.findByUsernameContaining(searchValue)
                 .stream()
                 .map(UserShortShowDto::new)
                 .collect(Collectors.toList());
     }
 
     public UserShortShowDto findByEmail(String email) {
-        User user = repository.findByEmail(email);
+        User user = userRepository.findByEmail(email);
         if (user == null) {
             throw new CodunoNoSuchElementException("user.invalid");
         }
