@@ -3,9 +3,7 @@ package uno.cod.platform.server.core.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
-import uno.cod.platform.server.core.domain.Challenge;
-import uno.cod.platform.server.core.domain.Result;
-import uno.cod.platform.server.core.domain.User;
+import uno.cod.platform.server.core.domain.*;
 import uno.cod.platform.server.core.dto.challenge.LeaderboardEntryDto;
 import uno.cod.platform.server.core.dto.result.ResultInfoDto;
 import uno.cod.platform.server.core.dto.result.ResultShowDto;
@@ -13,6 +11,7 @@ import uno.cod.platform.server.core.dto.user.UserShortShowDto;
 import uno.cod.platform.server.core.exception.CodunoIllegalArgumentException;
 import uno.cod.platform.server.core.mapper.ResultMapper;
 import uno.cod.platform.server.core.repository.ChallengeRepository;
+import uno.cod.platform.server.core.repository.ParticipationRepository;
 import uno.cod.platform.server.core.repository.ResultRepository;
 
 import javax.transaction.Transactional;
@@ -28,13 +27,15 @@ public class ResultService {
     private final ResultRepository repository;
     private final ChallengeRepository challengeRepository;
     private final TaskScheduler taskScheduler;
+    private final ParticipationRepository participationRepository;
 
     @Autowired
     public ResultService(ResultRepository repository,
-                         ChallengeRepository challengeRepository, TaskScheduler taskScheduler) {
+                         ChallengeRepository challengeRepository, TaskScheduler taskScheduler, ParticipationRepository participationRepository) {
         this.repository = repository;
         this.challengeRepository = challengeRepository;
         this.taskScheduler = taskScheduler;
+        this.participationRepository = participationRepository;
     }
 
     public ResultShowDto save(UUID challengeId, User user) {
@@ -46,10 +47,21 @@ public class ResultService {
         if (result != null) {
             throw new CodunoIllegalArgumentException("challenge.completed");
         }
+        ParticipationKey key = new ParticipationKey();
+        key.setChallenge(challenge);
+        key.setUser(user);
+        Participation participation = participationRepository.findOne(key);
+        if (participation == null) {
+            throw new CodunoIllegalArgumentException("participation.invalid");
+        }
         result = new Result();
         challenge.addResult(result);
         result.setStarted(ZonedDateTime.now());
-        result.setUser(user);
+        if (participation.getTeam() != null) {
+            result.setTeam(participation.getTeam());
+        } else {
+            result.setUser(user);
+        }
         result = repository.save(result);
         final UUID resultId = result.getId();
 
@@ -61,12 +73,12 @@ public class ResultService {
         }
 
         taskScheduler.schedule(() -> {
-                    Result r = repository.findOne(resultId);
-                    if (r.getFinished() != null) {
-                        return;
-                    }
-                    r.setFinished(ZonedDateTime.now());
-                    repository.save(r);
+            Result r = repository.findOne(resultId);
+            if (r.getFinished() != null) {
+                return;
+            }
+            r.setFinished(ZonedDateTime.now());
+            repository.save(r);
         }, setFinished);
 
         return ResultMapper.map(result);

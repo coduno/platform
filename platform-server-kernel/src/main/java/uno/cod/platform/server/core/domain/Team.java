@@ -34,6 +34,9 @@ public class Team extends IdentifiableEntity implements CanonicalEntity, Seriali
     )
     private Set<User> invitedUsers;
 
+    @OneToMany(mappedBy = "team")
+    private Set<Result> results;
+
     private boolean enabled = true;
 
     public String getName() {
@@ -75,6 +78,14 @@ public class Team extends IdentifiableEntity implements CanonicalEntity, Seriali
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public Set<Result> getResults() {
+        return results;
+    }
+
+    public void setResults(Set<Result> results) {
+        this.results = results;
     }
 
     protected void addInvitedUser(User user) {

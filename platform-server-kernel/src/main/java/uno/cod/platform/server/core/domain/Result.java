@@ -19,6 +19,9 @@ public class Result extends IdentifiableEntity {
     private User user;
 
     @ManyToOne
+    private Team team;
+
+    @ManyToOne
     private Challenge challenge;
 
     private ZonedDateTime started;
@@ -34,6 +37,14 @@ public class Result extends IdentifiableEntity {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public Team getTeam() {
+        return team;
+    }
+
+    public void setTeam(Team team) {
+        this.team = team;
     }
 
     public Challenge getChallenge() {
