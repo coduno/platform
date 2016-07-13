@@ -2,8 +2,10 @@ package uno.cod.platform.server.core.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import uno.cod.platform.server.core.domain.ActivationToken;
 import uno.cod.platform.server.core.domain.Challenge;
 import uno.cod.platform.server.core.domain.User;
 import uno.cod.platform.server.core.dto.user.*;
@@ -59,32 +61,35 @@ public class UserService {
             }
         }
 
-        UUID token = activationTokenService.createToken(dto.getEmail(), dto.getNick(),
+        String token = activationTokenService.createToken(dto.getEmail(), dto.getNick(),
                 passwordEncoder.encode(dto.getPassword()), challenge, ZonedDateTime.now().plus(duration));
 
         Map<String, Object> params = new HashMap<>();
-        params.put("token", token.toString());
+        params.put("token", token);
         params.put("challengeCanonicalName", challenge == null ? "" : challenge.getCanonicalName());
         mailService.sendMail(dto.getNick(), dto.getEmail(), "Account verification", "account-verification", params, Locale.ENGLISH);
-
-
     }
 
-    public void confirm(UUID token) {
+    public UserDetails confirm(UUID id) {
+        ActivationToken activationToken = activationTokenService.findTokenById(id);
 
-        /*ActivationToken activationToken = activationTokenService.findTokenById(token);
-        String firstName = "";
-        String lastName = "";
+        if (activationToken == null) {
+           throw new CodunoNoSuchElementException("token.invalid");
+        }
+
+        // String firstName = "";
+        // String lastName = "";
+        // user.setFirstName(dto.getFirstName());
+        // user.setLastName(dto.getLastName());
 
         User user = new User();
         user.setUsername(activationToken.getUsername());
         user.setEmail(activationToken.getEmail());
-
-        user.setFirstName(dto.getFirstName());
-        user.setLastName(dto.getLastName());
-        user.setPassword(passwordEncoder.encode(dto.getPassword()));
+        user.setPassword(passwordEncoder.encode(activationToken.getPassword()));
         user.setEnabled(true);
-        return userRepository.save(user);*/
+
+        User stored = userRepository.save(user);
+        return stored;
     }
 
     public UserShowDto update(UserUpdateProfileDetailsDto dto, User user) {

@@ -14,8 +14,8 @@
 </div>
 
 <div id="buttoncontent" layout:fragment="buttoncontent">
-    <a cod:href="@{/challenges/{challengeCanonicalName}/register(user=${name},invitedby=${invitedBy},teamname=${teamName})}"
-       class="btn btn primary" style="color: white;">Accept team invitation</a>
+    <a cod:href="@{/login(token=${token},challengeCanonicalName=${challengeCanonicalName})}"
+       class="btn btn primary" style="color: white;">Verify account</a>
 </div>
 </body>
 </html>

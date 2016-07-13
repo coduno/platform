@@ -34,6 +34,9 @@ public class ActivationToken extends IdentifiableEntity {
     @Column(nullable = false)
     private String password;
 
+    @Column(nullable = false)
+    private String token;
+
     public String getEmail() {
         return email;
     }
@@ -65,4 +68,8 @@ public class ActivationToken extends IdentifiableEntity {
     public String getPassword() { return password; }
 
     public void setPassword(String password) { this.password = password; }
+
+    public String getToken() { return token; }
+
+    public void setToken(String token) { this.token = token; }
 }
