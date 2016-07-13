@@ -61,9 +61,7 @@ subprojects { proj ->
         testCompile "org.springframework.boot:spring-boot-starter-test"
     }
 
-    bootRepackage {
-        mainClass = 'uno.cod.platform.server.Server'
-    }
+    bootRepackage.enabled = false
 
     checkstyle {
         configFile = rootProject.file('checkstyle.xml')

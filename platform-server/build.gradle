@@ -18,6 +18,7 @@ dependencies {
 compileJava.dependsOn(processResources)
 
 bootRepackage {
+    enabled = true
     mainClass = 'uno.cod.platform.server.Server'
 }
 
