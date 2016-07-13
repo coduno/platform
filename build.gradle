@@ -1,10 +1,10 @@
 ext {
-    springBootVersion = '1.3.5.RELEASE'
+    springBootVersion = '1.3.6.RELEASE'
 }
 
 buildscript {
     ext {
-        springBootVersion = '1.3.5.RELEASE'
+        springBootVersion = '1.3.6.RELEASE'
     }
     repositories {
         mavenLocal()
@@ -16,7 +16,7 @@ buildscript {
     }
     dependencies {
         classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
-        classpath "io.spring.gradle:dependency-management-plugin:0.5.6.RELEASE"
+        classpath "io.spring.gradle:dependency-management-plugin:0.6.0.RELEASE"
         classpath "org.springframework.build.gradle:propdeps-plugin:0.0.7"
         classpath "gradle.plugin.com.gorylenko.gradle-git-properties:gradle-git-properties:1.4.16"
 
@@ -51,7 +51,7 @@ subprojects { proj ->
 
     dependencyManagement {
         imports {
-            mavenBom 'io.spring.platform:platform-bom:2.0.5.RELEASE'
+            mavenBom 'io.spring.platform:platform-bom:2.0.6.RELEASE'
         }
     }
 
