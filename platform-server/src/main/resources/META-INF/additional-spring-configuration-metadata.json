@@ -33,17 +33,17 @@
     {
       "name": "coduno.register.expire",
       "type": "java.lang.String",
-      "description": "test"
+      "description": "Time until activation token expires."
     },
     {
       "name": "coduno.template.expire",
       "type": "java.lang.String",
-      "description": "test"
+      "description": "Time until template expires."
     },
     {
       "name": "coduno.invite.expire",
       "type": "java.lang.String",
-      "description": "test"
+      "description": "Time until invite token expires."
     }
   ]
 }

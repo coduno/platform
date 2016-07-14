@@ -83,13 +83,6 @@ public class ActivationTokenService {
         deleteActivationToken(id);
 
         // Make user a real user
-        //return userService.confirm(id);
-
-        // String firstName = "";
-        // String lastName = "";
-        // user.setFirstName(dto.getFirstName());
-        // user.setLastName(dto.getLastName());
-
         User user = new User();
         user.setUsername(activationToken.getUsername());
         user.setEmail(activationToken.getEmail());
