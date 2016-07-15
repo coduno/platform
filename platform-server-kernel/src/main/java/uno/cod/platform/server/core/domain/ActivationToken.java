@@ -18,8 +18,8 @@ import java.time.ZonedDateTime;
 @Entity
 @Table(name = "activation_token")
 public class ActivationToken extends IdentifiableEntity {
-    @Column(unique = true, nullable = false)
     @Email
+    @Column(unique = true, nullable = false)
     private String email;
 
     @ManyToOne
@@ -61,15 +61,27 @@ public class ActivationToken extends IdentifiableEntity {
         this.expire = expire;
     }
 
-    public String getUsername() { return username; }
+    public String getUsername() {
+        return username;
+    }
 
-    public void setUsername(String username) { this.username = username; }
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
-    public String getPassword() { return password; }
+    public String getPassword() {
+        return password;
+    }
 
-    public void setPassword(String password) { this.password = password; }
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
-    public String getToken() { return token; }
+    public String getToken() {
+        return token;
+    }
 
-    public void setToken(String token) { this.token = token; }
+    public void setToken(String token) {
+        this.token = token;
+    }
 }

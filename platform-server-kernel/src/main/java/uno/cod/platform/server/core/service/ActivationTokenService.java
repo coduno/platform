@@ -70,7 +70,6 @@ public class ActivationTokenService {
         return new String(Base64.encode(bytes));
     }
 
-
     public ActivationToken findTokenById(UUID id) {
         return activationTokenRepository.findOne(id);
     }

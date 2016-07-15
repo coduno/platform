@@ -17,7 +17,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.UUID;
 
-
 /**
  * This filter authenticates via a non standardized Authorization Header. We
  * are using this approach since a full OAuth2 implementation at the current

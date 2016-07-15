@@ -32,18 +32,11 @@ import java.io.IOException;
 @EnableWebSecurity
 @Order(SecurityProperties.ACCESS_OVERRIDE_ORDER)
 public class RestSecurityConfig extends WebSecurityConfigurerAdapter {
-
     @Autowired
     private AccessTokenService accessTokenService;
 
     @Autowired
     private ActivationTokenService activationTokenService;
-
-    /*@Autowired
-    public RestSecurityConfig(AccessTokenService accessTokenService, ActivationTokenService activationTokenService) {
-        this.accessTokenService = accessTokenService;
-        this.activationTokenService = activationTokenService;
-    }*/
 
     @Value("${coduno.url}")
     private String appUrl;
