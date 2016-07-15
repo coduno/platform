@@ -27,12 +27,6 @@ public class UserController {
         this.passwordResetService = passwordResetService;
     }
 
-    @RequestMapping(value = RestUrls.USERS, method = RequestMethod.POST)
-    public ResponseEntity<String> create(@Valid @RequestBody UserCreateDto dto) {
-        userService.createFromDto(dto);
-        return new ResponseEntity<>(HttpStatus.CREATED);
-    }
-
     @RequestMapping(value = RestUrls.USERS_USERNAME, method = RequestMethod.GET)
     public ResponseEntity<UserShowDto> querySingleUser(@PathVariable("username") String username) {
         return new ResponseEntity<>(userService.findByUsername(username), HttpStatus.OK);
@@ -55,7 +49,7 @@ public class UserController {
         return new ResponseEntity<>(userService.update(dto, user), HttpStatus.OK);
     }
 
-    @RequestMapping(value = RestUrls.USER_SEARCH, method = RequestMethod.GET)
+    @RequestMapping(value = RestUrls.USERS_SEARCH, method = RequestMethod.GET)
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<UserShortShowDto>> searchUsers(@RequestParam String searchValue) {
         return new ResponseEntity<>(userService.listUsersByUsernameContaining(searchValue), HttpStatus.OK);

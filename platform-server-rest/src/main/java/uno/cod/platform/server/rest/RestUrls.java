@@ -27,6 +27,7 @@ public class RestUrls {
     public static final String USERS = "/users";
     public static final String USERS_USERNAME = "/users/{username}";
     public static final String USERS_USERNAME_TEAMS = "/users/{username}/teams";
+    public static final String USERS_SEARCH = "/users/search";
 
     public static final String USER = "/user";
     public static final String USER_CHALLENGE_CANONICAL_NAME_STATUS = "/user/challenge/{canonicalName}/status";
@@ -35,7 +36,7 @@ public class RestUrls {
     public static final String USER_ORGANIZATIONS = "/user/organizations";
     public static final String USER_TEAMS = "/user/teams";
     public static final String USER_TEAMS_INVITATIONS = "/user/teams/invitations";
-    public static final String USER_SEARCH = "/users/search";
+
     public static final String USER_ACCCESSTOKEN = "/user/access_token";
 
     public static final String RESULTS = "/results";
@@ -81,4 +82,6 @@ public class RestUrls {
 
     public static final String PARTICIPATION_INVITATIONS = "/participation/invitations";
     public static final String PARTICIPATION_INVITATIONS_ACCEPT = "/participation/invitations/accept";
+
+    public static final String ACTIVATION_TOKENS = "/activation_tokens";
 }

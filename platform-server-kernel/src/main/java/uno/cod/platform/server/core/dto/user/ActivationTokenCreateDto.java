@@ -7,7 +7,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-public class UserCreateDto {
+public class ActivationTokenCreateDto {
     @NotNull
     @Size(min = 5, max = 40)
     @Pattern(regexp = "^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*$")
@@ -24,6 +24,8 @@ public class UserCreateDto {
     @NotNull
     @Size(min = 6, max = 40)
     private String password;
+
+    private String challengeCanonicalName;
 
     public String getNick() {
         return nick;
@@ -47,6 +49,14 @@ public class UserCreateDto {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getChallengeCanonicalName() {
+        return challengeCanonicalName;
+    }
+
+    public void setChallengeCanonicalName(String challengeCanonicalName) {
+        this.challengeCanonicalName = challengeCanonicalName;
     }
 
     public String getFirstName() {

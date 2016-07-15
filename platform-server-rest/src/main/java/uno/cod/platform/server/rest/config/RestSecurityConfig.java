@@ -19,7 +19,9 @@ import org.springframework.session.web.http.CookieHttpSessionStrategy;
 import org.springframework.session.web.http.HttpSessionStrategy;
 import org.springframework.social.security.SpringSocialConfigurer;
 import uno.cod.platform.server.core.filter.AccessTokenAuthenticationFilter;
+import uno.cod.platform.server.core.filter.ActivationTokenAuthenticationFilter;
 import uno.cod.platform.server.core.service.AccessTokenService;
+import uno.cod.platform.server.core.service.ActivationTokenService;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -32,6 +34,9 @@ import java.io.IOException;
 public class RestSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private AccessTokenService accessTokenService;
+
+    @Autowired
+    private ActivationTokenService activationTokenService;
 
     @Value("${coduno.url}")
     private String appUrl;
@@ -49,6 +54,7 @@ public class RestSecurityConfig extends WebSecurityConfigurerAdapter {
                     .invalidateHttpSession(true)
                     .logoutSuccessUrl(appUrl)
                 .and()
+                .addFilterBefore(new ActivationTokenAuthenticationFilter(activationTokenService), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new AccessTokenAuthenticationFilter(accessTokenService), UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
                 .antMatchers(HttpMethod.OPTIONS).permitAll()
@@ -59,6 +65,7 @@ public class RestSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/ip",
                         "/user/password/reset",
                         "/auth/**",
+                        "/activation_tokens",
                         "/invite/auth/*").permitAll()
                 .anyRequest().authenticated()
                 .and()

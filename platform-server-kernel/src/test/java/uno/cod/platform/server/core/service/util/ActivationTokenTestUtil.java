@@ -1,13 +1,13 @@
 package uno.cod.platform.server.core.service.util;
 
-import uno.cod.platform.server.core.domain.Invitation;
+import uno.cod.platform.server.core.domain.ActivationToken;
 
 import java.time.ZonedDateTime;
 
-public class InvitationTestUtil {
+public class ActivationTokenTestUtil {
 
-    public static Invitation getInvitation() {
-        Invitation invitation = new Invitation();
+    public static ActivationToken getActivationToken() {
+        ActivationToken invitation = new ActivationToken();
 
         invitation.setToken("token");
         invitation.setExpire(ZonedDateTime.now());

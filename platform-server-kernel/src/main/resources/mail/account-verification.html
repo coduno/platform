@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cod="http://cod.uno"
+      xmlns:layout="http://www.thymeleaf.org/xsd/thymeleaf-extras-dialect-2.1.xsd"
+      layout:decorator="layout/main">
+<head>
+    <title>Account Verification</title>
+</head>
+
+<body>
+<div id="textcontent" layout:fragment="textcontent">
+    Welcome to Coduno! Thank you for signing up.
+    Please click the button below in order to complete the account creation.
+</div>
+
+<div id="buttoncontent" layout:fragment="buttoncontent">
+    <a cod:href="@{/login(token=${token},challengeCanonicalName=${challengeCanonicalName})}"
+       class="btn btn primary" style="color: white;">Verify account</a>
+</div>
+</body>
+</html>

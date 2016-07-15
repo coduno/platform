@@ -29,6 +29,21 @@
       "name": "coduno.runtime.password",
       "type": "java.lang.String",
       "description": "Password for basic authentication of the runtime."
+    },
+    {
+      "name": "coduno.register.expire",
+      "type": "java.lang.String",
+      "description": "Time until activation token expires."
+    },
+    {
+      "name": "coduno.template.expire",
+      "type": "java.lang.String",
+      "description": "Time until template expires."
+    },
+    {
+      "name": "coduno.invite.expire",
+      "type": "java.lang.String",
+      "description": "Time until invite token expires."
     }
   ]
 }

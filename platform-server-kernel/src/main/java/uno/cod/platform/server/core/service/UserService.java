@@ -8,7 +8,9 @@ import uno.cod.platform.server.core.dto.user.*;
 import uno.cod.platform.server.core.exception.CodunoIllegalArgumentException;
 import uno.cod.platform.server.core.exception.CodunoNoSuchElementException;
 import uno.cod.platform.server.core.exception.CodunoResourceConflictException;
+import uno.cod.platform.server.core.repository.ChallengeRepository;
 import uno.cod.platform.server.core.repository.UserRepository;
+import uno.cod.platform.server.core.service.mail.MailService;
 
 import javax.transaction.Transactional;
 import java.util.List;
@@ -19,41 +21,46 @@ import java.util.stream.Collectors;
 @Transactional
 public class UserService {
     private final PasswordEncoder passwordEncoder;
-    private final UserRepository repository;
+    private final UserRepository userRepository;
+    private final ChallengeRepository challengeRepository;
+    private final MailService mailService;
 
     @Autowired
-    public UserService(UserRepository repository, PasswordEncoder passwordEncoder) {
-        this.repository = repository;
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder,
+                       ChallengeRepository challengeRepository,
+                       MailService mailService) {
+        this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.challengeRepository = challengeRepository;
+        this.mailService = mailService;
     }
 
-    public User createFromDto(UserCreateDto dto) {
-        User found = repository.findByUsernameOrEmail(dto.getNick(), dto.getEmail());
+    public User createUser(String username, String email, String password) {
+        return createUser(username, email, password, null, null);
+    }
+
+    public User createUser(String username, String email, String password, String firstName, String lastName) {
+        User found = userRepository.findByUsernameOrEmail(username, email);
+
         if (found != null) {
-            throw new CodunoResourceConflictException("user.name.exists", new String[]{dto.getNick()});
+            throw new CodunoResourceConflictException("user.name.exists", new String[]{username});
         }
-        User user = new User();
-        user.setUsername(dto.getNick());
-        user.setEmail(dto.getEmail());
-        user.setFirstName(dto.getFirstName());
-        user.setLastName(dto.getLastName());
-        user.setPassword(passwordEncoder.encode(dto.getPassword()));
-        user.setEnabled(true);
-        return repository.save(user);
+
+        return userRepository.save(new User(username, email, passwordEncoder.encode(password), firstName, lastName));
     }
 
     public UserShowDto update(UserUpdateProfileDetailsDto dto, User user) {
-        if (!dto.getUsername().equals(user.getUsername()) && repository.findByUsername(dto.getUsername()) != null) {
+        if (!dto.getUsername().equals(user.getUsername()) && userRepository.findByUsername(dto.getUsername()) != null) {
             throw new CodunoResourceConflictException("user.name.exists", new String[]{dto.getUsername()});
         }
-        if (!dto.getEmail().equals(user.getEmail()) && repository.findByEmail(dto.getEmail()) != null) {
+        if (!dto.getEmail().equals(user.getEmail()) && userRepository.findByEmail(dto.getEmail()) != null) {
             throw new CodunoResourceConflictException("email.existing", new String[]{dto.getEmail()});
         }
         user.setUsername(dto.getUsername());
         user.setEmail(dto.getEmail());
         user.setFirstName(dto.getFirstName());
         user.setLastName(dto.getLastName());
-        return new UserShowDto(repository.save(user));
+        return new UserShowDto(userRepository.save(user));
     }
 
     public void updatePassword(UserPasswordChangeDto dto, User user) {
@@ -66,11 +73,11 @@ public class UserService {
         }
 
         user.setPassword(passwordEncoder.encode(dto.getNewPassword()));
-        repository.save(user);
+        userRepository.save(user);
     }
 
     public UserShowDto findByUsername(String username) {
-        User user = repository.findByUsername(username);
+        User user = userRepository.findByUsername(username);
         if (user == null) {
             throw new CodunoNoSuchElementException("user.invalid");
         }
@@ -78,7 +85,7 @@ public class UserService {
     }
 
     public CurrentUserDto findCurrentUser(UUID id) {
-        User user = repository.findOne(id);
+        User user = userRepository.findOne(id);
         if (user == null) {
             throw new CodunoNoSuchElementException("user.invalid");
         }
@@ -86,7 +93,7 @@ public class UserService {
     }
 
     public UserShowDto findOne(UUID id) {
-        User user = repository.findOne(id);
+        User user = userRepository.findOne(id);
         if (user == null) {
             throw new CodunoNoSuchElementException("user.invalid");
         }
@@ -94,7 +101,7 @@ public class UserService {
     }
 
     public List<UserShortShowDto> listUsers() {
-        return repository.findAll().stream().map(UserShortShowDto::new).collect(Collectors.toList());
+        return userRepository.findAll().stream().map(UserShortShowDto::new).collect(Collectors.toList());
     }
 
     public List<UserShortShowDto> listUsersByUsernameContaining(String searchValue) {
@@ -102,14 +109,14 @@ public class UserService {
             throw new CodunoIllegalArgumentException("user.search.length.invalid");
         }
 
-        return repository.findByUsernameContaining(searchValue)
+        return userRepository.findByUsernameContaining(searchValue)
                 .stream()
                 .map(UserShortShowDto::new)
                 .collect(Collectors.toList());
     }
 
     public UserShortShowDto findByEmail(String email) {
-        User user = repository.findByEmail(email);
+        User user = userRepository.findByEmail(email);
         if (user == null) {
             throw new CodunoNoSuchElementException("user.invalid");
         }

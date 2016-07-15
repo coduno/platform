@@ -6,7 +6,8 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.filter.OncePerRequestFilter;
-import uno.cod.platform.server.core.service.AccessTokenService;
+import uno.cod.platform.server.core.exception.CodunoNoSuchElementException;
+import uno.cod.platform.server.core.service.ActivationTokenService;
 import uno.cod.platform.server.core.util.TokenHelper;
 
 import javax.servlet.FilterChain;
@@ -25,11 +26,11 @@ import java.util.UUID;
  *
  * Registered Schemes can be found here: http://www.iana.org/assignments/http-authschemes/http-authschemes.xhtml
  */
-public class AccessTokenAuthenticationFilter extends OncePerRequestFilter {
-    private AccessTokenService accessTokenService;
+public class ActivationTokenAuthenticationFilter extends OncePerRequestFilter {
+    private ActivationTokenService activationTokenService;
 
-    public AccessTokenAuthenticationFilter(AccessTokenService accessTokenService) {
-        this.accessTokenService = accessTokenService;
+    public ActivationTokenAuthenticationFilter(ActivationTokenService activationTokenService) {
+        this.activationTokenService = activationTokenService;
     }
 
     @Override
@@ -55,10 +56,16 @@ public class AccessTokenAuthenticationFilter extends OncePerRequestFilter {
                 throw new BadCredentialsException("Failed to decode basic authentication token");
             }
 
-            UserDetails user = accessTokenService.loadByAccessToken(UUID.fromString(authHeader[0]), authHeader[1]);
+            if (debug) {
+                logger.debug("Decoded header with ID " + authHeader[0] + " and secret " + authHeader[1]);
+            }
+
+            UUID id = UUID.fromString(authHeader[0]);
+            String token = authHeader[1];
+            UserDetails user = activationTokenService.loadByActivationToken(id, token);
 
             if (user == null) {
-                throw new BadCredentialsException("No user with this token found");
+                throw new CodunoNoSuchElementException("token.invalid");
             }
 
             if (debug) {
