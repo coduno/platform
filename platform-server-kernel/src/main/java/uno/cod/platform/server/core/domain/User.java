@@ -90,6 +90,19 @@ public class User extends IdentifiableEntity implements SocialUserDetails, Canon
     @OneToMany(mappedBy = "key.user")
     private Set<Participation> participations;
 
+    public User() {
+    }
+
+    public User(String username, String email, String password, String firstName, String lastName) {
+        this.username = username;
+        this.email = email;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.password = password;
+        this.enabled = true;
+        this.admin = false;
+    }
+
     public String getUsername() {
         return username;
     }

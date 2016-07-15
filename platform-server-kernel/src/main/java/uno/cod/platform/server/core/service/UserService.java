@@ -1,12 +1,8 @@
 package uno.cod.platform.server.core.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import uno.cod.platform.server.core.domain.ActivationToken;
-import uno.cod.platform.server.core.domain.Challenge;
 import uno.cod.platform.server.core.domain.User;
 import uno.cod.platform.server.core.dto.user.*;
 import uno.cod.platform.server.core.exception.CodunoIllegalArgumentException;
@@ -16,11 +12,9 @@ import uno.cod.platform.server.core.repository.ChallengeRepository;
 import uno.cod.platform.server.core.repository.UserRepository;
 import uno.cod.platform.server.core.service.mail.MailService;
 
-import javax.mail.MessagingException;
 import javax.transaction.Transactional;
-import java.time.Duration;
-import java.time.ZonedDateTime;
-import java.util.*;
+import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,68 +22,31 @@ import java.util.stream.Collectors;
 public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
-    private final ActivationTokenService activationTokenService;
     private final ChallengeRepository challengeRepository;
     private final MailService mailService;
 
-    @Value("#{T(java.time.Duration).parse('${coduno.register.expire}')}")
-    private Duration duration;
-
     @Autowired
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder,
-                       ActivationTokenService activationTokenService,
                        ChallengeRepository challengeRepository,
                        MailService mailService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-        this.activationTokenService = activationTokenService;
         this.challengeRepository = challengeRepository;
         this.mailService = mailService;
     }
 
-    public void createFromDto(UserCreateDto dto) throws MessagingException {
-        User found = userRepository.findByUsernameOrEmail(dto.getNick(), dto.getEmail());
-        if (found != null) {
-            throw new CodunoResourceConflictException("user.name.exists", new String[]{dto.getNick()});
-        }
-
-        Challenge challenge = null;
-        if(!dto.getChallengeCanonicalName().isEmpty()) {
-            challenge = challengeRepository.findOneByCanonicalName(dto.getChallengeCanonicalName());
-            if (challenge == null) {
-                throw new CodunoNoSuchElementException("challenge.invalid");
-            }
-        }
-
-        String token = activationTokenService.createToken(dto.getEmail(), dto.getNick(),
-                passwordEncoder.encode(dto.getPassword()), challenge, ZonedDateTime.now().plus(duration));
-
-        Map<String, Object> params = new HashMap<>();
-        params.put("token", token);
-        params.put("challengeCanonicalName", challenge == null ? "" : challenge.getCanonicalName());
-        mailService.sendMail(dto.getNick(), dto.getEmail(), "Account verification", "account-verification", params, Locale.ENGLISH);
+    public User createUser(String username, String email, String password) {
+        return createUser(username, email, password, null, null);
     }
 
-    public UserDetails confirm(UUID id) {
-        ActivationToken activationToken = activationTokenService.findTokenById(id);
+    public User createUser(String username, String email, String password, String firstName, String lastName) {
+        User found = userRepository.findByUsernameOrEmail(username, email);
 
-        if (activationToken == null) {
-           throw new CodunoNoSuchElementException("token.invalid");
+        if (found != null) {
+            throw new CodunoResourceConflictException("user.name.exists", new String[]{username});
         }
 
-        // String firstName = "";
-        // String lastName = "";
-        // user.setFirstName(dto.getFirstName());
-        // user.setLastName(dto.getLastName());
-
-        User user = new User();
-        user.setUsername(activationToken.getUsername());
-        user.setEmail(activationToken.getEmail());
-        user.setPassword(passwordEncoder.encode(activationToken.getPassword()));
-        user.setEnabled(true);
-
-        User stored = userRepository.save(user);
-        return stored;
+        return userRepository.save(new User(username, email, passwordEncoder.encode(password), firstName, lastName));
     }
 
     public UserShowDto update(UserUpdateProfileDetailsDto dto, User user) {

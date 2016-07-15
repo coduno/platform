@@ -72,6 +72,7 @@ public class RestSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/ip",
                         "/user/password/reset",
                         "/auth/**",
+                        "/activation_tokens",
                         "/invite/auth/*").permitAll()
                 .anyRequest().authenticated()
                 .and()

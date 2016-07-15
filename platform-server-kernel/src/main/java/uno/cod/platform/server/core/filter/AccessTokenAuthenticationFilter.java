@@ -7,6 +7,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.filter.OncePerRequestFilter;
 import uno.cod.platform.server.core.service.AccessTokenService;
+import uno.cod.platform.server.core.util.TokenHelper;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -48,7 +49,7 @@ public class AccessTokenAuthenticationFilter extends OncePerRequestFilter {
         }
 
         try {
-            String[] authHeader = TokenHelper.extractAndDecodeHeader(header);
+            String[] authHeader = TokenHelper.decodeAndSplit(header.substring(6));
 
             if (authHeader.length != 2) {
                 throw new BadCredentialsException("Failed to decode basic authentication token");

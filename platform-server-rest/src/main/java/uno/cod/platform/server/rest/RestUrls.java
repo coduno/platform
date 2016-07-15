@@ -82,4 +82,6 @@ public class RestUrls {
 
     public static final String PARTICIPATION_INVITATIONS = "/participation/invitations";
     public static final String PARTICIPATION_INVITATIONS_ACCEPT = "/participation/invitations/accept";
+
+    public static final String ACTIVATION_TOKENS = "/activation_tokens";
 }

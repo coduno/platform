@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.filter.OncePerRequestFilter;
 import uno.cod.platform.server.core.exception.CodunoNoSuchElementException;
 import uno.cod.platform.server.core.service.ActivationTokenService;
+import uno.cod.platform.server.core.util.TokenHelper;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -50,13 +51,15 @@ public class ActivationTokenAuthenticationFilter extends OncePerRequestFilter {
         }
 
         try {
-            String[] authHeader = TokenHelper.extractAndDecodeHeader(header);
+            String[] authHeader = TokenHelper.decodeAndSplit(header.substring(6));
 
             if (authHeader.length != 2) {
                 throw new BadCredentialsException("Failed to decode basic authentication token");
             }
 
-            logger.debug("Decoded header with ID " + authHeader[0] + " and secret " + authHeader[1]);
+            if (debug) {
+                logger.debug("Decoded header with ID " + authHeader[0] + " and secret " + authHeader[1]);
+            }
 
             UUID id = UUID.fromString(authHeader[0]);
             String token = authHeader[1];
