@@ -3,9 +3,9 @@ package uno.cod.platform.server.core.domain;
 import org.hibernate.validator.constraints.Email;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.social.security.SocialUserDetails;
+import uno.cod.platform.server.core.Named;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
 import java.util.*;
 
@@ -22,13 +22,7 @@ import java.util.*;
                 @NamedAttributeNode("invitedChallenges")
         }
 )
-public class User extends IdentifiableEntity implements SocialUserDetails, CanonicalEntity {
-    private static final long serialVersionUID = 1L;
-
-    @Column(unique = true, nullable = false)
-    @NotNull
-    private String username;
-
+public class User extends CanonicalEntity implements Named<UUID>, SocialUserDetails {
     @Column(unique = true, nullable = false)
     @Email
     private String email;
@@ -48,6 +42,23 @@ public class User extends IdentifiableEntity implements SocialUserDetails, Canon
     private boolean enabled;
 
     private boolean admin;
+
+    public User(String canonicalName, String email, String password, String firstName, String lastName) {
+        super(canonicalName);
+        this.email = email;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.password = password;
+        this.enabled = true;
+        this.admin = false;
+    }
+
+    public User(UUID id) {
+        super(id);
+    }
+
+    public User() {
+    }
 
     /**
      * The current coding profile, represents his skills
@@ -90,27 +101,7 @@ public class User extends IdentifiableEntity implements SocialUserDetails, Canon
     @OneToMany(mappedBy = "key.user")
     private Set<Participation> participations;
 
-    public User() {
-    }
-
-    public User(String username, String email, String password, String firstName, String lastName) {
-        this.username = username;
-        this.email = email;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.password = password;
-        this.enabled = true;
-        this.admin = false;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
+    @Override
     public String getPassword() {
         return password;
     }
@@ -141,18 +132,6 @@ public class User extends IdentifiableEntity implements SocialUserDetails, Canon
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
-    }
-
-    @Transient
-    public String getFullName() {
-        String name = "";
-        if (firstName != null) {
-            name = firstName + " ";
-        }
-        if (lastName != null) {
-            name += lastName;
-        }
-        return name;
     }
 
     public Set<AccessToken> getAccessTokens() {
@@ -249,37 +228,6 @@ public class User extends IdentifiableEntity implements SocialUserDetails, Canon
         this.participations = participations;
     }
 
-    @Transient
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Transient
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Transient
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    public Set<Team> getInvitedTeams() {
-        return invitedTeams;
-    }
-
-    public void setInvitedTeams(Set<Team> invitedTeams) {
-        this.invitedTeams = invitedTeams;
-    }
-
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        ArrayList<GrantedAuthority> ga = new ArrayList<>();
-        if (isAdmin()) {
-            ga.add(() -> "ROLE_ADMIN");
-        }
-        return ga;
-    }
-
     public void addOrganizationMembership(OrganizationMembership membership) {
         if (organizationMemberships == null) {
             organizationMemberships = new HashSet<>();
@@ -320,8 +268,67 @@ public class User extends IdentifiableEntity implements SocialUserDetails, Canon
     }
 
     @Override
-    public String getCanonicalName() {
-        return username;
+    @Transient
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    @Transient
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    @Transient
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    @Transient
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        ArrayList<GrantedAuthority> ga = new ArrayList<>();
+        if (isAdmin()) {
+            ga.add(() -> "ROLE_ADMIN");
+        }
+        return ga;
+    }
+
+    @Override
+    @Transient
+    public String getUserId() {
+        return getId().toString();
+    }
+
+    @Override
+    @Transient
+    public String getUsername() {
+        return getCanonicalName();
+    }
+
+    @Transient
+    public void setUsername(String username) {
+        setCanonicalName(username);
+    }
+
+    /**
+     * Makes best efforts to construct a human readable name for {@code this}.
+     * @return If {@link #firstName} and {@link #lastName} are set, it will return a
+     * concatenation (also regarded as the "full name"). If only {@link #firstName}
+     * is set, it will return that. As a fallback {@link #canonicalName} is
+     * returned.
+     */
+    @Override
+    @Transient
+    public String getName() {
+        if (firstName != null) {
+            if (lastName != null) {
+                return firstName + " " + lastName;
+            }
+            return firstName;
+        }
+        return canonicalName;
     }
 
     @Override
@@ -345,10 +352,5 @@ public class User extends IdentifiableEntity implements SocialUserDetails, Canon
     @Override
     public int hashCode() {
         return email != null ? email.hashCode() : 0;
-    }
-
-    @Override
-    public String getUserId() {
-        return getId().toString();
     }
 }

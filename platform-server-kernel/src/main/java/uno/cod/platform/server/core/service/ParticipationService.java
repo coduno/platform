@@ -77,7 +77,7 @@ public class ParticipationService {
             Map<String, Object> params = new HashMap<>();
             params.put("challengeCanonicalName", challenge.getCanonicalName());
             params.put("challengeName", challenge.getName());
-            mailService.sendMail(user.getFullName(), user.getEmail(), "Confirm Registration", "registration-confirmation", params, Locale.ENGLISH);
+            mailService.sendMail(user.getName(), user.getEmail(), "Confirm Registration", "registration-confirmation", params, Locale.ENGLISH);
         }
 
         if (dto != null && dto.getLocation() != null) {

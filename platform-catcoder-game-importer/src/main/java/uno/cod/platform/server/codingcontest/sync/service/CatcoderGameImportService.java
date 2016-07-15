@@ -65,9 +65,7 @@ public class CatcoderGameImportService {
     private ChallengeTemplate mapChallengeTemplate(CodingContestGameDto dto, Organization organization, Duration gameDuration) {
         Endpoint challengeEndpoint = getEndpoint("CCC challenge", "ccc-challenge");
 
-        ChallengeTemplate challengeTemplate = new ChallengeTemplate();
-        challengeTemplate.setCanonicalName(fixCanonicalName(dto.getCanonicalName()));
-        challengeTemplate.setName(dto.getName());
+        ChallengeTemplate challengeTemplate = new ChallengeTemplate(fixCanonicalName(dto.getCanonicalName()), dto.getName());
         challengeTemplate.setDescription(dto.getDescription());
         challengeTemplate.setEndpoint(challengeEndpoint);
         challengeTemplate.setOrganization(organization);
@@ -87,9 +85,8 @@ public class CatcoderGameImportService {
                          Runner runner,
                          Endpoint endpoint,
                          Set<Language> languages) throws IOException {
-        Task task = new Task();
-        task.setCanonicalName(fixCanonicalName(challengeTemplate.getCanonicalName() + "-" + puzzle.getCanonicalName()));
-        task.setName(puzzle.getCanonicalName());
+        String cn = fixCanonicalName(challengeTemplate.getCanonicalName() + "-" + puzzle.getCanonicalName());
+        Task task = new Task(cn, puzzle.getCanonicalName());
         task.setEndpoint(endpoint);
         task.setDescription(puzzle.getCanonicalName());
         task.setInstructions(storage.uploadPublic(instructionsBucket,

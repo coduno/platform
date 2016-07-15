@@ -64,7 +64,7 @@ public class InvitationServiceTest {
         Result result = ResultTestUtil.getResult();
 
         when(activationTokenRepository.findAllByChallenge(activationToken.getChallenge().getId())).thenReturn(Collections.singletonList(activationToken));
-        when(userRepository.findByUsernameOrEmail(activationToken.getEmail(), activationToken.getEmail())).thenReturn(user);
+        when(userRepository.findByCanonicalNameOrEmail(activationToken.getEmail(), activationToken.getEmail())).thenReturn(user);
         when(resultRepository.findOneByUserAndChallenge(user.getId(), activationToken.getChallenge().getId())).thenReturn(result);
 
         List<InvitationShowDto> dtos = invitationService.getByChallengeId(activationToken.getChallenge().getId());

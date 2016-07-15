@@ -4,16 +4,14 @@ import javax.persistence.Column;
 import javax.persistence.Lob;
 import javax.persistence.MappedSuperclass;
 import java.time.Duration;
+import java.util.UUID;
 
 /**
  * Assignment conveys the specification of what a user
  * must do in order to fulfill a task or challenge.
  */
 @MappedSuperclass
-public abstract class Assignment extends IdentifiableEntity {
-    @Column(nullable = false)
-    private String name;
-
+abstract class Assignment extends NamedEntity {
     @Column(nullable = false)
     @Lob
     private String description;
@@ -25,12 +23,15 @@ public abstract class Assignment extends IdentifiableEntity {
     @Column(nullable = false)
     private Duration duration;
 
-    public String getName() {
-        return name;
+    Assignment(UUID id, String canonicalName, String name) {
+        super(id, canonicalName, name);
     }
 
-    public void setName(String name) {
-        this.name = name;
+    Assignment(String canonicalName, String name) {
+        super(canonicalName, name);
+    }
+
+    protected Assignment() {
     }
 
     public String getDescription() {

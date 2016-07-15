@@ -78,9 +78,8 @@ public class EndpointServiceTest {
 
         final UUID uuid = new UUID(0xcafe, 0xbabe);
 
-        final Endpoint endpoint = new Endpoint();
+        final Endpoint endpoint = new Endpoint(uuid);
         endpoint.setComponent(component);
-        endpoint.setId(uuid);
 
         when(repository.findOneByComponent(component)).thenReturn(endpoint);
 

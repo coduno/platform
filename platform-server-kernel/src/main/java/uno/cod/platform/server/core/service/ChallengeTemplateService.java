@@ -49,12 +49,10 @@ public class ChallengeTemplateService {
         if (repository.findOneByCanonicalName(dto.getCanonicalName()) != null) {
             throw new CodunoIllegalArgumentException("challenge.template.canonical.name.exists");
         }
-        ChallengeTemplate challengeTemplate = new ChallengeTemplate();
-        challengeTemplate.setName(dto.getName());
+        ChallengeTemplate challengeTemplate = new ChallengeTemplate(dto.getCanonicalName(), dto.getName());
         challengeTemplate.setDescription(dto.getDescription());
         challengeTemplate.setInstructions(dto.getInstructions());
         challengeTemplate.setDuration(dto.getDuration());
-        challengeTemplate.setCanonicalName(dto.getCanonicalName());
         for (UUID taskId : dto.getTasks()) {
             challengeTemplate.addTask(taskRepository.getOne(taskId));
         }

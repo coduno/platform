@@ -42,8 +42,8 @@ public class OrganizationServiceTest {
         dto.setNick("nick");
         dto.setName("name");
 
-        Mockito.when(repository.findByNick(dto.getNick())).thenReturn(null);
-        Mockito.when(userRepository.findByUsername(user.getUsername())).thenReturn(user);
+        Mockito.when(repository.findByCanonicalName(dto.getNick())).thenReturn(null);
+        Mockito.when(userRepository.findByCanonicalName(user.getUsername())).thenReturn(user);
 
         service.createFromDto(dto, user.getUsername());
     }
@@ -55,8 +55,8 @@ public class OrganizationServiceTest {
         dto.setNick("nick");
         dto.setName("name");
 
-        Mockito.when(repository.findByNick(dto.getNick())).thenReturn(new Organization());
-        Mockito.when(userRepository.findByUsername(user.getUsername())).thenReturn(user);
+        Mockito.when(repository.findByCanonicalName(dto.getNick())).thenReturn(new Organization());
+        Mockito.when(userRepository.findByCanonicalName(user.getUsername())).thenReturn(user);
 
         service.createFromDto(dto, user.getUsername());
     }
@@ -74,7 +74,7 @@ public class OrganizationServiceTest {
         User user = UserTestUtil.getUser();
         Organization organization = OrganizationTestUtil.getOrganization();
         user.addOrganizationMembership(OrganizationMembershipTestUtil.getOrganizationMembership(user, organization, true));
-        Mockito.when(userRepository.findByUsernameOrEmail(user.getUsername(), user.getUsername())).thenReturn(user);
+        Mockito.when(userRepository.findByCanonicalNameOrEmail(user.getUsername(), user.getUsername())).thenReturn(user);
 
         List<OrganizationMembershipShowDto> dtos = service.findUserOrganizations(user.getUsername());
 
@@ -87,7 +87,7 @@ public class OrganizationServiceTest {
     @Test(expected = CodunoIllegalArgumentException.class)
     public void findUserOrganizationsNullUser() throws Exception {
         User user = UserTestUtil.getUser();
-        Mockito.when(userRepository.findByUsernameOrEmail(user.getUsername(), user.getUsername())).thenReturn(null);
+        Mockito.when(userRepository.findByCanonicalNameOrEmail(user.getUsername(), user.getUsername())).thenReturn(null);
 
         service.findUserOrganizations(user.getUsername());
     }
@@ -95,7 +95,7 @@ public class OrganizationServiceTest {
     @Test
     public void findUserOrganizationsNoMemberships() throws Exception {
         User user = UserTestUtil.getUser();
-        Mockito.when(userRepository.findByUsernameOrEmail(user.getUsername(), user.getUsername())).thenReturn(user);
+        Mockito.when(userRepository.findByCanonicalNameOrEmail(user.getUsername(), user.getUsername())).thenReturn(user);
 
         List<OrganizationMembershipShowDto> dtos = service.findUserOrganizations(user.getUsername());
 

@@ -34,13 +34,8 @@ public class TeamService {
         if (teamRepository.findByCanonicalName(dto.getCanonicalName()) != null) {
             throw new CodunoIllegalArgumentException("team.canonicalName.existing");
         }
-        if (teamRepository.findByNameAndEnabledTrue(dto.getName()) != null) {
-            throw new CodunoIllegalArgumentException("team.name.existing");
-        }
 
-        Team team = new Team();
-        team.setName(dto.getName());
-        team.setCanonicalName(dto.getCanonicalName());
+        Team team = new Team(dto.getCanonicalName(), dto.getName());
         team = teamRepository.save(team);
 
         TeamUserKey key = new TeamUserKey();
@@ -76,6 +71,6 @@ public class TeamService {
     }
 
     public List<TeamShowDto> findAllTeamsForUser(String username) {
-        return teamRepository.findAllByUsername(username).stream().map(TeamShowDto::new).collect(Collectors.toList());
+        return teamRepository.findAllByUserCanonicalName(username).stream().map(TeamShowDto::new).collect(Collectors.toList());
     }
 }

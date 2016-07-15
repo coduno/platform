@@ -32,7 +32,7 @@ public class LanguageServiceTest {
         Assert.assertEquals(dtos.size(), 1);
         LanguageShowDto dto = dtos.get(0);
         Assert.assertEquals(dto.getId(), language.getId());
-        Assert.assertEquals(dto.getTag(), language.getTag());
         Assert.assertEquals(dto.getName(), language.getName());
+        Assert.assertEquals(dto.getCanonicalName(), language.getCanonicalName());
     }
 }

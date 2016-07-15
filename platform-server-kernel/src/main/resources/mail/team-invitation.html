@@ -15,7 +15,7 @@
 </div>
 
 <div id="buttoncontent" layout:fragment="buttoncontent">
-    <a cod:href="@{/u/{user}(user=${name},invitedby=${invitedBy},teamname=${teamName})}"
+    <a cod:href="@{/u/{user}(user=${canonicalName},invitedby=${invitedBy},teamname=${teamName})}"
        class="btn btn primary" style="color: white;">Accept team invitation</a>
 </div>
 </body>

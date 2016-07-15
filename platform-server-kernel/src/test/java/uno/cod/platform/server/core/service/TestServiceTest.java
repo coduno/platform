@@ -70,8 +70,7 @@ public class TestServiceTest {
 
     @Test
     public void findByTaskIdOrderByIndex() throws Exception {
-        uno.cod.platform.server.core.domain.Test test = new uno.cod.platform.server.core.domain.Test();
-        test.setId(UUID.randomUUID());
+        uno.cod.platform.server.core.domain.Test test = new uno.cod.platform.server.core.domain.Test(UUID.randomUUID());
 
         Mockito.when(repository.findByTaskIdOrderByIndex(test.getId())).thenReturn(Collections.singletonList(test));
 

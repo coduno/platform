@@ -5,38 +5,30 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import java.util.Collections;
 import java.util.Set;
+import java.util.UUID;
 
 @Entity
 @Table(name = "language")
-public class Language extends IdentifiableEntity {
-    private String name;
-    private String tag;
-
+public class Language extends NamedEntity {
     @ManyToMany(mappedBy = "languages")
     private Set<Task> tasks;
 
-    public String getName() {
-        return name;
+    public Language(UUID id, String canonicalName, String name) {
+        super(id, canonicalName, name);
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public Language(String canonicalName, String name) {
+        super(canonicalName, name);
     }
 
-    public String getTag() {
-        return tag;
-    }
-
-    public void setTag(String tag) {
-        this.tag = tag;
+    protected Language() {
+        super();
     }
 
     public Set<Task> getTasks() {
         return Collections.unmodifiableSet(tasks);
     }
-
-    public void setTasks(Set<Task> tasks) {
+    protected void setTasks(Set<Task> tasks) {
         this.tasks = tasks;
     }
-
 }

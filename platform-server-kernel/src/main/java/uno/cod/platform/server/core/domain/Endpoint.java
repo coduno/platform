@@ -7,6 +7,7 @@ import javax.persistence.Table;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "endpoint")
@@ -22,6 +23,13 @@ public class Endpoint extends IdentifiableEntity {
 
     @OneToMany(mappedBy = "endpoint")
     private List<ChallengeTemplate> challengeTemplates;
+
+    public Endpoint(UUID id) {
+        super(id);
+    }
+
+    public Endpoint() {
+    }
 
     public String getName() {
         return name;

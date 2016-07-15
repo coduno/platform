@@ -82,10 +82,10 @@ public class AccountConnectionSignUp implements ConnectionSignUp {
             UsernameUtil.randomUsername();
         }
 
-        if (userRepository.findByUsername(username) != null) {
+        if (userRepository.findByCanonicalName(username) != null) {
             for (int i = 1;; i++) {
                 String check = username + "-" + i;
-                if (userRepository.findByUsername(check) == null) {
+                if (userRepository.findByCanonicalName(check) == null) {
                     username = check;
                     break;
                 }

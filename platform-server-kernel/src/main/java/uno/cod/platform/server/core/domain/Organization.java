@@ -2,13 +2,14 @@ package uno.cod.platform.server.core.domain;
 
 import uno.cod.platform.server.core.exception.CodunoIllegalArgumentException;
 
-import javax.persistence.*;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
-import java.io.Serializable;
+import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 /**
  * An organization, can be a school, company or something else
@@ -16,19 +17,9 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "organization",
-        uniqueConstraints = {@UniqueConstraint(name = "nick", columnNames = "nick")}
+        uniqueConstraints = {@UniqueConstraint(name = "canonical_name", columnNames = "canonical_name")}
 )
-public class Organization extends IdentifiableEntity implements CanonicalEntity, Serializable {
-    private static final long serialVersionUID = 1L;
-
-    @Column(unique = true, nullable = false, length = 40)
-    @Size(min = 5, max = 40)
-    @Pattern(regexp = "^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*$")
-    private String nick;
-
-    @Column(nullable = false)
-    private String name;
-
+public class Organization extends NamedEntity {
     /**
      * all organization memberships
      */
@@ -44,20 +35,15 @@ public class Organization extends IdentifiableEntity implements CanonicalEntity,
     @OneToMany(mappedBy = "organization")
     private Set<Task> tasks;
 
-    public String getNick() {
-        return nick;
+    public Organization(UUID id, String canonicalName, String name) {
+        super(id, canonicalName, name);
     }
 
-    public void setNick(String nick) {
-        this.nick = nick;
+    public Organization(String canonicalName, String name) {
+        super(canonicalName, name);
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+    public Organization() {
     }
 
     public Set<OrganizationMembership> getMemberships() {
@@ -114,10 +100,5 @@ public class Organization extends IdentifiableEntity implements CanonicalEntity,
         }
         challengeTemplate.setOrganization(this);
         challengeTemplates.add(challengeTemplate);
-    }
-
-    @Override
-    public String getCanonicalName() {
-        return name;
     }
 }

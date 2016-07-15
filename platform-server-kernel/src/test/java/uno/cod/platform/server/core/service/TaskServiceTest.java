@@ -38,7 +38,6 @@ public class TaskServiceTest {
     public void save() throws Exception {
         TaskCreateDto dto = TaskTestUtil.getTaskCreateDto();
         Task task = TaskTestUtil.getTask(dto);
-        task.setId(UUID.randomUUID());
 
         Mockito.when(repository.save(Mockito.any(Task.class))).thenReturn(task);
         Mockito.when(endpointRepository.findOne(dto.getEndpointId())).thenReturn(task.getEndpoint());

@@ -7,6 +7,7 @@ import javax.persistence.Table;
 import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Result holds the performance of an user for a challenge.
@@ -30,6 +31,13 @@ public class Result extends IdentifiableEntity {
 
     @OneToMany(mappedBy = "key.result")
     private List<TaskResult> taskResults;
+
+    public Result(UUID id) {
+        super(id);
+    }
+
+    public Result() {
+    }
 
     public User getUser() {
         return user;

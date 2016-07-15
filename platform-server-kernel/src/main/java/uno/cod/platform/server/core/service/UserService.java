@@ -40,7 +40,7 @@ public class UserService {
     }
 
     public User createUser(String username, String email, String password, String firstName, String lastName) {
-        User found = userRepository.findByUsernameOrEmail(username, email);
+        User found = userRepository.findByCanonicalNameOrEmail(username, email);
 
         if (found != null) {
             throw new CodunoResourceConflictException("user.name.exists", new String[]{username});
@@ -50,7 +50,7 @@ public class UserService {
     }
 
     public UserShowDto update(UserUpdateProfileDetailsDto dto, User user) {
-        if (!dto.getUsername().equals(user.getUsername()) && userRepository.findByUsername(dto.getUsername()) != null) {
+        if (!dto.getUsername().equals(user.getUsername()) && userRepository.findByCanonicalName(dto.getUsername()) != null) {
             throw new CodunoResourceConflictException("user.name.exists", new String[]{dto.getUsername()});
         }
         if (!dto.getEmail().equals(user.getEmail()) && userRepository.findByEmail(dto.getEmail()) != null) {
@@ -77,7 +77,7 @@ public class UserService {
     }
 
     public UserShowDto findByUsername(String username) {
-        User user = userRepository.findByUsername(username);
+        User user = userRepository.findByCanonicalName(username);
         if (user == null) {
             throw new CodunoNoSuchElementException("user.invalid");
         }
@@ -109,7 +109,7 @@ public class UserService {
             throw new CodunoIllegalArgumentException("user.search.length.invalid");
         }
 
-        return userRepository.findByUsernameContaining(searchValue)
+        return userRepository.findByCanonicalNameContaining(searchValue)
                 .stream()
                 .map(UserShortShowDto::new)
                 .collect(Collectors.toList());

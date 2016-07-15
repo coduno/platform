@@ -1,10 +1,10 @@
 package uno.cod.platform.server.core.domain;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 /**
  * A coding team, unlike the CCC teams, those teams
@@ -14,15 +14,7 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "team")
-public class Team extends IdentifiableEntity implements CanonicalEntity, Serializable {
-    private static final long serialVersionUID = 1L;
-
-    @Column(unique = true, nullable = false)
-    private String name;
-
-    @Column(name = "canonical_name", nullable = false, unique = true)
-    private String canonicalName;
-
+public class Team extends NamedEntity {
     @OneToMany(mappedBy = "key.team")
     private Set<TeamMember> members;
 
@@ -39,21 +31,15 @@ public class Team extends IdentifiableEntity implements CanonicalEntity, Seriali
 
     private boolean enabled = true;
 
-    public String getName() {
-        return name;
+    public Team(UUID id, String canonicalName, String name) {
+        super(id, canonicalName, name);
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public Team(String canonicalName, String name) {
+        super(canonicalName, name);
     }
 
-    @Override
-    public String getCanonicalName() {
-        return canonicalName;
-    }
-
-    public void setCanonicalName(String canonicalName) {
-        this.canonicalName = canonicalName;
+    protected Team() {
     }
 
     public Set<TeamMember> getMembers() {

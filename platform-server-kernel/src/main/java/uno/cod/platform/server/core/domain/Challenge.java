@@ -1,23 +1,15 @@
 package uno.cod.platform.server.core.domain;
 
-import org.hibernate.validator.constraints.NotEmpty;
-
 import javax.persistence.*;
 import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 @Entity
 @Table(name = "challenge")
-public class Challenge extends IdentifiableEntity implements CanonicalEntity {
-    @NotEmpty
-    private String name;
-
-    @NotEmpty
-    @Column(name = "canonical_name", unique = true, nullable = false)
-    private String canonicalName;
-
+public class Challenge extends NamedEntity {
     @ManyToOne
     @JoinColumn(name = "challenge_template_id")
     private ChallengeTemplate challengeTemplate;
@@ -56,6 +48,17 @@ public class Challenge extends IdentifiableEntity implements CanonicalEntity {
 
     @OneToMany(mappedBy = "key.challenge")
     private Set<Participation> participations;
+
+    public Challenge(UUID id, String canonicalName, String name) {
+        super(id, canonicalName, name);
+    }
+
+    public Challenge(String canonicalName, String name) {
+        super(canonicalName, name);
+    }
+
+    protected Challenge() {
+    }
 
     public Set<User> getInvitedUsers() {
         return invitedUsers;
@@ -138,21 +141,8 @@ public class Challenge extends IdentifiableEntity implements CanonicalEntity {
         this.challengeTemplate = challengeTemplate;
     }
 
-    public String getName() {
-        return name;
-    }
-
     public void setName(String name) {
         this.name = name;
-    }
-
-    @Override
-    public String getCanonicalName() {
-        return canonicalName;
-    }
-
-    public void setCanonicalName(String canonicalName) {
-        this.canonicalName = canonicalName;
     }
 
     public Set<LocationDetail> getLocationDetails() {
@@ -167,21 +157,7 @@ public class Challenge extends IdentifiableEntity implements CanonicalEntity {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        Challenge challenge = (Challenge) o;
-
-        return canonicalName.equals(challenge.canonicalName);
-    }
-
-    @Override
-    public int hashCode() {
-        return canonicalName.hashCode();
+    public void setCanonicalName(String canonicalName) {
+        setCanonicalName(canonicalName);
     }
 }

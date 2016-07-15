@@ -61,25 +61,21 @@ public class CodingcontestSyncService {
     public void createOrUpdateContest(CodingcontestDto dto) {
         UUID id = UUID.fromString(dto.getUuid());
         Challenge challenge = challengeRepository.findOne(id);
-        ChallengeTemplate template = challengeTemplateRepository.findOneByName(dto.getGameName());
-        if (template == null) {
-            switch (dto.getGameName()) {
-                case DRONES_UUID:
-                    template = challengeTemplateRepository.findOneByName("Drones");
-                    break;
-                case DRONES_2D_UUID:
-                    template = challengeTemplateRepository.findOneByName("Drones 2D");
-                    break;
-            }
+        ChallengeTemplate template = null;
+        switch (dto.getGameName()) {
+            case DRONES_UUID:
+                template = challengeTemplateRepository.findOneByCanonicalName("drones");
+                break;
+            case DRONES_2D_UUID:
+                template = challengeTemplateRepository.findOneByCanonicalName("drones-2d");
+                break;
         }
         if (template == null) {
             throw new IllegalArgumentException("sync.game.invalid");
         }
         if (challenge == null) {
-            challenge = new Challenge();
-            challenge.setId(id);
-            challenge.setName(dto.getName());
-            challenge.setCanonicalName("ccc-" + dto.getLocation() + "-" + Year.now().toString());
+            String cn = "ccc-" + dto.getLocation() + "-" + Year.now().toString();
+            challenge = new Challenge(id, cn, dto.getName());
             challenge.setChallengeTemplate(template);
             ZonedDateTime startDate = ZonedDateTime.ofInstant(dto.getStartTime().toInstant(), ZoneId.of("UTC"));
             challenge.setStartDate(startDate);
@@ -200,8 +196,7 @@ public class CodingcontestSyncService {
     }
 
     private User createUserFromDto(ParticipationDto dto) {
-        User user = new User();
-        user.setId(UUID.fromString(dto.getUuid()));
+        User user = new User(UUID.fromString(dto.getUuid()));
         user.setUsername(dto.getName());
         user.setPassword(dto.getPassword());
         if (dto.getEmail() != null) {
