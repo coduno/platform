@@ -57,7 +57,7 @@ public class ParticipationInvitationService {
         key.setUser(user);
         key.setChallenge(challenge);
         Participation participation = participationRepository.findOne(key);
-        if (participation == null || participation.getTeam() == null) {
+        if (participation == null || !participation.isTeam()) {
             throw new CodunoIllegalArgumentException("participation.invalid");
         }
 

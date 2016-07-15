@@ -22,7 +22,6 @@ public class TaskResultKey implements Serializable {
         this.result = result;
     }
 
-
     public Task getTask() {
         return task;
     }

@@ -1,6 +1,6 @@
 package uno.cod.platform.server.core.dto.challenge;
 
-import uno.cod.platform.server.core.dto.location.LocationUpdateDto;
+import uno.cod.platform.server.core.dto.location.LocationDetailUpdateDto;
 import uno.cod.platform.server.core.util.constraints.CanonicalName;
 
 import javax.validation.constraints.NotNull;
@@ -8,18 +8,20 @@ import java.time.ZonedDateTime;
 import java.util.Set;
 
 public class ChallengeCreateDto {
-
     @CanonicalName
     private String templateCanonicalName;
 
     @NotNull
     private String name;
+
     @CanonicalName
     private String canonicalName;
+
     private boolean inviteOnly;
+
     private ZonedDateTime startDate;
 
-    private Set<LocationUpdateDto> locations;
+    private Set<LocationDetailUpdateDto> locations;
 
     public String getName() {
         return name;
@@ -61,11 +63,11 @@ public class ChallengeCreateDto {
         this.templateCanonicalName = templateCanonicalName;
     }
 
-    public Set<LocationUpdateDto> getLocations() {
+    public Set<LocationDetailUpdateDto> getLocations() {
         return locations;
     }
 
-    public void setLocations(Set<LocationUpdateDto> locations) {
+    public void setLocations(Set<LocationDetailUpdateDto> locations) {
         this.locations = locations;
     }
 }

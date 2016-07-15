@@ -1,6 +1,7 @@
 package uno.cod.platform.server.core.mapper;
 
 import uno.cod.platform.server.core.domain.ChallengeTemplate;
+import uno.cod.platform.server.core.domain.Task;
 import uno.cod.platform.server.core.dto.challenge.ChallengeShortShowDto;
 import uno.cod.platform.server.core.dto.challenge.template.ChallengeTemplateShowDto;
 
@@ -14,7 +15,7 @@ public class ChallengeTemplateMapper {
         }
         ChallengeTemplateShowDto dto = new ChallengeTemplateShowDto(challengeTemplate);
         dto.setEndpoint(EndpointMapper.map(challengeTemplate.getEndpoint()));
-        dto.setTasks(challengeTemplate.getTasks().stream().map(e -> e.getId()).collect(Collectors.toList()));
+        dto.setTasks(challengeTemplate.getTasks().stream().map(Task::getId).collect(Collectors.toList()));
         dto.setChallenges(challengeTemplate.getChallenges().stream().map(ChallengeShortShowDto::new).collect(Collectors.toList()));
         return dto;
     }

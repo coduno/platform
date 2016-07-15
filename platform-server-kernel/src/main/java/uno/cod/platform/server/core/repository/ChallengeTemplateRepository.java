@@ -11,7 +11,6 @@ import java.util.UUID;
 
 @Repository
 public interface ChallengeTemplateRepository extends JpaRepository<ChallengeTemplate, UUID> {
-
     ChallengeTemplate findOneByName(String name);
 
     ChallengeTemplate findOneByCanonicalName(String canonicalName);

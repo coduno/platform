@@ -1,34 +1,23 @@
 package uno.cod.platform.server.core.dto.location;
 
-import uno.cod.platform.server.core.domain.Location;
+import uno.cod.platform.server.core.domain.LocationDetail;
 
-import java.util.UUID;
-
-public class LocationShowDto {
-    private UUID id;
-    private String name;
-    private String description;
-    private String address;
-    private String placeId;
+public class LocationDetailShowDto {
+    private String id;
     private Float latitude;
     private Float longitude;
 
-    public LocationShowDto(Location location) {
-        this.id = location.getId();
-        this.name = location.getName();
-        this.description = location.getDescription();
-        this.address = location.getAddress();
-        this.placeId = location.getPlaceId();
-        this.latitude = location.getLatitude();
-        this.longitude = location.getLongitude();
-    }
+    private String name;
+    private String description;
+    private String address;
 
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
+    public LocationDetailShowDto(LocationDetail locationDetail) {
+        this.name = locationDetail.getName();
+        this.description = locationDetail.getDescription();
+        this.address = locationDetail.getAddress();
+        this.id = locationDetail.getKey().getLocation().getId();
+        this.latitude = locationDetail.getKey().getLocation().getLatitude();
+        this.longitude = locationDetail.getKey().getLocation().getLongitude();
     }
 
     public String getName() {
@@ -39,12 +28,12 @@ public class LocationShowDto {
         this.name = name;
     }
 
-    public String getPlaceId() {
-        return placeId;
+    public String getId() {
+        return id;
     }
 
-    public void setPlaceId(String placeId) {
-        this.placeId = placeId;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public Float getLatitude() {

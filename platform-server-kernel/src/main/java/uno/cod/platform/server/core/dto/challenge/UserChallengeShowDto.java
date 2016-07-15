@@ -1,12 +1,12 @@
 package uno.cod.platform.server.core.dto.challenge;
 
-import uno.cod.platform.server.core.dto.location.LocationShowDto;
+import uno.cod.platform.server.core.dto.location.LocationDetailShowDto;
 
 public class UserChallengeShowDto {
     private ChallengeDto challenge;
     private ChallengeStatus status;
     private String registeredAs;
-    private LocationShowDto location;
+    private LocationDetailShowDto location;
 
     public UserChallengeShowDto() {
         this.status = ChallengeStatus.INVITED;
@@ -36,11 +36,11 @@ public class UserChallengeShowDto {
         this.registeredAs = registeredAs;
     }
 
-    public LocationShowDto getLocation() {
+    public LocationDetailShowDto getLocation() {
         return location;
     }
 
-    public void setLocation(LocationShowDto location) {
+    public void setLocation(LocationDetailShowDto location) {
         this.location = location;
     }
 
@@ -51,6 +51,6 @@ public class UserChallengeShowDto {
         REGISTERED,
         OPEN,
         INVITE_ONLY,
-        COMPLETED;
+        COMPLETED
     }
 }

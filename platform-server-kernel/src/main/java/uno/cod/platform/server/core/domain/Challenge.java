@@ -3,7 +3,6 @@ package uno.cod.platform.server.core.domain;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.HashSet;
@@ -12,9 +11,9 @@ import java.util.Set;
 @Entity
 @Table(name = "challenge")
 public class Challenge extends IdentifiableEntity implements CanonicalEntity {
+    @NotEmpty
     private String name;
 
-    @NotNull
     @NotEmpty
     @Column(name = "canonical_name", unique = true, nullable = false)
     private String canonicalName;
@@ -33,11 +32,12 @@ public class Challenge extends IdentifiableEntity implements CanonicalEntity {
 
     @OneToMany(mappedBy = "challenge")
     private Set<Result> results;
+
     /**
-     * If it's null or empty, the challenge is only online
+     * If it's null or empty, the challenge is online only.
      */
-    @ManyToMany
-    private Set<Location> locations;
+    @OneToMany(mappedBy = "key.challenge")
+    private Set<LocationDetail> locationDetails;
 
     @Column(name = "invite_only")
     private boolean inviteOnly = true;
@@ -155,6 +155,17 @@ public class Challenge extends IdentifiableEntity implements CanonicalEntity {
         this.canonicalName = canonicalName;
     }
 
+    public Set<LocationDetail> getLocationDetails() {
+        if (locationDetails == null) {
+            locationDetails = new HashSet<>();
+        }
+        return Collections.unmodifiableSet(locationDetails);
+    }
+
+    private void setLocationDetails(Set<LocationDetail> locationDetails) {
+        this.locationDetails = locationDetails;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -172,26 +183,5 @@ public class Challenge extends IdentifiableEntity implements CanonicalEntity {
     @Override
     public int hashCode() {
         return canonicalName.hashCode();
-    }
-
-    public void addLocation(Location location) {
-        if (locations == null) {
-            locations = new HashSet<>();
-        }
-        locations.add(location);
-    }
-
-    public void removeLocation(Location location) {
-        if (location != null) {
-            locations.remove(location);
-        }
-    }
-
-    public Set<Location> getLocations() {
-        return Collections.unmodifiableSet(locations);
-    }
-
-    public void setLocations(Set<Location> locations) {
-        this.locations = locations;
     }
 }

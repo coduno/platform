@@ -69,7 +69,6 @@ public class TeamService {
         }
         team.setEnabled(false);
         teamRepository.save(team);
-
     }
 
     public TeamShowDto findOne(String canonicalName) {

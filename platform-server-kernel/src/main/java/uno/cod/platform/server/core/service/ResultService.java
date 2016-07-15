@@ -65,7 +65,7 @@ public class ResultService {
         result = repository.save(result);
         final UUID resultId = result.getId();
 
-        Date setFinished = null;
+        Date setFinished;
         if (challenge.getEndDate() != null) {
             setFinished = Date.from(challenge.getEndDate().toInstant());
         } else {

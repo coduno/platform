@@ -1,8 +1,9 @@
 package uno.cod.platform.server.core.dto.participation;
 
+import uno.cod.platform.server.core.domain.LocationDetail;
 import uno.cod.platform.server.core.domain.Participation;
 import uno.cod.platform.server.core.dto.challenge.ChallengeShortShowDto;
-import uno.cod.platform.server.core.dto.location.LocationShowDto;
+import uno.cod.platform.server.core.dto.location.LocationDetailShowDto;
 
 import java.util.Date;
 
@@ -13,7 +14,7 @@ public class ParticipationShowDto {
     private String teamCanonicalName;
     private ChallengeShortShowDto challenge;
     private Date created;
-    private LocationShowDto location;
+    private LocationDetailShowDto location;
 
     public ParticipationShowDto(Participation participation) {
         if (participation.getKey().getUser() != null) {
@@ -28,7 +29,13 @@ public class ParticipationShowDto {
             this.challenge = new ChallengeShortShowDto(participation.getKey().getChallenge());
         }
         if (participation.getLocation() != null) {
-            this.location = new LocationShowDto(participation.getLocation());
+            for (LocationDetail locationDetail : participation.getKey().getChallenge().getLocationDetails()) {
+                if (!locationDetail.getKey().getLocation().getId().equals(participation.getLocation().getId())) {
+                    continue;
+                }
+                this.location = new LocationDetailShowDto(locationDetail);
+                break;
+            }
         }
         this.created = participation.getCreated();
     }
@@ -73,11 +80,11 @@ public class ParticipationShowDto {
         this.teamCanonicalName = teamCanonicalName;
     }
 
-    public LocationShowDto getLocation() {
+    public LocationDetailShowDto getLocation() {
         return location;
     }
 
-    public void setLocation(LocationShowDto location) {
+    public void setLocation(LocationDetailShowDto location) {
         this.location = location;
     }
 

@@ -11,10 +11,8 @@ import java.util.UUID;
 
 @Repository
 public interface ParticipationInvitationRepository extends JpaRepository<ParticipationInvitation, ParticipationKey> {
-
     @Query("SELECT invitation FROM ParticipationInvitation invitation " +
             "LEFT JOIN FETCH invitation.emails invited " +
             "WHERE invitation.key.challenge.id = :challenge AND invited = :email")
     ParticipationInvitation findOneByChallengeAndEmailsContaining(@Param("challenge") UUID challenge, @Param("email") String email);
-
 }
