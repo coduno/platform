@@ -21,7 +21,7 @@ update `participation`, `location` set `participation`.`location_place_id` = `lo
 alter table `participation` drop foreign key `FKbbmq18iuz5zzpqln98iyd4bp9l`;
 alter table `participation` drop column `location_id`;
 
-ALTER TABLE `participation` CHANGE  `location_place_id` `location_id` VARCHAR(255) NOT NULL;
+ALTER TABLE `participation` CHANGE `location_place_id` `location_id` VARCHAR(255);
 
 alter table `location` drop primary key, add primary key (`place_id`);
 
@@ -44,13 +44,15 @@ CREATE TABLE `location_detail` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
-insert into location_detail select
-  l.place_id as location_id,
-  cl.challenges_id as challenge_id,
+insert into location_detail (
+  name, address, description, created, challenge_id, location_id
+) select
+  l.name as name,
   l.address as address,
   l.description as description,
-  l.name as name,
-  ('00000000000000') as created
+  ('00000000000000') as created,
+  cl.challenges_id as challenge_id,
+  l.place_id as location_id
 from location l, challenge_location cl where cl.location_id = l.place_id;
 
 alter table `location` drop column address;
