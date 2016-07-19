@@ -80,10 +80,10 @@ public class ChallengeServiceTest {
         result.setFinished(null);
         User user = UserTestUtil.getUser();
 
-        when(repository.findAllValidWithOrganizationAndInvitedUsersAndRegisteredUsers(user.getId())).thenReturn(Collections.singletonList(challenge));
+        when(repository.findAllByInvitedUser(user.getId())).thenReturn(Collections.singletonList(challenge));
         when(resultRepository.findOneByUserAndChallenge(user.getId(), challenge.getId())).thenReturn(result);
 
-        List<UserChallengeShowDto> dtos = service.getPublicChallenges(user);
+        List<UserChallengeShowDto> dtos = service.getInviteOnlyChallenges(user);
 
         assertEquals(dtos.size(), 1);
         UserChallengeShowDto dto = dtos.get(0);
