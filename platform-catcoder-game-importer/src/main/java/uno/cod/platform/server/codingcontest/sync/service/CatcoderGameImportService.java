@@ -136,7 +136,7 @@ public class CatcoderGameImportService {
                 .findAny()
                 .filter(puzzleDto -> puzzleDto.getValidationClass() != null)
                 .isPresent()) {
-            throw new CodunoIllegalArgumentException("ccc.game.structure.unsuported");
+            throw new CodunoIllegalArgumentException("ccc.game.structure.unsupported");
         }
 
         Runner runner = getRunner("/io");

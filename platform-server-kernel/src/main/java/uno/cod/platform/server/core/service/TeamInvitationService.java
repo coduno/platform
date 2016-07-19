@@ -102,7 +102,7 @@ public class TeamInvitationService {
         if (invitationCheck) {
             TeamInvitation invitation = repository.findByKey(key);
             if (invitation == null) {
-                throw new CodunoIllegalArgumentException("team.invite.notfound");
+                throw new CodunoIllegalArgumentException("team.invite.notFound");
             }
             repository.delete(invitation);
         }
@@ -120,7 +120,7 @@ public class TeamInvitationService {
         key.setUser(user);
         TeamInvitation invitation = repository.findByKey(key);
         if (invitation == null) {
-            throw new CodunoIllegalArgumentException("team.invite.notfound");
+            throw new CodunoIllegalArgumentException("team.invite.notFound");
         }
         repository.delete(invitation);
     }
