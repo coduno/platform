@@ -91,6 +91,11 @@ public class ActivationTokenService {
 
         deleteActivationToken(id);
 
+        User found = userRepository.findByUsernameOrEmail(activationToken.getUsername(), activationToken.getEmail());
+        if (found != null) {
+           return found;
+        }
+
         return userService.createUser(activationToken.getUsername(), activationToken.getEmail(), activationToken.getPassword());
     }
 
