@@ -158,8 +158,20 @@ public class ChallengeService {
     }
 
     public List<UserChallengeShowDto> getPublicChallenges(final User user) {
-        List<Challenge> challenges = repository.findAllValidWithOrganizationAndInvitedUsersAndRegisteredUsers(user.getId());
-        return challenges.stream().map(challenge -> {
+        List<Challenge> publicChallenges = repository.findAllPublicChallenges();
+        return mapChallengesToUserChallengeShowDto(publicChallenges, user)
+                .stream()
+                .sorted((a, b) -> Integer.compare(a.getStatus().getValue(), b.getStatus().getValue()))
+                .collect(Collectors.toList());
+    }
+
+    public List<UserChallengeShowDto> getInviteOnlyChallenges(final User user) {
+        List<Challenge> invitedChallenges = repository.findAllByInvitedUser(user.getId());
+        return mapChallengesToUserChallengeShowDto(invitedChallenges, user);
+    }
+
+    public List<UserChallengeShowDto> mapChallengesToUserChallengeShowDto(List<Challenge> list, User user) {
+        return list.stream().map(challenge -> {
             UserChallengeShowDto dto = new UserChallengeShowDto();
             dto.setChallenge(new ChallengeDto(challenge));
             addStatusAndLocation(dto, challenge, user);
@@ -168,32 +180,36 @@ public class ChallengeService {
     }
 
     private void addStatusAndLocation(UserChallengeShowDto dto, Challenge challenge, User user) {
-        UserChallengeShowDto.ChallengeStatus status = null;
+        UserChallengeShowDto.ChallengeStatus status = UserChallengeShowDto.ChallengeStatus.OPEN;
+
+        if (challenge.isInviteOnly()) {
+            status = UserChallengeShowDto.ChallengeStatus.INVITE_ONLY;
+        }
+
+        if (challenge.getEndDate() != null && challenge.getEndDate().isAfter(ZonedDateTime.now())) {
+            status = UserChallengeShowDto.ChallengeStatus.ENDED;
+        }
 
         if (challenge.getInvitedUsers() != null && challenge.getInvitedUsers().contains(user)) {
             status = UserChallengeShowDto.ChallengeStatus.INVITED;
-        } else if (challenge.getParticipations() != null) {
+        }
+
+        if (challenge.getParticipations() != null) {
             for (Participation participation : challenge.getParticipations()) {
                 if (participation.getKey().getUser().equals(user)) {
                     status = UserChallengeShowDto.ChallengeStatus.REGISTERED;
-                    if (participation.getLocation() != null) {
-                        for (LocationDetail locationDetail : participation.getKey().getChallenge().getLocationDetails()) {
-                            if (!locationDetail.getKey().getLocation().getId().equals(participation.getLocation().getId())) {
-                                continue;
-                            }
-                            dto.setLocation(new LocationDetailShowDto(locationDetail));
-                            break;
-                        }
-                    }
+
+                    addLocation(dto, participation);
+
                     if (participation.getTeam() != null) {
                         dto.setRegisteredAs(participation.getTeam().getName());
                     } else {
                         dto.setRegisteredAs(user.getUsername());
                     }
-                    break;
                 }
             }
         }
+
         Result result = resultRepository.findOneByUserAndChallenge(user.getId(), challenge.getId());
         if (result != null && result.getStarted() != null) {
             if (result.getFinished() != null) {
@@ -202,17 +218,25 @@ public class ChallengeService {
                 status = UserChallengeShowDto.ChallengeStatus.IN_PROGRESS;
             }
         }
-        if (status == null & challenge.isInviteOnly()) {
-            status = UserChallengeShowDto.ChallengeStatus.INVITE_ONLY;
-        }
-        if (status == null) {
-            status = UserChallengeShowDto.ChallengeStatus.OPEN;
-        }
+
         if (challenge.getEndDate() != null &&
                 challenge.getEndDate().isBefore(ZonedDateTime.now()) &&
                 !status.equals(UserChallengeShowDto.ChallengeStatus.COMPLETED)) {
             status = UserChallengeShowDto.ChallengeStatus.ENDED;
         }
+
         dto.setStatus(status);
+    }
+
+    private void addLocation(UserChallengeShowDto dto, Participation participation) {
+        if (participation.getLocation() != null) {
+            for (LocationDetail locationDetail : participation.getKey().getChallenge().getLocationDetails()) {
+                if (!locationDetail.getKey().getLocation().getId().equals(participation.getLocation().getId())) {
+                    continue;
+                }
+                dto.setLocation(new LocationDetailShowDto(locationDetail));
+                break;
+            }
+        }
     }
 }

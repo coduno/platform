@@ -45,12 +45,22 @@ public class UserChallengeShowDto {
     }
 
     public enum ChallengeStatus {
-        INVITED,
-        IN_PROGRESS,
-        ENDED,
-        REGISTERED,
-        OPEN,
-        INVITE_ONLY,
-        COMPLETED
+        INVITED(0),
+        REGISTERED(1),
+        IN_PROGRESS(2),
+        OPEN(3),
+        INVITE_ONLY(4),
+        COMPLETED(5),
+        ENDED(6);
+
+        private final int value;
+
+        ChallengeStatus(final int value) {
+            this.value = value;
+        }
+
+        public int getValue() {
+            return this.value;
+        }
     }
 }

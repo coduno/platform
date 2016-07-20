@@ -1,0 +1,1 @@
+DROP INDEX activation_token_email_uindex ON activation_token;

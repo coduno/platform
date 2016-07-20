@@ -57,6 +57,12 @@ public class ChallengeController {
         return new ResponseEntity<>(challengeService.getPublicChallenges(user), HttpStatus.OK);
     }
 
+    @RequestMapping(value = RestUrls.CHALLENGES_INVITE_ONLY, method = RequestMethod.GET)
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<List<UserChallengeShowDto>> getInviteOnlyChallenges(@AuthenticationPrincipal User user) {
+        return new ResponseEntity<>(challengeService.getInviteOnlyChallenges(user), HttpStatus.OK);
+    }
+
     @RequestMapping(value = RestUrls.CHALLENGES_CANONICAL_NAME_REGISTER, method = RequestMethod.PUT)
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<String> register(@PathVariable("canonicalName") String challengeName,
