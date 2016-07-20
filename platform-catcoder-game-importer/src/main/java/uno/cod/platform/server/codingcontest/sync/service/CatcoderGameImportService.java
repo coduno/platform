@@ -3,8 +3,12 @@ package uno.cod.platform.server.codingcontest.sync.service;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.codec.*;
+import org.springframework.security.crypto.codec.Base64;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,18 +20,22 @@ import uno.cod.platform.server.core.exception.CodunoIllegalArgumentException;
 import uno.cod.platform.server.core.repository.*;
 import uno.cod.storage.PlatformStorage;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.time.Duration;
 import java.time.LocalTime;
 import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 @Service
 @Transactional
 public class CatcoderGameImportService {
+    private final static Logger LOG = LoggerFactory.getLogger(CatcoderGameImportService.class);
+
+    private static final Predicate<String> IS_XML_FILENAME = s -> s.endsWith(".xml");
+
     private final ChallengeTemplateRepository challengeTemplateRepository;
     private final EndpointRepository endpointRepository;
     private final RunnerRepository runnerRepository;
@@ -36,6 +44,7 @@ public class CatcoderGameImportService {
     private final PlatformStorage storage;
     private final OrganizationRepository organizationRepository;
     private final TaskRepository taskRepository;
+    private final Random random;
 
     @Value("${coduno.tests.bucket}")
     private String testsBucket;
@@ -60,6 +69,7 @@ public class CatcoderGameImportService {
         this.testRepository = testRepository;
         this.organizationRepository = organizationRepository;
         this.taskRepository = taskRepository;
+        this.random = new Random();
     }
 
     private ChallengeTemplate mapChallengeTemplate(CodingContestGameDto dto, Organization organization, Duration gameDuration) {
@@ -80,7 +90,7 @@ public class CatcoderGameImportService {
     private Task mapTask(PuzzleDto puzzle,
                          ChallengeTemplate challengeTemplate,
                          Organization organization,
-                         Map<String, ByteArrayOutputStream> files,
+                         Map<String, byte[]> files,
                          Duration gameDuration,
                          Runner runner,
                          Endpoint endpoint,
@@ -91,7 +101,7 @@ public class CatcoderGameImportService {
         task.setDescription(puzzle.getCanonicalName());
         task.setInstructions(storage.uploadPublic(instructionsBucket,
                 instructionsFileName(challengeTemplate, puzzle.getInstructionsFile()),
-                new ByteArrayInputStream(files.get(puzzle.getInstructionsFile()).toByteArray()),
+                new ByteArrayInputStream(files.get(puzzle.getInstructionsFile())),
                 "application/pdf"));
         task.setDuration(gameDuration);
         task.setRunner(runner);
@@ -100,7 +110,7 @@ public class CatcoderGameImportService {
         return task;
     }
 
-    private Test mapTest(PuzzleTestDto puzzleTest, Runner runner, Map<String, ByteArrayOutputStream> testFiles) throws IOException {
+    private Test mapTest(PuzzleTestDto puzzleTest, Runner runner, Map<String, byte[]> testFiles) throws IOException {
         Test test = new Test();
         test.setIndex(Integer.parseInt(puzzleTest.getIndex()));
         test.setRunner(runner);
@@ -109,7 +119,7 @@ public class CatcoderGameImportService {
         if (testFiles == null) {
             storage.uploadPublic(testsBucket, inputFileName, new ByteArrayInputStream(puzzleTest.getData().getBytes()), "text/plain");
         } else {
-            storage.uploadPublic(testsBucket, inputFileName, new ByteArrayInputStream(testFiles.get(puzzleTest.getData()).toByteArray()), "text/plain");
+            storage.uploadPublic(testsBucket, inputFileName, new ByteArrayInputStream(testFiles.get(puzzleTest.getData())), "text/plain");
         }
         storage.upload(testsBucket, test.getId() + "/output.txt", new ByteArrayInputStream(puzzleTest.getSolution().getBytes()), "text/plain");
         Map<String, String> testParams = new HashMap<>();
@@ -121,11 +131,12 @@ public class CatcoderGameImportService {
         return test;
     }
 
-    private UUID createChallengeTemplate(CodingContestGameDto dto, UUID organizationId, Map<String, ByteArrayOutputStream> files) throws IOException {
+    private UUID createChallengeTemplate(CodingContestGameDto dto, UUID organizationId, Map<String, byte[]> files) throws IOException {
         ChallengeTemplate challengeTemplate = challengeTemplateRepository.findOneByCanonicalName(dto.getCanonicalName());
         if (challengeTemplate != null) {
             return challengeTemplate.getId();
         }
+
         Organization organization = organizationRepository.findOne(organizationId);
         if (organization == null) {
             throw new CodunoIllegalArgumentException("organization.invalid");
@@ -148,9 +159,11 @@ public class CatcoderGameImportService {
 
         for (PuzzleDto puzzle : dto.getPuzzles()) {
             Task task = mapTask(puzzle, challengeTemplate, organization, files, gameDuration, runner, taskEndpoint, languages);
-            Map<String, ByteArrayOutputStream> testFiles = null;
+            Map<String, byte[]> testFiles = null;
             if (puzzle.getInputFilePath() != null) {
-                testFiles = unzip(files.get(puzzle.getInputFilePath()).toByteArray());
+                try (InputStream is = new ByteArrayInputStream(files.get(puzzle.getInputFilePath()))) {
+                    testFiles = unzip(is);
+                }
             }
             for (PuzzleTestDto puzzleTest : puzzle.getTests()) {
                 Test test = mapTest(puzzleTest, runner, testFiles);
@@ -163,48 +176,87 @@ public class CatcoderGameImportService {
     }
 
     private String instructionsFileName(ChallengeTemplate challengeTemplate, String fileName) {
-        return challengeTemplate.getCanonicalName() + "/" + UUID.randomUUID().toString() + "/" + fileName;
+        // 33 mod 3 = 0, s.t. Base64 needs no padding.
+        final byte[] buffer = new byte[33];
+        random.nextBytes(buffer);
+        final String random = new String(Base64.encode(buffer)).replace("/", "_").replace("+", "_");
+
+        return challengeTemplate.getCanonicalName() + "/" + random + "/" + fileName;
     }
 
-    private Map<String, ByteArrayOutputStream> unzip(byte[] zipbytes) throws IOException {
-        final int bufSize = 2048;
-        Map<String, ByteArrayOutputStream> map = new HashMap<>();
-        ZipInputStream zip = new ZipInputStream(new ByteArrayInputStream(zipbytes));
-        ZipEntry entry;
-        byte[] buf = new byte[bufSize];
-        while ((entry = zip.getNextEntry()) != null) {
-            String fileName = entry.getName().substring(entry.getName().indexOf("/") + 1);
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            int count;
-            while ((count = zip.read(buf, 0, bufSize)) != -1) {
-                baos.write(buf, 0, count);
+    /**
+     * Unzips a ZIP file so that it's content is accessible without
+     * seeking at the expense of keeping the whole file in memory.
+     *
+     * Entries are keyed by their name according to {@link ZipEntry#getName()}.
+     *
+     * @param is the input stream to unzip.
+     * @return a map that translates an entry name to the byte content of the file.
+     * @throws IOException if reading from the input stream fails.
+     */
+    private Map<String, byte[]> unzip(InputStream is) throws IOException {
+        try (ZipInputStream zis = new ZipInputStream(is)) {
+            Map<String, byte[]> map = new HashMap<>();
+            ZipEntry entry;
+            while ((entry = zis.getNextEntry()) != null) {
+                final byte[] buffer = new byte[(int) entry.getSize()];
+
+                // NOTE: dis is not wrapped by a try-with-resources block
+                // on purpose, because that would imply it being closed
+                // when leaving the try block, effectively closing the
+                // underlying zis, failing to read further entries.
+
+                DataInputStream dis = new DataInputStream(zis);
+                dis.readFully(buffer);
+                map.put(entry.getName(), buffer);
             }
-            map.put(fileName, baos);
+            return map;
         }
-        return map;
     }
 
-    public UUID createChallengeTemplateFromGameResources(MultipartFile gameZip, UUID organizationId) throws IOException {
-        Map<String, ByteArrayOutputStream> files = unzip(gameZip.getBytes());
-        CodingContestGameDto game = null;
-        for (String fileName : files.keySet()) {
-            if (fileName.endsWith(".xml")) {
-                byte[] byts = files.get(fileName).toByteArray();
-                ObjectMapper mapper = new XmlMapper();
-                mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-                game = mapper.readValue(new ByteArrayInputStream(byts), CodingContestGameDto.class);
-            }
+    public UUID createChallengeTemplateFromGameResources(MultipartFile file, UUID organizationId) throws IOException {
+        final Map<String, byte[]> files;
+
+        try (InputStream is = file.getInputStream()) {
+            files = unzip(is);
         }
-        if (game == null) {
+
+        Optional<CodingContestGameDto> game = files
+                .keySet()
+                .parallelStream()
+                .filter(IS_XML_FILENAME)
+                .flatMap(k -> {
+                    try {
+                        return Stream.of(map(files.get(k)));
+                    } catch (Throwable t) {
+                        LOG.warn("Deserialization of {} failed.", k, t);
+                        return Stream.empty();
+                    }
+                })
+                .findAny();
+
+        if (!game.isPresent()) {
             throw new CodunoIllegalArgumentException("ccc.game.zip.invalid");
         }
-        return createChallengeTemplate(game, organizationId, files);
+
+        return createChallengeTemplate(game.get(), organizationId, files);
     }
 
-    private Duration parseGameDuration(String duration) {
-        LocalTime time = LocalTime.parse(duration);
-        int seconds = time.toSecondOfDay();
-        return Duration.ofSeconds(seconds);
+    private static CodingContestGameDto map(byte[] bytes) throws IOException {
+        final ObjectMapper mapper = new XmlMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        return mapper.readValue(new ByteArrayInputStream(bytes), CodingContestGameDto.class);
+    }
+
+    /**
+     * Converts conventional notation of a duration, e.g. "4:00" for "four hours"
+     * to a duration. {@link Duration#parse(CharSequence)} cannot be used because
+     * it expects ISO8601 conform input and not the colloquial form above.
+     * @param duration the {@link CharSequence} to be parsed.
+     * @return parsed representation of the duration.
+     */
+    private static Duration parseGameDuration(CharSequence duration) {
+        return Duration.ofSeconds(LocalTime.parse(duration).toSecondOfDay());
     }
 
     private Runner getRunner(String path) {
@@ -228,7 +280,7 @@ public class CatcoderGameImportService {
         return endpoint;
     }
 
-    private String fixCanonicalName(String canonicalName) {
+    private static String fixCanonicalName(String canonicalName) {
         return canonicalName.toLowerCase().replaceAll("[^0-9a-z]", "-").replaceAll("--", "");
     }
 }
