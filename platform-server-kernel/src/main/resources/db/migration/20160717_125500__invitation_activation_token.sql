@@ -1,3 +1,5 @@
+set FOREIGN_KEY_CHECKS = 0;
+
 DROP TABLE IF EXISTS activation_token;
 
 ALTER TABLE invitation RENAME TO activation_token;
@@ -16,3 +18,5 @@ SET id = new_data.abc;
 ALTER TABLE activation_token DROP PRIMARY KEY, ADD PRIMARY KEY (id);
 
 CREATE UNIQUE INDEX activation_token_email_uindex ON activation_token (email);
+
+set FOREIGN_KEY_CHECKS = 1;
