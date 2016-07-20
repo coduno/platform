@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -19,7 +20,9 @@ import java.util.UUID;
 @Table(name = "organization",
         uniqueConstraints = {@UniqueConstraint(name = "canonical_name", columnNames = "canonical_name")}
 )
-public class Organization extends NamedEntity {
+public class Organization extends NamedEntity implements Serializable {
+    private static final long serialVersionUID = 2L;
+
     /**
      * all organization memberships
      */

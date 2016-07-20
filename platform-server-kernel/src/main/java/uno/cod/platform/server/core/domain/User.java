@@ -6,6 +6,7 @@ import org.springframework.social.security.SocialUserDetails;
 import uno.cod.platform.server.core.Named;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.*;
 
@@ -22,7 +23,9 @@ import java.util.*;
                 @NamedAttributeNode("invitedChallenges")
         }
 )
-public class User extends CanonicalEntity implements Named<UUID>, SocialUserDetails {
+public class User extends CanonicalEntity implements Named<UUID>, SocialUserDetails, Serializable {
+    private static final long serialVersionUID = 2L;
+
     @Column(unique = true, nullable = false)
     @Email
     private String email;
