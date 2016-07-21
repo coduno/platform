@@ -10,10 +10,6 @@ public class OrganizationTestUtil {
     }
 
     public static Organization getOrganization(UUID id) {
-        Organization organization = new Organization();
-        organization.setId(id);
-        organization.setName("Coduno");
-        organization.setNick("coduno");
-        return organization;
+        return new Organization(id, "coduno", "Coduno");
     }
 }

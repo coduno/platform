@@ -11,15 +11,14 @@ public class ChallengeTemplateTestUtil {
     }
 
     public static ChallengeTemplate getChallengeTemplate(UUID id) {
-        ChallengeTemplate template = new ChallengeTemplate();
-        template.setId(id);
+        ChallengeTemplate template = new ChallengeTemplate(id, "canonical-name", "name");
         template.setDuration(Duration.ofMinutes(50));
         return template;
     }
 
     public static ChallengeTemplate getChallengeTemplate(String canonicalName) {
-        ChallengeTemplate template = getChallengeTemplate();
-        template.setCanonicalName(canonicalName);
-        return template;
+        ChallengeTemplate result = new ChallengeTemplate(UUID.randomUUID(), canonicalName, "name");
+        result.setDuration(Duration.ofHours(2));
+        return result;
     }
 }

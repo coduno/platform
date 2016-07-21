@@ -8,10 +8,7 @@ import java.util.UUID;
 
 public class ChallengeTestUtil {
     public static Challenge getChallenge() {
-        Challenge challenge = new Challenge();
-        challenge.setId(UUID.randomUUID());
-        challenge.setName("name");
-        challenge.setCanonicalName("canonical-name");
+        Challenge challenge = new Challenge(UUID.randomUUID(), "canonical-name", "name");
         challenge.setChallengeTemplate(ChallengeTemplateTestUtil.getChallengeTemplate());
         challenge.setStartDate(ZonedDateTime.now());
         challenge.setEndDate(ZonedDateTime.now());
@@ -20,9 +17,7 @@ public class ChallengeTestUtil {
     }
 
     public static Challenge getChallenge(ChallengeCreateDto dto) {
-        Challenge challenge = new Challenge();
-        challenge.setName(dto.getName());
-        challenge.setCanonicalName(dto.getCanonicalName());
+        Challenge challenge = new Challenge(UUID.randomUUID(), dto.getCanonicalName(), dto.getName());
         challenge.setChallengeTemplate(ChallengeTemplateTestUtil.getChallengeTemplate(dto.getCanonicalName()));
         challenge.setInviteOnly(dto.isInviteOnly());
         challenge.setStartDate(dto.getStartDate());

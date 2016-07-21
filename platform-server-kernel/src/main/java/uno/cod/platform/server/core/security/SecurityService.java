@@ -90,7 +90,7 @@ public class SecurityService {
             Challenge challenge = challengeRepository.findOneByCanonicalName(canonicalName);
             return !challenge.isInviteOnly();
         }
-        return canAccessChallenge(userRepository.findByUsername(user), canonicalName);
+        return canAccessChallenge(userRepository.findByCanonicalName(user), canonicalName);
     }
 
     public boolean canEditChallenge(User user, String canonicalName) {

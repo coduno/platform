@@ -18,6 +18,7 @@ public class TaskResult {
 
     @Column(name = "start_time")
     private ZonedDateTime startTime;
+
     @Column(name = "end_time")
     private ZonedDateTime endTime;
 

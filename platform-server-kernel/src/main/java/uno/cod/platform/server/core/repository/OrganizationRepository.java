@@ -8,6 +8,6 @@ import java.util.UUID;
 
 @Repository
 public interface OrganizationRepository extends JpaRepository<Organization, UUID> {
-    Organization findByNick(String nick);
+    Organization findByCanonicalName(String canonicalName);
 }
 

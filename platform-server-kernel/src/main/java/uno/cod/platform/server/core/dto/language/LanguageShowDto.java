@@ -7,8 +7,8 @@ import java.util.UUID;
 
 public class LanguageShowDto {
     private UUID id;
+    private String canonicalName;
     private String name;
-    private String tag;
 
     public LanguageShowDto(Language language) {
         BeanUtils.copyProperties(language, this);
@@ -22,19 +22,19 @@ public class LanguageShowDto {
         this.id = id;
     }
 
+    public String getCanonicalName() {
+        return canonicalName;
+    }
+
+    public void setCanonicalName(String canonicalName) {
+        this.canonicalName = canonicalName;
+    }
+
     public String getName() {
         return name;
     }
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getTag() {
-        return tag;
-    }
-
-    public void setTag(String tag) {
-        this.tag = tag;
     }
 }

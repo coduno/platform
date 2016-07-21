@@ -10,8 +10,7 @@ public class RunnerTestUtil {
     }
 
     public static Runner getRunner(UUID id) {
-        Runner runner = new Runner();
-        runner.setId(id);
+        Runner runner = new Runner(id);
         runner.setPath("default runner");
         return runner;
     }

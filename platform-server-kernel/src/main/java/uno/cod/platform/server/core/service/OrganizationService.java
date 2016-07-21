@@ -38,15 +38,13 @@ public class OrganizationService {
     }
 
     public void createFromDto(OrganizationCreateDto dto, String owner) {
-        if (organizationRepository.findByNick(dto.getNick()) != null) {
+        if (organizationRepository.findByCanonicalName(dto.getNick()) != null) {
             throw new CodunoIllegalArgumentException("organization.invalid");
         }
-        Organization organization = new Organization();
-        organization.setNick(dto.getNick());
-        organization.setName(dto.getName());
+        Organization organization = new Organization(dto.getNick(), dto.getName());
         organization = organizationRepository.save(organization);
 
-        User user = userRepository.findByUsername(owner);
+        User user = userRepository.findByCanonicalName(owner);
 
         OrganizationMembershipKey organizationMembershipKey = new OrganizationMembershipKey();
         organizationMembershipKey.setOrganization(organization);
@@ -64,7 +62,7 @@ public class OrganizationService {
     }
 
     public List<OrganizationMembershipShowDto> findUserOrganizations(String username) {
-        User user = userRepository.findByUsernameOrEmail(username, username);
+        User user = userRepository.findByCanonicalNameOrEmail(username, username);
         if (user == null) {
             throw new CodunoIllegalArgumentException("user.invalid");
         }

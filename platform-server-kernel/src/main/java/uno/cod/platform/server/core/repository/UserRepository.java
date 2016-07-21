@@ -16,14 +16,14 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     User findOne(UUID uuid);
 
     @EntityGraph("User.detail")
-    User findByUsername(String username);
+    User findByCanonicalName(String canonicalName);
 
     @EntityGraph("User.detail")
     User findByEmail(String email);
 
-    User findByUsernameOrEmail(String username, String email);
+    User findByCanonicalNameOrEmail(String canonicalName, String email);
 
-    List<User> findByUsernameContaining(@Param("searchValue") String searchValue);
+    List<User> findByCanonicalNameContaining(@Param("searchValue") String searchValue);
 
     @Query("SELECT user FROM User user " +
             "LEFT JOIN FETCH user.results results " +

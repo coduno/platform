@@ -55,8 +55,7 @@ public class TaskService {
         if (skillSum != 1) {
             throw new CodunoIllegalArgumentException("skills.invalid");
         }
-        Task task = new Task();
-        task.setName(dto.getName());
+        Task task = new Task(dto.getCanonicalName(), dto.getName());
         task.setInstructions(dto.getInstructions());
         task.setDescription(dto.getDescription());
         task.setPublic(dto.isPublic());
@@ -64,7 +63,6 @@ public class TaskService {
         task.setSkillMap(dto.getSkillMap());
         task.setRunner(runner);
         task.setParams(dto.getParams());
-        task.setCanonicalName(dto.getCanonicalName());
         endpoint.addTask(task);
         organization.addTask(task);
         return repository.save(task).getId();

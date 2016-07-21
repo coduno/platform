@@ -11,9 +11,7 @@ import java.util.UUID;
 
 public class TaskTestUtil {
     public static Task getValidTask() {
-        Task task = new Task();
-        task.setId(UUID.randomUUID());
-        task.setName("name");
+        Task task = new Task(UUID.randomUUID(), "canonicalName", "name");
         task.setDescription("description");
         task.setInstructions("instructions");
         task.setOrganization(OrganizationTestUtil.getOrganization());
@@ -26,8 +24,7 @@ public class TaskTestUtil {
     }
 
     public static Task getTask(TaskCreateDto dto) {
-        Task task = new Task();
-        task.setName(dto.getName());
+        Task task = new Task(UUID.randomUUID(), dto.getCanonicalName(), dto.getName());
         task.setDescription(dto.getDescription());
         task.setInstructions(dto.getInstructions());
         task.setDuration(dto.getDuration());

@@ -6,6 +6,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "runner")
@@ -18,6 +19,13 @@ public class Runner extends IdentifiableEntity {
 
     @OneToMany(mappedBy = "runner")
     private List<Task> tasks;
+
+    public Runner(UUID id) {
+        super(id);
+    }
+
+    public Runner() {
+    }
 
     public List<Test> getTests() {
         return Collections.unmodifiableList(tests);

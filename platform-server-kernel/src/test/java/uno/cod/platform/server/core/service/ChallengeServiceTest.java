@@ -17,7 +17,6 @@ import uno.cod.platform.server.core.service.util.UserTestUtil;
 import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -47,8 +46,6 @@ public class ChallengeServiceTest {
     public void createFromDto() throws Exception {
         ChallengeCreateDto dto = ChallengeTestUtil.getChallengeCreateDto();
         Challenge challenge = ChallengeTestUtil.getChallenge(dto);
-        challenge.setId(UUID.randomUUID());
-        challenge.setCanonicalName(UUID.randomUUID().toString());
 
         when(challengeTemplateRepository.findOneByCanonicalName(dto.getTemplateCanonicalName())).thenReturn(challenge.getChallengeTemplate());
         when(repository.save(Mockito.any(Challenge.class))).thenReturn(challenge);

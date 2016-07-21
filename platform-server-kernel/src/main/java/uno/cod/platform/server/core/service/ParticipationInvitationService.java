@@ -70,14 +70,14 @@ public class ParticipationInvitationService {
             params.put("team", participation.getTeam().getName());
             params.put("challengeCanonicalName", challenge.getCanonicalName());
             params.put("teamCanonicalName", participation.getTeam().getCanonicalName());
-            params.put("invitedBy", user.getFullName().isEmpty() ? user.getUsername() : user.getFullName());
+            params.put("invitedBy", user.getName());
             params.put("invitedByUsername", user.getUsername());
 
             User invitedUser = userRepository.findByEmail(email);
             if (invitedUser == null) {
                 params.put("name", email);
             } else {
-                params.put("name", invitedUser.getFullName().isEmpty() ? user.getUsername() : user.getFullName());
+                params.put("name", invitedUser.getName());
                 teamInvitationService.create(user, invitedUser, participation.getTeam(), false);
             }
             try {
@@ -98,7 +98,7 @@ public class ParticipationInvitationService {
     }
 
     public ParticipationShowDto get(String username, String challenge) {
-        Participation participation = participationRepository.findOneByUsernameAndChallengeCanonicalName(username, challenge);
+        Participation participation = participationRepository.findOneByUserCanonicalNameAndChallengeCanonicalName(username, challenge);
         if (participation == null) {
             throw new CodunoIllegalArgumentException("participation.invalid");
         }
@@ -106,7 +106,7 @@ public class ParticipationInvitationService {
     }
 
     public void accept(User user, String username, String challenge) throws MessagingException {
-        Participation participation = participationRepository.findOneByUsernameAndChallengeCanonicalName(username, challenge);
+        Participation participation = participationRepository.findOneByUserCanonicalNameAndChallengeCanonicalName(username, challenge);
         if (participation == null) {
             throw new CodunoIllegalArgumentException("participation.invalid");
         }

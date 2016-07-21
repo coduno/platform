@@ -82,9 +82,7 @@ public class SetupService {
     }
 
     private Organization initCatalystsWithUsers() {
-        Organization catalysts = new Organization();
-        catalysts.setName("Catalysts");
-        catalysts.setNick("catalysts");
+        Organization catalysts = new Organization("catalysts", "Catalysts GmbH");
         catalysts = organizationRepository.save(catalysts);
 
         String password = this.passwordEncoder.encode("Whatismypassword?");
@@ -120,11 +118,9 @@ public class SetupService {
                          String[] instructions, String[] taskNames, Duration duration, String name,
                          Runner testRunner, Runner normalRunner) {
 
-        ChallengeTemplate ccc = new ChallengeTemplate();
-        ccc.setName(name);
+        ChallengeTemplate ccc = new ChallengeTemplate(name, name);
         ccc.setDescription("## Description");
         ccc.setInstructions("## Instructions");
-        ccc.setCanonicalName(name);
         ccc.setOrganization(catalysts);
         ccc.setEndpoint(cccChallengeEndpoint);
         ccc.setDuration(duration);
@@ -160,9 +156,7 @@ public class SetupService {
     }
 
     private Task createTask(String name, String canonicalName, String description, String instructions, Endpoint endpoint, Runner runner, Duration duration, Organization organization, Set<Language> languages, Map<String, String> params) {
-        Task task = new Task();
-        task.setName(name);
-        task.setCanonicalName(canonicalName);
+        Task task = new Task(canonicalName, name);
         task.setDescription(description);
         task.setInstructions(instructions);
         task.setEndpoint(endpoint);
@@ -208,10 +202,8 @@ public class SetupService {
         organizationMembershipRepository.save(membership);
     }
 
-    private Language createLanguage(String name, String tag) {
-        Language language = new Language();
-        language.setName(name);
-        language.setTag(tag);
+    private Language createLanguage(String name, String canonicalName) {
+        Language language = new Language(name, canonicalName);
         return languageRepository.save(language);
     }
 }

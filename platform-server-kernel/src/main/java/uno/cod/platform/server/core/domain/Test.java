@@ -2,6 +2,7 @@ package uno.cod.platform.server.core.domain;
 
 import javax.persistence.*;
 import java.util.Map;
+import java.util.UUID;
 
 @Entity
 @Table(name = "test")
@@ -22,6 +23,13 @@ public class Test extends IdentifiableEntity {
 
     @Column(name = "custom_index")
     private int index;
+
+    public Test(UUID id) {
+        super(id);
+    }
+
+    public Test() {
+    }
 
     public Task getTask() {
         return task;

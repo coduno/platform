@@ -6,10 +6,6 @@ import java.util.UUID;
 
 public class LanguageTestUtil {
     public static Language getLanguage() {
-        Language language = new Language();
-        language.setId(UUID.randomUUID());
-        language.setName("Java");
-        language.setTag("java");
-        return language;
+        return new Language(UUID.randomUUID(), "java", "Java");
     }
 }

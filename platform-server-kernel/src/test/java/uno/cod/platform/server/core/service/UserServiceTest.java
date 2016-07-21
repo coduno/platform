@@ -51,7 +51,7 @@ public class UserServiceTest {
 
         User user = UserTestUtil.getUser(username, email);
 
-        when(repository.findByUsernameOrEmail(user.getUsername(), user.getEmail())).thenReturn(null);
+        when(repository.findByCanonicalNameOrEmail(user.getUsername(), user.getEmail())).thenReturn(null);
         when(repository.save(user)).thenReturn(user);
         service.createUser(username, email, password);
 
@@ -66,7 +66,7 @@ public class UserServiceTest {
 
         User user = UserTestUtil.getUser(username, email);
 
-        when(repository.findByUsernameOrEmail(user.getUsername(), user.getEmail())).thenReturn(new User());
+        when(repository.findByCanonicalNameOrEmail(user.getUsername(), user.getEmail())).thenReturn(new User());
         when(repository.save(user)).thenReturn(user);
         service.createUser(username, email, password);
 
@@ -80,7 +80,7 @@ public class UserServiceTest {
         User user = UserTestUtil.getUser("user", "email");
         UserUpdateProfileDetailsDto dto = UserTestUtil.getUserUpdateProfileDetailsDto("user2", "email2");
 
-        when(repository.findByUsername(dto.getUsername())).thenReturn(null);
+        when(repository.findByCanonicalName(dto.getUsername())).thenReturn(null);
         when(repository.findByEmail(dto.getEmail())).thenReturn(null);
         when(repository.save(user)).thenReturn(user);
 
@@ -96,7 +96,7 @@ public class UserServiceTest {
         User user = UserTestUtil.getUser("user2", "email2");
         UserUpdateProfileDetailsDto dto = UserTestUtil.getUserUpdateProfileDetailsDto("user", "email");
 
-        when(repository.findByUsername(dto.getUsername())).thenReturn(new User());
+        when(repository.findByCanonicalName(dto.getUsername())).thenReturn(new User());
         when(repository.findByEmail(dto.getEmail())).thenReturn(null);
 
         service.update(dto, user);
@@ -106,7 +106,7 @@ public class UserServiceTest {
     public void updateExistingEmail() throws Exception {
         UserUpdateProfileDetailsDto dto = UserTestUtil.getUserUpdateProfileDetailsDto("user2", "emaila");
 
-        when(repository.findByUsername(dto.getUsername())).thenReturn(null);
+        when(repository.findByCanonicalName(dto.getUsername())).thenReturn(null);
         when(repository.findByEmail(dto.getEmail())).thenReturn(new User());
 
         User user = UserTestUtil.getUser("user2", "email2");
@@ -143,7 +143,7 @@ public class UserServiceTest {
     @Test
     public void findByUsername() throws Exception {
         User user = UserTestUtil.getUser();
-        when(repository.findByUsername(user.getUsername())).thenReturn(user);
+        when(repository.findByCanonicalName(user.getUsername())).thenReturn(user);
 
         UserShowDto showDto = service.findByUsername(user.getUsername());
 
@@ -155,7 +155,7 @@ public class UserServiceTest {
 
     @Test(expected = CodunoNoSuchElementException.class)
     public void findByUsernameNotExisting() throws Exception {
-        when(repository.findByUsername("user")).thenReturn(null);
+        when(repository.findByCanonicalName("user")).thenReturn(null);
 
         service.findByUsername("user");
     }
@@ -199,7 +199,7 @@ public class UserServiceTest {
     public void listUsersByUsernameContaining() throws Exception {
         User user = UserTestUtil.getUser();
         String searchValue = "user";
-        when(repository.findByUsernameContaining(searchValue)).thenReturn(Collections.singletonList(user));
+        when(repository.findByCanonicalNameContaining(searchValue)).thenReturn(Collections.singletonList(user));
 
         List<UserShortShowDto> dtos = service.listUsersByUsernameContaining(searchValue);
 

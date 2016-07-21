@@ -76,10 +76,8 @@ public class ChallengeService {
             throw new CodunoResourceConflictException("challenge.canonicalName.existing", new String[]{dto.getCanonicalName()});
         }
 
-        Challenge challenge = new Challenge();
+        Challenge challenge = new Challenge(dto.getCanonicalName(), dto.getName());
         challenge.setChallengeTemplate(template);
-        challenge.setName(dto.getName());
-        challenge.setCanonicalName(dto.getCanonicalName());
         if (dto.getStartDate() != null) {
             challenge.setStartDate(dto.getStartDate());
             challenge.setEndDate(dto.getStartDate().plus(template.getDuration()));

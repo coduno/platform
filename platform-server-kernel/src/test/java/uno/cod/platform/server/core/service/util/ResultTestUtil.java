@@ -7,9 +7,8 @@ import java.util.UUID;
 
 public class ResultTestUtil {
     public static Result getResult() {
-        Result result = new Result();
+        Result result = new Result(UUID.randomUUID());
 
-        result.setId(UUID.randomUUID());
         result.setChallenge(ChallengeTestUtil.getChallenge());
         result.setUser(UserTestUtil.getUser());
         result.setStarted(ZonedDateTime.now());

@@ -73,15 +73,15 @@ public class TeamInvitationService {
         Map<String, Object> params = new HashMap<>();
         params.put("teamCanonicalName", team.getCanonicalName());
         params.put("teamName", team.getName());
-        params.put("invitedByFull", invitingUser.getFullName().isEmpty() ? invitingUser.getUsername() : invitingUser.getFullName());
+        params.put("invitedByFull", invitingUser.getName());
         params.put("invitedBy", invitingUser.getUsername());
-        params.put("nameFull", user.getFullName().isEmpty() ? user.getUsername() : user.getFullName());
+        params.put("nameFull", user.getName());
         params.put("name", user.getUsername());
-        mailService.sendMail(user.getFullName(), user.getEmail(), "Team invitation", "team-invitation", params, Locale.ENGLISH);
+        mailService.sendMail(user.getName(), user.getEmail(), "Team invitation", "team-invitation", params, Locale.ENGLISH);
     }
 
     public void create(User invitingUser, String usernameToInvite, String canonicalName) throws MessagingException {
-        User user = userRepository.findByUsername(usernameToInvite);
+        User user = userRepository.findByCanonicalName(usernameToInvite);
         Team team = teamRepository.findByCanonicalNameAndEnabledTrue(canonicalName);
         create(invitingUser, user, team, true);
     }
@@ -102,7 +102,7 @@ public class TeamInvitationService {
         if (invitationCheck) {
             TeamInvitation invitation = repository.findByKey(key);
             if (invitation == null) {
-                throw new CodunoIllegalArgumentException("team.invite.notfound");
+                throw new CodunoIllegalArgumentException("team.invite.notFound");
             }
             repository.delete(invitation);
         }
@@ -120,7 +120,7 @@ public class TeamInvitationService {
         key.setUser(user);
         TeamInvitation invitation = repository.findByKey(key);
         if (invitation == null) {
-            throw new CodunoIllegalArgumentException("team.invite.notfound");
+            throw new CodunoIllegalArgumentException("team.invite.notFound");
         }
         repository.delete(invitation);
     }

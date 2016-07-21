@@ -46,8 +46,7 @@ public class UserTestUtil {
     }
 
     public static User getUser(String username, String email) {
-        User user = new User();
-        user.setId(UUID.randomUUID());
+        User user = new User(UUID.randomUUID());
         user.setEmail(email);
         user.setUsername(username);
         user.setPassword("password");

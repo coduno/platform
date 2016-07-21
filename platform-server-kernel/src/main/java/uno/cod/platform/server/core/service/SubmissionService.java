@@ -66,7 +66,7 @@ public class SubmissionService {
         Submission submission = create(resultId, taskId);
         TaskResultKey key = submission.getTaskResult().getKey();
 
-        submission.setLanguage(languageRepository.findByTag(language));
+        submission.setLanguage(languageRepository.findOneByCanonicalName(language));
 
         for (MultipartFile file : files) {
             final String path = submission.filePath() + file.getOriginalFilename();

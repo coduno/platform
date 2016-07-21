@@ -8,5 +8,5 @@ import java.util.UUID;
 
 @Repository
 public interface LanguageRepository extends JpaRepository<Language, UUID> {
-    Language findByTag(String tag);
+    Language findOneByCanonicalName(String canonicalName);
 }

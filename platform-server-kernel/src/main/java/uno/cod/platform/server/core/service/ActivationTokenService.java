@@ -91,7 +91,7 @@ public class ActivationTokenService {
 
         deleteActivationToken(id);
 
-        User found = userRepository.findByUsernameOrEmail(activationToken.getUsername(), activationToken.getEmail());
+        User found = userRepository.findByCanonicalNameOrEmail(activationToken.getUsername(), activationToken.getEmail());
         if (found != null) {
            return found;
         }
@@ -100,7 +100,7 @@ public class ActivationTokenService {
     }
 
     public void createActivationTokenFromDto(ActivationTokenCreateDto dto) throws MessagingException {
-        User found = userRepository.findByUsernameOrEmail(dto.getNick(), dto.getEmail());
+        User found = userRepository.findByCanonicalNameOrEmail(dto.getNick(), dto.getEmail());
         if (found != null) {
             throw new CodunoResourceConflictException("user.name.exists", new String[]{dto.getNick()});
         }

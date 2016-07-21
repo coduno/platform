@@ -10,8 +10,7 @@ public class EndpointTestUtil {
     }
 
     public static Endpoint getEndpoint(UUID id) {
-        Endpoint endpoint = new Endpoint();
-        endpoint.setId(id);
+        Endpoint endpoint = new Endpoint(id);
         endpoint.setName("endpoint");
         endpoint.setComponent("endpoint-element");
         return endpoint;
