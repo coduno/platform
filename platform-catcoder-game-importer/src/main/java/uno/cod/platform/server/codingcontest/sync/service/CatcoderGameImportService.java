@@ -143,9 +143,9 @@ public class CatcoderGameImportService {
         }
 
         if (dto.getPuzzles()
-                .stream()
+                .parallelStream()
+                .filter(x -> x.getValidationClass() != null)
                 .findAny()
-                .filter(puzzleDto -> puzzleDto.getValidationClass() != null)
                 .isPresent()) {
             throw new CodunoIllegalArgumentException("ccc.game.structure.unsupported");
         }
