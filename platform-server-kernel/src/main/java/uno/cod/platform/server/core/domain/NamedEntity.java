@@ -4,8 +4,10 @@ import org.hibernate.validator.constraints.NotEmpty;
 import uno.cod.platform.server.core.Named;
 
 import javax.persistence.Column;
+import javax.persistence.MappedSuperclass;
 import java.util.UUID;
 
+@MappedSuperclass
 abstract class NamedEntity extends CanonicalEntity implements Named<UUID> {
     @NotEmpty
     @Column(nullable = false)
