@@ -21,9 +21,17 @@ public class OrganizationMembership implements Serializable {
 
     private boolean admin;
 
-    public OrganizationMembership(User user, Organization organization, boolean admin) {
-        this.key = new OrganizationMembershipKey(user, organization);
+    public OrganizationMembership(OrganizationMembershipKey key, boolean admin) {
+        this.key = key;
         this.admin = admin;
+    }
+
+    public OrganizationMembership(OrganizationMembershipKey key) {
+        this(key, false);
+    }
+
+    public OrganizationMembership(User user, Organization organization, boolean admin) {
+        this(new OrganizationMembershipKey(user, organization), admin);
     }
 
     public OrganizationMembership(User user, Organization organization) {

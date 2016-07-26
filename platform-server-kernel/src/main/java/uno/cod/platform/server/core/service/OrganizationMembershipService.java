@@ -39,14 +39,11 @@ public class OrganizationMembershipService {
         if (organization == null) {
             throw new CodunoIllegalArgumentException("organization.invalid");
         }
-        OrganizationMembershipKey key = new OrganizationMembershipKey();
-        key.setUser(user);
-        key.setOrganization(organization);
+        OrganizationMembershipKey key = new OrganizationMembershipKey(user, organization);
         if (repository.findOne(key) != null) {
             throw new CodunoResourceConflictException("organization.member.exists");
         }
-        OrganizationMembership membership = new OrganizationMembership();
-        membership.setKey(key);
+        OrganizationMembership membership = new OrganizationMembership(key);
         membership.setAdmin(dto.isAdmin());
         repository.save(membership);
         user.addOrganizationMembership(membership);
@@ -62,9 +59,7 @@ public class OrganizationMembershipService {
         if (organization == null) {
             throw new CodunoIllegalArgumentException("organization.invalid");
         }
-        OrganizationMembershipKey key = new OrganizationMembershipKey();
-        key.setUser(user);
-        key.setOrganization(organization);
+        OrganizationMembershipKey key = new OrganizationMembershipKey(user, organization);
         repository.delete(key);
     }
 }

@@ -46,12 +46,7 @@ public class OrganizationService {
 
         User user = userRepository.findByCanonicalName(owner);
 
-        OrganizationMembershipKey organizationMembershipKey = new OrganizationMembershipKey();
-        organizationMembershipKey.setOrganization(organization);
-        organizationMembershipKey.setUser(user);
-
-        OrganizationMembership organizationMembership = new OrganizationMembership();
-        organizationMembership.setKey(organizationMembershipKey);
+        OrganizationMembership organizationMembership = new OrganizationMembership(user, organization);
         organizationMembership.setAdmin(true);
 
         organizationMembershipRepository.save(organizationMembership);
