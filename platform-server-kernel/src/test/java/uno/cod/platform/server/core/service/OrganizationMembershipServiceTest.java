@@ -35,9 +35,7 @@ public class OrganizationMembershipServiceTest {
     public void save() throws Exception {
         User user = UserTestUtil.getUser();
         Organization organization = OrganizationTestUtil.getOrganization();
-        OrganizationMembershipKey key = new OrganizationMembershipKey();
-        key.setUser(user);
-        key.setOrganization(organization);
+        OrganizationMembershipKey key = new OrganizationMembershipKey(user, organization);
 
         OrganizationMembershipCreateDto createDto = new OrganizationMembershipCreateDto();
         createDto.setUserId(user.getId());
@@ -53,9 +51,7 @@ public class OrganizationMembershipServiceTest {
     public void saveUserInvalid() throws Exception {
         User user = UserTestUtil.getUser();
         Organization organization = OrganizationTestUtil.getOrganization();
-        OrganizationMembershipKey key = new OrganizationMembershipKey();
-        key.setUser(user);
-        key.setOrganization(organization);
+        OrganizationMembershipKey key = new OrganizationMembershipKey(user, organization);
 
         OrganizationMembershipCreateDto createDto = new OrganizationMembershipCreateDto();
         createDto.setUserId(user.getId());
@@ -71,9 +67,7 @@ public class OrganizationMembershipServiceTest {
     public void saveOrganizationInvalid() throws Exception {
         User user = UserTestUtil.getUser();
         Organization organization = OrganizationTestUtil.getOrganization();
-        OrganizationMembershipKey key = new OrganizationMembershipKey();
-        key.setUser(user);
-        key.setOrganization(organization);
+        OrganizationMembershipKey key = new OrganizationMembershipKey(user, organization);
 
         OrganizationMembershipCreateDto createDto = new OrganizationMembershipCreateDto();
         createDto.setUserId(user.getId());
@@ -89,16 +83,14 @@ public class OrganizationMembershipServiceTest {
     public void saveMembershipExisting() throws Exception {
         User user = UserTestUtil.getUser();
         Organization organization = OrganizationTestUtil.getOrganization();
-        OrganizationMembershipKey key = new OrganizationMembershipKey();
-        key.setUser(user);
-        key.setOrganization(organization);
+        OrganizationMembershipKey key = new OrganizationMembershipKey(user, organization);
 
         OrganizationMembershipCreateDto createDto = new OrganizationMembershipCreateDto();
         createDto.setUserId(user.getId());
 
         Mockito.when(userRepository.findOne(user.getId())).thenReturn(user);
         Mockito.when(organizationRepository.findOne(organization.getId())).thenReturn(organization);
-        Mockito.when(repository.findOne(key)).thenReturn(new OrganizationMembership());
+        Mockito.when(repository.findOne(key)).thenReturn(new OrganizationMembership(key));
 
         service.save(createDto, organization.getId());
     }

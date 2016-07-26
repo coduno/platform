@@ -19,7 +19,7 @@ public class OrganizationMembershipKey implements Serializable {
         this.organization = organization;
     }
 
-    protected  OrganizationMembershipKey() {
+    protected OrganizationMembershipKey() {
     }
 
     public Organization getOrganization() {

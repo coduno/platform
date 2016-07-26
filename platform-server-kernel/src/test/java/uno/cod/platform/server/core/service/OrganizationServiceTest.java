@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import uno.cod.platform.server.core.domain.Organization;
+import uno.cod.platform.server.core.domain.OrganizationMembership;
 import uno.cod.platform.server.core.domain.User;
 import uno.cod.platform.server.core.dto.organization.OrganizationCreateDto;
 import uno.cod.platform.server.core.dto.organization.OrganizationShowDto;
@@ -13,7 +14,6 @@ import uno.cod.platform.server.core.exception.CodunoIllegalArgumentException;
 import uno.cod.platform.server.core.repository.OrganizationMembershipRepository;
 import uno.cod.platform.server.core.repository.OrganizationRepository;
 import uno.cod.platform.server.core.repository.UserRepository;
-import uno.cod.platform.server.core.service.util.OrganizationMembershipTestUtil;
 import uno.cod.platform.server.core.service.util.OrganizationTestUtil;
 import uno.cod.platform.server.core.service.util.UserTestUtil;
 
@@ -73,7 +73,7 @@ public class OrganizationServiceTest {
     public void findUserOrganizations() throws Exception {
         User user = UserTestUtil.getUser();
         Organization organization = OrganizationTestUtil.getOrganization();
-        user.addOrganizationMembership(OrganizationMembershipTestUtil.getOrganizationMembership(user, organization, true));
+        user.addOrganizationMembership(new OrganizationMembership(user, organization, true));
         Mockito.when(userRepository.findByCanonicalNameOrEmail(user.getUsername(), user.getUsername())).thenReturn(user);
 
         List<OrganizationMembershipShowDto> dtos = service.findUserOrganizations(user.getUsername());
