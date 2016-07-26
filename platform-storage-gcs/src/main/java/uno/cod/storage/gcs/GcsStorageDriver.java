@@ -91,6 +91,7 @@ public class GcsStorageDriver implements PlatformStorage {
 
     @Override
     public String uploadPublic(String bucket, String fileName, InputStream data, String contentType) throws IOException {
+        LOGGER.info("Uploading file " + fileName);
         InputStreamContent contentStream = new InputStreamContent(contentType, data);
         Storage.Objects.Insert insertObject = storage
                 .objects()

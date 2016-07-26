@@ -20,6 +20,9 @@ public class PuzzleDto {
     @JacksonXmlProperty(localName = "inputfile")
     private String inputFilePath;
 
+    @JacksonXmlProperty(localName = "resourcefile")
+    private String resourceFilePath;
+
     public String getCanonicalName() {
         return canonicalName;
     }
@@ -38,5 +41,9 @@ public class PuzzleDto {
 
     public String getValidationClass() {
         return validationClass;
+    }
+
+    public String getResourceFilePath() {
+        return resourceFilePath;
     }
 }

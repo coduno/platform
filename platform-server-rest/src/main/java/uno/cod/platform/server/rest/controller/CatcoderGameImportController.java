@@ -26,8 +26,8 @@ public class CatcoderGameImportController {
 
     @AllowedForAdmin
     @RequestMapping(value = RestUrls.CATCODER_GAME_UPLOAD, method = RequestMethod.POST)
-    public ResponseEntity<UUID> gameUploadZip(@RequestParam("file") MultipartFile file,
-                                              @RequestParam("organization") UUID organization) throws IOException {
+    public ResponseEntity<String> gameUploadZip(@RequestParam("file") MultipartFile file,
+                                                @RequestParam("organization") UUID organization) throws IOException {
         return new ResponseEntity<>(catcoderGameImportService.createChallengeTemplateFromGameResources(file, organization), HttpStatus.OK);
     }
 }

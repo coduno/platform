@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.crypto.codec.*;
 import org.springframework.security.crypto.codec.Base64;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,7 +19,10 @@ import uno.cod.platform.server.core.exception.CodunoIllegalArgumentException;
 import uno.cod.platform.server.core.repository.*;
 import uno.cod.storage.PlatformStorage;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.Duration;
 import java.time.LocalTime;
 import java.util.*;
@@ -100,7 +102,7 @@ public class CatcoderGameImportService {
         task.setEndpoint(endpoint);
         task.setDescription(puzzle.getCanonicalName());
         task.setInstructions(storage.uploadPublic(instructionsBucket,
-                instructionsFileName(challengeTemplate, puzzle.getInstructionsFile()),
+                randomFileName(challengeTemplate, puzzle.getInstructionsFile()),
                 new ByteArrayInputStream(files.get(puzzle.getInstructionsFile())),
                 "application/pdf"));
         task.setDuration(gameDuration);
@@ -131,10 +133,10 @@ public class CatcoderGameImportService {
         return test;
     }
 
-    private UUID createChallengeTemplate(CodingContestGameDto dto, UUID organizationId, Map<String, byte[]> files) throws IOException {
+    private String createChallengeTemplate(CodingContestGameDto dto, UUID organizationId, Map<String, byte[]> files) throws IOException {
         ChallengeTemplate challengeTemplate = challengeTemplateRepository.findOneByCanonicalName(dto.getCanonicalName());
         if (challengeTemplate != null) {
-            return challengeTemplate.getId();
+            return challengeTemplate.getCanonicalName();
         }
 
         Organization organization = organizationRepository.findOne(organizationId);
@@ -157,6 +159,25 @@ public class CatcoderGameImportService {
 
         challengeTemplate = mapChallengeTemplate(dto, organization, gameDuration);
 
+        Optional<PuzzleDto> resourceFilePuzzle = dto.getPuzzles()
+                .stream()
+                .filter(p -> p.getResourceFilePath() != null && !p.getResourceFilePath().isEmpty())
+                .findFirst();
+
+        if (resourceFilePuzzle.isPresent()) {
+            final String bucketFileName = randomFileName(challengeTemplate, resourceFilePuzzle.get().getResourceFilePath());
+            final String resourceFileURL = storage.uploadPublic(instructionsBucket, bucketFileName,
+                    new ByteArrayInputStream(files.get(resourceFilePuzzle.get().getResourceFilePath())),
+                    "application/zip");
+
+            String updatedInstructions = challengeTemplate.getInstructions();
+            updatedInstructions += "\n### Resource Files" +
+                    "\nIn order to complete the challenge, you will need some additional files " +
+                    "which can be downloaded [here](" + resourceFileURL + ").";
+
+            challengeTemplate.setInstructions(updatedInstructions);
+        }
+
         for (PuzzleDto puzzle : dto.getPuzzles()) {
             Task task = mapTask(puzzle, challengeTemplate, organization, files, gameDuration, runner, taskEndpoint, languages);
             Map<String, byte[]> testFiles = null;
@@ -172,10 +193,10 @@ public class CatcoderGameImportService {
             task = taskRepository.save(task);
             challengeTemplate.addTask(task);
         }
-        return challengeTemplateRepository.save(challengeTemplate).getId();
+        return challengeTemplateRepository.save(challengeTemplate).getCanonicalName();
     }
 
-    private String instructionsFileName(ChallengeTemplate challengeTemplate, String fileName) {
+    private String randomFileName(ChallengeTemplate challengeTemplate, String fileName) {
         // 33 mod 3 = 0, s.t. Base64 needs no padding.
         final byte[] buffer = new byte[33];
         random.nextBytes(buffer);
@@ -214,7 +235,7 @@ public class CatcoderGameImportService {
         }
     }
 
-    public UUID createChallengeTemplateFromGameResources(MultipartFile file, UUID organizationId) throws IOException {
+    public String createChallengeTemplateFromGameResources(MultipartFile file, UUID organizationId) throws IOException {
         final Map<String, byte[]> files;
 
         try (InputStream is = file.getInputStream()) {
