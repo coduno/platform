@@ -28,7 +28,7 @@ public class ChallengeTemplateController {
 
     @RequestMapping(value = RestUrls.CHALLENGE_TEMPLATES, method = RequestMethod.POST)
     @PreAuthorize("isAuthenticated() and @securityService.isOrganizationAdmin(principal, #dto.organizationId)")
-    public ResponseEntity<UUID> create(@RequestBody ChallengeTemplateCreateDto dto) {
+    public ResponseEntity<String> create(@RequestBody ChallengeTemplateCreateDto dto) {
         return new ResponseEntity<>(service.save(dto), HttpStatus.CREATED);
     }
 

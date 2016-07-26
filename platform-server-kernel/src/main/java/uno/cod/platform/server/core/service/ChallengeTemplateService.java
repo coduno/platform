@@ -37,7 +37,7 @@ public class ChallengeTemplateService {
         this.endpointRepository = endpointRepository;
     }
 
-    public UUID save(ChallengeTemplateCreateDto dto) {
+    public String save(ChallengeTemplateCreateDto dto) {
         Organization organization = organizationRepository.findOne(dto.getOrganizationId());
         if (organization == null) {
             throw new CodunoIllegalArgumentException("organization.invalid");
@@ -59,7 +59,7 @@ public class ChallengeTemplateService {
         organization.addChallenge(challengeTemplate);
         endpoint.addChallenge(challengeTemplate);
 
-        return repository.save(challengeTemplate).getId();
+        return repository.save(challengeTemplate).getCanonicalName();
     }
 
     public ChallengeTemplateShowDto findById(UUID id) {

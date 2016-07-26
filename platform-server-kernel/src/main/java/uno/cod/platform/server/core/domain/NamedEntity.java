@@ -5,7 +5,6 @@ import uno.cod.platform.server.core.Named;
 
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
-import java.io.Serializable;
 import java.util.UUID;
 
 @MappedSuperclass

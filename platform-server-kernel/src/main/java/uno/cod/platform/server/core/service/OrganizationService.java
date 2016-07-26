@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uno.cod.platform.server.core.domain.Organization;
 import uno.cod.platform.server.core.domain.OrganizationMembership;
-import uno.cod.platform.server.core.domain.OrganizationMembershipKey;
 import uno.cod.platform.server.core.domain.User;
 import uno.cod.platform.server.core.dto.organization.OrganizationCreateDto;
 import uno.cod.platform.server.core.dto.organization.OrganizationShowDto;
