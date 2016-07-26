@@ -203,7 +203,7 @@ public class SetupService {
     }
 
     private Language createLanguage(String name, String canonicalName) {
-        Language language = new Language(name, canonicalName);
+        Language language = new Language(canonicalName, name);
         return languageRepository.save(language);
     }
 }
