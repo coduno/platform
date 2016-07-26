@@ -46,6 +46,10 @@ public class User extends CanonicalEntity implements Named<UUID>, SocialUserDeta
 
     private boolean admin;
 
+    public User(String canonicalName, String email, String password) {
+        this(canonicalName, email, password, "", "");
+    }
+
     public User(String canonicalName, String email, String password, String firstName, String lastName) {
         super(canonicalName);
         this.email = email;

@@ -182,28 +182,16 @@ public class SetupService {
     }
 
     private User createUser(String username, String email, String password, Boolean admin) {
-        User user = new User();
-        user.setUsername(username);
-        user.setEmail(email);
-        user.setPassword(password);
+        User user = new User(username, email, password);
         user.setAdmin(admin);
-        user.setEnabled(true);
         return userRepository.save(user);
     }
 
-    private void createMembership(User user, Organization organization) {
-        OrganizationMembershipKey key = new OrganizationMembershipKey();
-        key.setUser(user);
-        key.setOrganization(organization);
-
-        OrganizationMembership membership = new OrganizationMembership();
-        membership.setKey(key);
-        membership.setAdmin(true);
-        organizationMembershipRepository.save(membership);
+    private OrganizationMembership createMembership(User user, Organization organization) {
+        return organizationMembershipRepository.save(new OrganizationMembership(user, organization, true));
     }
 
     private Language createLanguage(String name, String canonicalName) {
-        Language language = new Language(canonicalName, name);
-        return languageRepository.save(language);
+        return languageRepository.save(new Language(canonicalName, name));
     }
 }

@@ -10,14 +10,23 @@ public class OrganizationMembershipKey implements Serializable {
 
     @ManyToOne
     private Organization organization;
+
     @ManyToOne
     private User user;
+
+    public OrganizationMembershipKey(User user, Organization organization) {
+        this.user = user;
+        this.organization = organization;
+    }
+
+    protected  OrganizationMembershipKey() {
+    }
 
     public Organization getOrganization() {
         return this.organization;
     }
 
-    public void setOrganization(Organization organization) {
+    protected void setOrganization(Organization organization) {
         this.organization = organization;
     }
 
@@ -25,7 +34,7 @@ public class OrganizationMembershipKey implements Serializable {
         return this.user;
     }
 
-    public void setUser(User user) {
+    protected void setUser(User user) {
         this.user = user;
     }
 

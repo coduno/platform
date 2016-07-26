@@ -21,14 +21,23 @@ public class OrganizationMembership implements Serializable {
 
     private boolean admin;
 
-    public OrganizationMembership() {
+    public OrganizationMembership(User user, Organization organization, boolean admin) {
+        this.key = new OrganizationMembershipKey(user, organization);
+        this.admin = admin;
+    }
+
+    public OrganizationMembership(User user, Organization organization) {
+        this(user, organization, false);
+    }
+
+    protected OrganizationMembership() {
     }
 
     public OrganizationMembershipKey getKey() {
         return this.key;
     }
 
-    public void setKey(OrganizationMembershipKey key) {
+    protected void setKey(OrganizationMembershipKey key) {
         this.key = key;
     }
 
@@ -44,7 +53,7 @@ public class OrganizationMembership implements Serializable {
         return this.created;
     }
 
-    public void setCreated(Date created) {
+    protected void setCreated(Date created) {
         this.created = created;
     }
 }
