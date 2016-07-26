@@ -5,13 +5,16 @@ import uno.cod.platform.server.core.util.constraints.CanonicalName;
 
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
+import java.io.Serializable;
 import java.util.UUID;
 
 /**
  * Bare bones of a JPA entity that fulfills {@link Canonical}.
  */
 @MappedSuperclass
-public abstract class CanonicalEntity extends IdentifiableEntity implements Canonical<UUID> {
+public abstract class CanonicalEntity extends IdentifiableEntity implements Canonical<UUID>, Serializable {
+    private static final long serialVersionUID = 2L;
+
     @CanonicalName
     @Column(name = "canonical_name", nullable = false, unique = true)
     protected String canonicalName;

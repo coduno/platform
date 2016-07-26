@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.util.UUID;
 
 /**
@@ -15,7 +16,9 @@ import java.util.UUID;
  * Superclasses may extend this type for consistency.
  */
 @MappedSuperclass
-public abstract class IdentifiableEntity implements Identifiable<UUID> {
+public abstract class IdentifiableEntity implements Identifiable<UUID>, Serializable {
+    private static final long serialVersionUID = 2L;
+
     @Id
     @NotNull
     @GeneratedValue(generator = "uuid2")
