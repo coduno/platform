@@ -98,13 +98,14 @@ public class CatcoderGameImportService {
                          Endpoint endpoint,
                          Set<Language> languages) throws IOException {
         String cn = fixCanonicalName(challengeTemplate.getCanonicalName() + "-" + puzzle.getCanonicalName());
-        Task task = new Task(cn, puzzle.getCanonicalName());
+        Task task = new Task(cn, cn);
         task.setEndpoint(endpoint);
-        task.setDescription(puzzle.getCanonicalName());
-        task.setInstructions(storage.uploadPublic(instructionsBucket,
+        task.setDescription("");
+        String instructionsFileUrl = storage.uploadPublic(instructionsBucket,
                 randomFileName(challengeTemplate, puzzle.getInstructionsFile()),
                 new ByteArrayInputStream(files.get(puzzle.getInstructionsFile())),
-                "application/pdf"));
+                "application/pdf");
+        task.setInstructions("\n### Instructions\nPlease find the task description [here](" + instructionsFileUrl + ").");
         task.setDuration(gameDuration);
         task.setRunner(runner);
         task.setLanguages(languages);
@@ -159,27 +160,26 @@ public class CatcoderGameImportService {
 
         challengeTemplate = mapChallengeTemplate(dto, organization, gameDuration);
 
-        Optional<PuzzleDto> resourceFilePuzzle = dto.getPuzzles()
+        long countResourceFiles = dto.getPuzzles()
                 .stream()
-                .filter(p -> p.getResourceFilePath() != null && !p.getResourceFilePath().isEmpty())
-                .findFirst();
+                .filter(this::hasResourceFile)
+                .count();
+        PuzzleDto firstPuzzle = dto.getPuzzles().get(0);
+        boolean firstHasResource = hasResourceFile(firstPuzzle);
+        boolean firstResourceOnly = countResourceFiles == 1 && firstHasResource;
 
-        if (resourceFilePuzzle.isPresent()) {
-            final String bucketFileName = randomFileName(challengeTemplate, resourceFilePuzzle.get().getResourceFilePath());
-            final String resourceFileURL = storage.uploadPublic(instructionsBucket, bucketFileName,
-                    new ByteArrayInputStream(files.get(resourceFilePuzzle.get().getResourceFilePath())),
-                    "application/zip");
-
-            String updatedInstructions = challengeTemplate.getInstructions();
-            updatedInstructions += "\n### Resource Files" +
-                    "\nIn order to complete the challenge, you will need some additional files " +
-                    "which can be downloaded [here](" + resourceFileURL + ").";
-
-            challengeTemplate.setInstructions(updatedInstructions);
+        if (firstResourceOnly) {
+            challengeTemplate.setInstructions(uploadIntoBucket(
+                    firstPuzzle, challengeTemplate.getInstructions(), files, challengeTemplate));
         }
 
         for (PuzzleDto puzzle : dto.getPuzzles()) {
             Task task = mapTask(puzzle, challengeTemplate, organization, files, gameDuration, runner, taskEndpoint, languages);
+
+            if (!firstResourceOnly && hasResourceFile(puzzle)) {
+                task.setInstructions(uploadIntoBucket(puzzle, task.getInstructions(), files, challengeTemplate));
+            }
+
             Map<String, byte[]> testFiles = null;
             if (puzzle.getInputFilePath() != null) {
                 try (InputStream is = new ByteArrayInputStream(files.get(puzzle.getInputFilePath()))) {
@@ -194,6 +194,24 @@ public class CatcoderGameImportService {
             challengeTemplate.addTask(task);
         }
         return challengeTemplateRepository.save(challengeTemplate).getCanonicalName();
+    }
+
+    private String uploadIntoBucket(PuzzleDto puzzle, String markdownText,
+                                    Map<String, byte[]> files, ChallengeTemplate challengeTemplate) throws IOException {
+        final String bucketFileName = randomFileName(challengeTemplate, puzzle.getResourceFilePath());
+        final String resourceFileURL = storage.uploadPublic(instructionsBucket, bucketFileName,
+                new ByteArrayInputStream(files.get(puzzle.getResourceFilePath())),
+                "application/zip");
+
+        markdownText += "\n### Resource Files" +
+                "\nIn order to complete the challenge, you will need some additional files " +
+                "which can be downloaded [here](" + resourceFileURL + ").";
+
+        return markdownText;
+    }
+
+    private boolean hasResourceFile(PuzzleDto p) {
+        return p.getResourceFilePath() != null && !p.getResourceFilePath().isEmpty();
     }
 
     private String randomFileName(ChallengeTemplate challengeTemplate, String fileName) {
