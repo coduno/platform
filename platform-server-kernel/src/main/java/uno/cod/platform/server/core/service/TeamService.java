@@ -2,7 +2,10 @@ package uno.cod.platform.server.core.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import uno.cod.platform.server.core.domain.*;
+import uno.cod.platform.server.core.domain.Team;
+import uno.cod.platform.server.core.domain.TeamInvitation;
+import uno.cod.platform.server.core.domain.TeamMember;
+import uno.cod.platform.server.core.domain.User;
 import uno.cod.platform.server.core.dto.team.TeamCreateDto;
 import uno.cod.platform.server.core.dto.team.TeamShowDto;
 import uno.cod.platform.server.core.exception.CodunoIllegalArgumentException;
@@ -38,30 +41,19 @@ public class TeamService {
         Team team = new Team(dto.getCanonicalName(), dto.getName());
         team = teamRepository.save(team);
 
-        TeamUserKey key = new TeamUserKey();
-        key.setTeam(team);
-        key.setUser(user);
-        TeamMember member = new TeamMember();
-        member.setKey(key);
-        member.setAdmin(true);
+        TeamMember member = new TeamMember(team, user, true);
         teamMemberRepository.save(member);
     }
 
     void join(User user, Team team) {
-        TeamUserKey key = new TeamUserKey();
-        key.setTeam(team);
-        key.setUser(user);
-        TeamMember member = new TeamMember();
-        member.setKey(key);
+        TeamMember member = new TeamMember(team, user);
         teamMemberRepository.save(member);
     }
 
     public void delete(String canonicalName) {
         Team team = teamRepository.findByCanonicalNameAndEnabledTrue(canonicalName);
         List<TeamInvitation> invites = teamInvitationRepository.findAllByTeam(team);
-        for (TeamInvitation i : invites) {
-            teamInvitationRepository.delete(i);
-        }
+        invites.forEach(teamInvitationRepository::delete);
         team.setEnabled(false);
         teamRepository.save(team);
     }

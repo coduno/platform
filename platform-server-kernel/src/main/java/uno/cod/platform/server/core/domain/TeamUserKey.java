@@ -14,11 +14,19 @@ public class TeamUserKey implements Serializable {
     @ManyToOne
     private User user;
 
+    public TeamUserKey(Team team, User user) {
+        this.team = team;
+        this.user = user;
+    }
+
+    protected TeamUserKey() {
+    }
+
     public Team getTeam() {
         return this.team;
     }
 
-    public void setTeam(Team team) {
+    protected void setTeam(Team team) {
         this.team = team;
     }
 
@@ -26,7 +34,7 @@ public class TeamUserKey implements Serializable {
         return this.user;
     }
 
-    public void setUser(User user) {
+    protected void setUser(User user) {
         this.user = user;
     }
 

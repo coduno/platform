@@ -52,19 +52,14 @@ public class TeamInvitationService {
             }
             return;
         }
-        TeamUserKey key = new TeamUserKey();
-        key.setUser(user);
-        key.setTeam(team);
+        TeamUserKey key = key(team, user);
         if (teamMemberRepository.findOne(key) != null) {
             if (existingCheck) {
                 throw new CodunoIllegalArgumentException("team.has.member");
             }
             return;
         }
-        TeamInvitation invitation = new TeamInvitation();
-        invitation.setKey(key);
-        invitation.setInvitedBy(invitingUser);
-        repository.save(invitation);
+        repository.save(new TeamInvitation(key, invitingUser));
 
         user.addInvitedTeam(team);
         teamRepository.save(team);
@@ -96,11 +91,8 @@ public class TeamInvitationService {
             throw new CodunoIllegalArgumentException("team.invalid");
         }
 
-        TeamUserKey key = new TeamUserKey();
-        key.setTeam(team);
-        key.setUser(user);
         if (invitationCheck) {
-            TeamInvitation invitation = repository.findByKey(key);
+            TeamInvitation invitation = repository.findByKey(key(team, user));
             if (invitation == null) {
                 throw new CodunoIllegalArgumentException("team.invite.notFound");
             }
@@ -115,10 +107,7 @@ public class TeamInvitationService {
             throw new CodunoIllegalArgumentException("team.invalid");
         }
 
-        TeamUserKey key = new TeamUserKey();
-        key.setTeam(team);
-        key.setUser(user);
-        TeamInvitation invitation = repository.findByKey(key);
+        TeamInvitation invitation = repository.findByKey(key(team, user));
         if (invitation == null) {
             throw new CodunoIllegalArgumentException("team.invite.notFound");
         }
@@ -127,5 +116,9 @@ public class TeamInvitationService {
 
     public List<TeamInvitationShowDto> findInvitationsByUserId(UUID userId) {
         return repository.findAllByUserIdAndTeamEnabled(userId).stream().map(TeamInvitationShowDto::new).collect(Collectors.toList());
+    }
+
+    private static TeamUserKey key(Team team, User user) {
+        return new TeamUserKey(team, user);
     }
 }

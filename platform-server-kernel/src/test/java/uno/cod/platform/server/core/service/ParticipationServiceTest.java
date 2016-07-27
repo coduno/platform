@@ -2,7 +2,6 @@ package uno.cod.platform.server.core.service;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import uno.cod.platform.server.core.domain.Challenge;
 import uno.cod.platform.server.core.domain.Participation;
 import uno.cod.platform.server.core.domain.Team;
@@ -15,37 +14,26 @@ import uno.cod.platform.server.core.service.util.ParticipationUtil;
 import uno.cod.platform.server.core.service.util.TeamTestUtil;
 import uno.cod.platform.server.core.service.util.UserTestUtil;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 public class ParticipationServiceTest {
     ParticipationService service;
     private UserRepository userRepository;
     private ChallengeRepository challengeRepository;
     private TeamRepository teamRepository;
     private ParticipationRepository participationRepository;
-    private ParticipationInvitationRepository participationInvitationRepository;
-    private LocationRepository locationRepository;
-    private MailService mailService;
 
     @Before
     public void setUp() throws Exception {
-        this.userRepository = Mockito.mock(UserRepository.class);
-        this.challengeRepository = Mockito.mock(ChallengeRepository.class);
-        this.teamRepository = Mockito.mock(TeamRepository.class);
-        this.participationRepository = Mockito.mock(ParticipationRepository.class);
-        this.participationInvitationRepository = Mockito.mock(ParticipationInvitationRepository.class);
-        this.locationRepository = Mockito.mock(LocationRepository.class);
-        this.mailService = Mockito.mock(MailService.class);
+        this.userRepository = mock(UserRepository.class);
+        this.challengeRepository = mock(ChallengeRepository.class);
+        this.teamRepository = mock(TeamRepository.class);
+        this.participationRepository = mock(ParticipationRepository.class);
+        ParticipationInvitationRepository participationInvitationRepository = mock(ParticipationInvitationRepository.class);
+        LocationRepository locationRepository = mock(LocationRepository.class);
+        MailService mailService = mock(MailService.class);
         this.service = new ParticipationService(userRepository, challengeRepository, teamRepository, participationRepository, participationInvitationRepository, locationRepository, mailService);
-    }
-
-    @Test
-    public void registerForChallengeNoTeam() throws Exception {
-        Challenge challenge = ChallengeTestUtil.getChallenge();
-        User user = UserTestUtil.getUser();
-        Mockito.when(challengeRepository.findOneByCanonicalName(challenge.getCanonicalName())).thenReturn(challenge);
-        Mockito.when(participationRepository.findOneByUserAndChallenge(user.getId(), challenge.getId())).thenReturn(null);
-        Mockito.when(userRepository.getOne(user.getId())).thenReturn(user);
-
-        service.registerForChallenge(user, challenge.getCanonicalName());
     }
 
     @Test
@@ -53,10 +41,10 @@ public class ParticipationServiceTest {
         Challenge challenge = ChallengeTestUtil.getChallenge();
         User user = UserTestUtil.getUser();
         Team team = TeamTestUtil.getTeamWithMember(user);
-        Mockito.when(challengeRepository.findOneByCanonicalName(challenge.getCanonicalName())).thenReturn(challenge);
-        Mockito.when(participationRepository.findOneByUserAndChallenge(user.getId(), challenge.getId())).thenReturn(null);
-        Mockito.when(teamRepository.findByCanonicalNameAndEnabledTrue(team.getCanonicalName())).thenReturn(team);
-        Mockito.when(userRepository.getOne(user.getId())).thenReturn(user);
+        when(challengeRepository.findOneByCanonicalName(challenge.getCanonicalName())).thenReturn(challenge);
+        when(participationRepository.findOneByUserAndChallenge(user.getId(), challenge.getId())).thenReturn(null);
+        when(teamRepository.findByCanonicalNameAndEnabledTrue(team.getCanonicalName())).thenReturn(team);
+        when(userRepository.getOne(user.getId())).thenReturn(user);
 
         service.registerForChallenge(user, challenge.getCanonicalName(), ParticipationUtil.getCreateDto(team.getCanonicalName()));
     }
@@ -66,9 +54,9 @@ public class ParticipationServiceTest {
         Challenge challenge = ChallengeTestUtil.getChallenge();
         User user = UserTestUtil.getUser();
         Team team = TeamTestUtil.getTeamWithMember(user);
-        Mockito.when(challengeRepository.findOneByCanonicalName(challenge.getCanonicalName())).thenReturn(challenge);
-        Mockito.when(participationRepository.findOneByUserAndChallenge(user.getId(), challenge.getId())).thenReturn(null);
-        Mockito.when(teamRepository.findByCanonicalNameAndEnabledTrue(team.getCanonicalName())).thenReturn(null);
+        when(challengeRepository.findOneByCanonicalName(challenge.getCanonicalName())).thenReturn(challenge);
+        when(participationRepository.findOneByUserAndChallenge(user.getId(), challenge.getId())).thenReturn(null);
+        when(teamRepository.findByCanonicalNameAndEnabledTrue(team.getCanonicalName())).thenReturn(null);
 
         service.registerForChallenge(user, challenge.getCanonicalName(), ParticipationUtil.getCreateDto(team.getCanonicalName()));
     }
@@ -78,29 +66,20 @@ public class ParticipationServiceTest {
         Challenge challenge = ChallengeTestUtil.getChallenge();
         User user = UserTestUtil.getUser();
         Team team = TeamTestUtil.getTeamWithMember(UserTestUtil.getUser("random", "random"));
-        Mockito.when(challengeRepository.findOneByCanonicalName(challenge.getCanonicalName())).thenReturn(challenge);
-        Mockito.when(participationRepository.findOneByUserAndChallenge(user.getId(), challenge.getId())).thenReturn(null);
-        Mockito.when(teamRepository.findByCanonicalNameAndEnabledTrue(team.getCanonicalName())).thenReturn(team);
-        Mockito.when(userRepository.getOne(user.getId())).thenReturn(user);
+        when(challengeRepository.findOneByCanonicalName(challenge.getCanonicalName())).thenReturn(challenge);
+        when(participationRepository.findOneByUserAndChallenge(user.getId(), challenge.getId())).thenReturn(null);
+        when(teamRepository.findByCanonicalNameAndEnabledTrue(team.getCanonicalName())).thenReturn(team);
+        when(userRepository.getOne(user.getId())).thenReturn(user);
 
         service.registerForChallenge(user, challenge.getCanonicalName(), ParticipationUtil.getCreateDto(team.getCanonicalName()));
-    }
-
-    @Test(expected = CodunoIllegalArgumentException.class)
-    public void registerForChallengeNoChallenge() throws Exception {
-        Challenge challenge = ChallengeTestUtil.getChallenge();
-        User user = UserTestUtil.getUser();
-        Mockito.when(challengeRepository.findOneByCanonicalName(challenge.getCanonicalName())).thenReturn(null);
-
-        service.registerForChallenge(user, challenge.getCanonicalName());
     }
 
     @Test(expected = CodunoIllegalArgumentException.class)
     public void registerForChallengeExistingParticipation() throws Exception {
         Challenge challenge = ChallengeTestUtil.getChallenge();
         User user = UserTestUtil.getUser();
-        Mockito.when(challengeRepository.findOneByCanonicalName(challenge.getCanonicalName())).thenReturn(challenge);
-        Mockito.when(participationRepository.findOneByUserAndChallenge(user.getId(), challenge.getId())).thenReturn(new Participation());
+        when(challengeRepository.findOneByCanonicalName(challenge.getCanonicalName())).thenReturn(challenge);
+        when(participationRepository.findOneByUserAndChallenge(user.getId(), challenge.getId())).thenReturn(new Participation(challenge, user));
 
         service.registerForChallenge(user, challenge.getCanonicalName(), ParticipationUtil.getCreateDto("team"));
     }

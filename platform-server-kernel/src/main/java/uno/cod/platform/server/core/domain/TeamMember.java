@@ -21,11 +21,31 @@ public class TeamMember implements Serializable {
 
     private boolean admin;
 
+    public TeamMember(Team team, User user) {
+        this(team, user, false);
+    }
+
+    public TeamMember(Team team, User user, boolean admin) {
+        this(new TeamUserKey(team, user), admin);
+    }
+
+    public TeamMember(TeamUserKey key) {
+        this(key, false);
+    }
+
+    public TeamMember(TeamUserKey key, boolean admin) {
+        this.key = key;
+        this.admin = admin;
+    }
+
+    protected TeamMember() {
+    }
+
     public TeamUserKey getKey() {
         return this.key;
     }
 
-    public void setKey(TeamUserKey key) {
+    protected void setKey(TeamUserKey key) {
         this.key = key;
     }
 
@@ -33,7 +53,7 @@ public class TeamMember implements Serializable {
         return this.admin;
     }
 
-    public void setAdmin(boolean admin) {
+    protected void setAdmin(boolean admin) {
         this.admin = admin;
     }
 
@@ -41,7 +61,7 @@ public class TeamMember implements Serializable {
         return this.created;
     }
 
-    public void setCreated(ZonedDateTime created) {
+    protected void setCreated(ZonedDateTime created) {
         this.created = created;
     }
 }

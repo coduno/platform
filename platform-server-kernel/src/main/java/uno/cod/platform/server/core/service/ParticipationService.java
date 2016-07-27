@@ -46,10 +46,6 @@ public class ParticipationService {
         this.mailService = mailService;
     }
 
-    public void registerForChallenge(User user, String challengeName) throws MessagingException {
-        this.registerForChallenge(user, challengeName, null);
-    }
-
     public void registerForChallenge(User user, String challengeName, ParticipationCreateDto dto) throws MessagingException {
         if (user == null) {
             throw new CodunoIllegalArgumentException("user.invalid");
@@ -63,16 +59,12 @@ public class ParticipationService {
         Participation participation = participationRepository.findOneByUserAndChallenge(user.getId(), challenge.getId());
         if (participation == null) {
             user = userRepository.getOne(user.getId());
-            ParticipationKey key = new ParticipationKey();
-            key.setChallenge(challenge);
-            key.setUser(user);
 
             if (user == null) {
                 throw new CodunoIllegalArgumentException("user.invalid");
             }
 
-            participation = new Participation();
-            participation.setKey(key);
+            participation = new Participation(challenge, user);
 
             Map<String, Object> params = new HashMap<>();
             params.put("challengeCanonicalName", challenge.getCanonicalName());
@@ -85,7 +77,7 @@ public class ParticipationService {
         } else {
             participation.setLocation(null);
         }
-        // Join as teamName
+
         if (dto != null && dto.getTeam() != null && !dto.getTeam().isEmpty()) {
             Team team = teamRepository.findByCanonicalNameAndEnabledTrue(dto.getTeam());
             if (!checkUserInTeam(user, team)) {
@@ -110,18 +102,23 @@ public class ParticipationService {
         if (challenge == null) {
             throw new CodunoIllegalArgumentException("challenge.invalid");
         }
+
         Participation participation = participationRepository.findOneByUserAndChallenge(user.getId(), challenge.getId());
         if (participation == null) {
             throw new CodunoNoSuchElementException("participation.not.registered");
         }
+
         participationRepository.delete(participation);
     }
 
     public Set<ParticipationShowDto> getByChallengeCanonicalName(String canonicalName) {
-        return participationRepository.findAllByChallengeCanonicalName(canonicalName).stream().map(ParticipationShowDto::new).collect(Collectors.toSet());
+        return participationRepository.findAllByChallengeCanonicalName(canonicalName)
+                .stream()
+                .map(ParticipationShowDto::new)
+                .collect(Collectors.toSet());
     }
 
-    private boolean checkUserInTeam(User user, Team team) {
+    private static boolean checkUserInTeam(User user, Team team) {
         if (team == null || user == null) {
             return false;
         }
