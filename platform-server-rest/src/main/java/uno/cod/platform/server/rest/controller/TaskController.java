@@ -4,7 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import uno.cod.platform.server.core.domain.User;
 import uno.cod.platform.server.core.dto.task.TaskCreateDto;
 import uno.cod.platform.server.core.dto.task.TaskShowDto;
 import uno.cod.platform.server.core.security.AllowedForAdmin;
@@ -32,8 +34,8 @@ public class TaskController {
 
     @RequestMapping(value = RestUrls.TASKS_ID, method = RequestMethod.GET)
     @PreAuthorize("isAuthenticated() and @securityService.canAccessTask(principal, #id)")
-    public ResponseEntity<TaskShowDto> findById(@PathVariable UUID id) {
-        return new ResponseEntity<>(taskService.findById(id), HttpStatus.OK);
+    public ResponseEntity<TaskShowDto> findById(@PathVariable UUID id, @AuthenticationPrincipal User user) {
+        return new ResponseEntity<>(taskService.findById(id, user), HttpStatus.OK);
     }
 
     @RequestMapping(value = RestUrls.TASKS, method = RequestMethod.GET, params = {"organization"})

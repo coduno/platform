@@ -2,19 +2,15 @@ package uno.cod.platform.server.core.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import uno.cod.platform.server.core.domain.Endpoint;
-import uno.cod.platform.server.core.domain.Organization;
-import uno.cod.platform.server.core.domain.Runner;
-import uno.cod.platform.server.core.domain.Task;
+import uno.cod.platform.server.core.domain.*;
 import uno.cod.platform.server.core.dto.task.TaskCreateDto;
 import uno.cod.platform.server.core.dto.task.TaskShowDto;
+import uno.cod.platform.server.core.exception.CodunoAccessDeniedException;
 import uno.cod.platform.server.core.exception.CodunoIllegalArgumentException;
 import uno.cod.platform.server.core.mapper.TaskMapper;
-import uno.cod.platform.server.core.repository.EndpointRepository;
-import uno.cod.platform.server.core.repository.OrganizationRepository;
-import uno.cod.platform.server.core.repository.RunnerRepository;
-import uno.cod.platform.server.core.repository.TaskRepository;
+import uno.cod.platform.server.core.repository.*;
 
+import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.UUID;
@@ -26,13 +22,28 @@ public class TaskService {
     private final EndpointRepository endpointRepository;
     private final OrganizationRepository organizationRepository;
     private final RunnerRepository runnerRepository;
+    private final ChallengeRepository challengeRepository;
+    private final UserRepository userRepository;
+    private final ResultRepository resultRepository;
+    private final HttpSession httpSession;
 
     @Autowired
-    public TaskService(TaskRepository repository, EndpointRepository endpointRepository, OrganizationRepository organizationRepository, RunnerRepository runnerRepository) {
+    public TaskService(TaskRepository repository,
+                       EndpointRepository endpointRepository,
+                       OrganizationRepository organizationRepository,
+                       RunnerRepository runnerRepository,
+                       ChallengeRepository challengeRepository,
+                       UserRepository userRepository,
+                       ResultRepository resultRepository,
+                       HttpSession httpSession) {
         this.repository = repository;
         this.endpointRepository = endpointRepository;
         this.organizationRepository = organizationRepository;
         this.runnerRepository = runnerRepository;
+        this.challengeRepository = challengeRepository;
+        this.userRepository = userRepository;
+        this.resultRepository = resultRepository;
+        this.httpSession = httpSession;
     }
 
     public UUID save(TaskCreateDto dto) {
@@ -68,8 +79,28 @@ public class TaskService {
         return repository.save(task).getId();
     }
 
-    public TaskShowDto findById(UUID id) {
-        return TaskMapper.map(repository.findOneWithTemplates(id));
+    public TaskShowDto findById(UUID taskId, User u) {
+        Task task = repository.findOneWithTemplates(taskId);
+        User user = userRepository.findOne(u.getId());
+        Object attr = httpSession.getAttribute(ResultService.CURRENT_CHALLENGE);
+        if (attr == null) {
+            throw new CodunoAccessDeniedException("challenge.invalid");
+        }
+
+        Challenge challenge = challengeRepository.findOne((UUID)attr);
+
+        if (canSeeTask(user, challenge, task)) {
+            return TaskMapper.map(task);
+        }
+        throw new CodunoAccessDeniedException("task.denied");
+    }
+
+    private boolean canSeeTask(User user, Challenge challenge, Task task) {
+        int requestedIndex = challenge.getChallengeTemplate().getTasks().indexOf(task);
+
+        // User can see task if it is the first task (requestedIndex == 0) or the previous task was completed
+        // successfully.
+        return requestedIndex == 0 || resultRepository.findOneByUserAndChallenge(user.getId(), challenge.getId()).getTaskResults().get(requestedIndex - 1).isSuccessful();
     }
 
     public List<TaskShowDto> findAllForOrganization(UUID organizationId) {
