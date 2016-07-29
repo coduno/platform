@@ -1,0 +1,12 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Server (development, local)" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+    <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="uno.cod.platform.server.Server" />
+    <option name="HIDE_BANNER" value="true" />
+    <option name="ACTIVE_PROFILES" value="development,local" />
+    <option name="ALTERNATIVE_JRE_PATH" />
+    <module name="platform-server_main" />
+    <envs />
+    <method />
+  </configuration>
+</component>
