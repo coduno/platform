@@ -4,15 +4,17 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import uno.cod.platform.server.core.domain.Task;
+import uno.cod.platform.server.core.domain.*;
 import uno.cod.platform.server.core.dto.task.TaskCreateDto;
 import uno.cod.platform.server.core.dto.task.TaskShowDto;
-import uno.cod.platform.server.core.repository.EndpointRepository;
-import uno.cod.platform.server.core.repository.OrganizationRepository;
-import uno.cod.platform.server.core.repository.RunnerRepository;
-import uno.cod.platform.server.core.repository.TaskRepository;
+import uno.cod.platform.server.core.exception.CodunoAccessDeniedException;
+import uno.cod.platform.server.core.repository.*;
+import uno.cod.platform.server.core.service.util.ChallengeTestUtil;
 import uno.cod.platform.server.core.service.util.TaskTestUtil;
+import uno.cod.platform.server.core.service.util.UserTestUtil;
 
+import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -23,6 +25,10 @@ public class TaskServiceTest {
     private EndpointRepository endpointRepository;
     private OrganizationRepository organizationRepository;
     private RunnerRepository runnerRepository;
+    private ChallengeRepository challengeRepository;
+    private UserRepository userRepository;
+    private ResultRepository resultRepository;
+    private HttpSession httpSession;
 
     @Before
     public void setup() {
@@ -30,7 +36,11 @@ public class TaskServiceTest {
         this.endpointRepository = Mockito.mock(EndpointRepository.class);
         this.organizationRepository = Mockito.mock(OrganizationRepository.class);
         this.runnerRepository = Mockito.mock(RunnerRepository.class);
-        this.service = new TaskService(repository, endpointRepository, organizationRepository, runnerRepository);
+        this.challengeRepository = Mockito.mock(ChallengeRepository.class);
+        this.userRepository = Mockito.mock(UserRepository.class);
+        this.resultRepository = Mockito.mock(ResultRepository.class);
+        this.httpSession = Mockito.mock(HttpSession.class);
+        this.service = new TaskService(repository, endpointRepository, organizationRepository, runnerRepository, challengeRepository, userRepository, resultRepository, httpSession);
     }
 
     @Test
@@ -48,14 +58,55 @@ public class TaskServiceTest {
         Assert.assertEquals(id, task.getId());
     }
 
-    @Test
-    public void findById() throws Exception {
+
+    @Test(expected = CodunoAccessDeniedException.class)
+    public void findByIdAccessDenied() throws Exception {
+        // Neither the session attribute is set nor the repository methods are mocked and therefore return null
         Task task = TaskTestUtil.getValidTask();
+        User user = UserTestUtil.getUser();
+
         Mockito.when(repository.findOneWithTemplates(task.getId())).thenReturn(task);
 
-        TaskShowDto dto = service.findById(task.getId());
-
+        TaskShowDto dto = service.findById(task.getId(), user);
         assertTaskEquals(task, dto);
+    }
+
+    @Test
+    public void findByIdAccessGranted() throws Exception {
+        Task task = TaskTestUtil.getValidTask();
+        Task newTask = TaskTestUtil.getValidTask();
+        User user = UserTestUtil.getUser();
+        Challenge challenge = ChallengeTestUtil.getChallenge();
+
+        Result result = new Result();
+        result.setChallenge(challenge);
+        result.setUser(user);
+
+        TaskResult taskResult = new TaskResult();
+        taskResult.setSuccessful(true);
+
+        TaskResultKey taskResultKey = new TaskResultKey();
+        taskResultKey.setResult(result);
+        taskResultKey.setTask(task);
+
+        ArrayList<TaskResult> taskResultList = new ArrayList<>();
+        taskResultList.add(taskResult);
+        result.setTaskResults(taskResultList);
+
+        ArrayList<Task> tasks = new ArrayList<>();
+        tasks.add(task);
+        tasks.add(newTask);
+        challenge.getChallengeTemplate().setTasks(tasks);
+
+        Mockito.when(httpSession.getAttribute(ResultService.CURRENT_CHALLENGE)).thenReturn(challenge.getId());
+        Mockito.when(userRepository.findOne(user.getId())).thenReturn(user);
+        Mockito.when(repository.findOneWithTemplates(task.getId())).thenReturn(task);
+        Mockito.when(repository.findOneWithTemplates(newTask.getId())).thenReturn(newTask);
+        Mockito.when(challengeRepository.findOne(challenge.getId())).thenReturn(challenge);
+        Mockito.when(resultRepository.findOneByUserAndChallenge(user.getId(), challenge.getId())).thenReturn(result);
+
+        TaskShowDto dto = service.findById(newTask.getId(), user);
+        assertTaskEquals(newTask, dto);
     }
 
     @Test

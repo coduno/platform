@@ -10,16 +10,12 @@ import uno.cod.platform.server.core.dto.result.ResultShowDto;
 import uno.cod.platform.server.core.dto.user.UserShortShowDto;
 import uno.cod.platform.server.core.exception.CodunoIllegalArgumentException;
 import uno.cod.platform.server.core.mapper.ResultMapper;
-import uno.cod.platform.server.core.repository.ChallengeRepository;
-import uno.cod.platform.server.core.repository.ParticipationRepository;
-import uno.cod.platform.server.core.repository.ResultRepository;
+import uno.cod.platform.server.core.repository.*;
 
+import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @Transactional
@@ -28,14 +24,21 @@ public class ResultService {
     private final ChallengeRepository challengeRepository;
     private final TaskScheduler taskScheduler;
     private final ParticipationRepository participationRepository;
+    private final HttpSession httpSession;
+
+    public static final String CURRENT_CHALLENGE = "CURRENT_CHALLENGE";
 
     @Autowired
     public ResultService(ResultRepository repository,
-                         ChallengeRepository challengeRepository, TaskScheduler taskScheduler, ParticipationRepository participationRepository) {
+                         ChallengeRepository challengeRepository,
+                         TaskScheduler taskScheduler,
+                         ParticipationRepository participationRepository,
+                         HttpSession httpSession) {
         this.repository = repository;
         this.challengeRepository = challengeRepository;
         this.taskScheduler = taskScheduler;
         this.participationRepository = participationRepository;
+        this.httpSession = httpSession;
     }
 
     public ResultShowDto save(UUID challengeId, User user) {
@@ -81,6 +84,7 @@ public class ResultService {
             repository.save(r);
         }, setFinished);
 
+        httpSession.setAttribute(CURRENT_CHALLENGE, challenge.getId());
         return ResultMapper.map(result);
     }
 
@@ -111,6 +115,7 @@ public class ResultService {
         if (result == null) {
             return null;
         }
+        httpSession.setAttribute(CURRENT_CHALLENGE, challengeId);
         return new ResultInfoDto(result);
     }
 }
