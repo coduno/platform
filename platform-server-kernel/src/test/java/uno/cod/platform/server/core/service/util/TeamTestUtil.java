@@ -1,6 +1,7 @@
 package uno.cod.platform.server.core.service.util;
 
 import uno.cod.platform.server.core.domain.Team;
+import uno.cod.platform.server.core.domain.TeamMember;
 import uno.cod.platform.server.core.domain.User;
 
 import java.util.UUID;
@@ -14,7 +15,7 @@ public class TeamTestUtil {
         Team team = new Team(UUID.randomUUID(), "name", "canonical-name");
         team.setEnabled(true);
         if (user != null) {
-            team.addTeamMember(TeamMemberTestUtil.getTeamMember(team, user));
+            team.addTeamMember(new TeamMember(team, user));
         }
         return team;
     }

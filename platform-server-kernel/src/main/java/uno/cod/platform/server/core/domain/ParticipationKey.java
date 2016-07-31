@@ -10,14 +10,23 @@ public class ParticipationKey implements Serializable {
 
     @ManyToOne
     private Challenge challenge;
+
     @ManyToOne
     private User user;
+
+    public ParticipationKey(Challenge challenge, User user) {
+        this.challenge = challenge;
+        this.user = user;
+    }
+
+    protected ParticipationKey() {
+    }
 
     public Challenge getChallenge() {
         return challenge;
     }
 
-    public void setChallenge(Challenge challenge) {
+    protected void setChallenge(Challenge challenge) {
         this.challenge = challenge;
     }
 
@@ -25,7 +34,7 @@ public class ParticipationKey implements Serializable {
         return user;
     }
 
-    public void setUser(User user) {
+    protected void setUser(User user) {
         this.user = user;
     }
 

@@ -47,10 +47,7 @@ public class ResultService {
         if (result != null) {
             throw new CodunoIllegalArgumentException("challenge.completed");
         }
-        ParticipationKey key = new ParticipationKey();
-        key.setChallenge(challenge);
-        key.setUser(user);
-        Participation participation = participationRepository.findOne(key);
+        Participation participation = participationRepository.findOne(new ParticipationKey(challenge, user));
         if (participation == null) {
             throw new CodunoIllegalArgumentException("participation.invalid");
         }

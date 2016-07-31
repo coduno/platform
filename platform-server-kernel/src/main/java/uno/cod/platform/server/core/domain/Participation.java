@@ -29,6 +29,35 @@ public class Participation {
     @Column(nullable = false, updatable = false)
     private Date created = new Date();
 
+    public Participation(Challenge challenge, User user) {
+        this(challenge, user, null, null);
+    }
+
+    public Participation(Challenge challenge, User user, Location location) {
+        this(challenge, user, location, null);
+    }
+
+    public Participation(Challenge challenge, User user, Location location, Team team) {
+        this(new ParticipationKey(challenge, user), location, team);
+    }
+
+    public Participation(ParticipationKey key, Location location) {
+        this(key, location, null);
+    }
+
+    public Participation(ParticipationKey key) {
+        this(key, null, null);
+    }
+
+    public Participation(ParticipationKey key, Location location, Team team) {
+        this.key = key;
+        this.location = location;
+        this.team = team;
+    }
+
+    protected Participation() {
+    }
+
     public ParticipationKey getKey() {
         return key;
     }

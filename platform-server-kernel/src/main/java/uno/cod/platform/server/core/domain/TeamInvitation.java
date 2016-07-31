@@ -20,11 +20,31 @@ public class TeamInvitation {
     @Column(nullable = false, updatable = false)
     private ZonedDateTime created = ZonedDateTime.now();
 
+    public TeamInvitation(Team team, User user) {
+        this(new TeamUserKey(team, user));
+    }
+
+    public TeamInvitation(Team team, User user, User invitedBy) {
+        this(new TeamUserKey(team, user), invitedBy);
+    }
+
+    public TeamInvitation(TeamUserKey key, User invitedBy) {
+        this.key = key;
+        this.invitedBy = invitedBy;
+    }
+
+    public TeamInvitation(TeamUserKey key) {
+        this.key = key;
+    }
+
+    protected TeamInvitation() {
+    }
+
     public TeamUserKey getKey() {
         return key;
     }
 
-    public void setKey(TeamUserKey key) {
+    protected void setKey(TeamUserKey key) {
         this.key = key;
     }
 
@@ -32,7 +52,7 @@ public class TeamInvitation {
         return invitedBy;
     }
 
-    public void setInvitedBy(User invitedBy) {
+    protected void setInvitedBy(User invitedBy) {
         this.invitedBy = invitedBy;
     }
 
@@ -40,7 +60,7 @@ public class TeamInvitation {
         return created;
     }
 
-    public void setCreated(ZonedDateTime created) {
+    protected void setCreated(ZonedDateTime created) {
         this.created = created;
     }
 }

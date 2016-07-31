@@ -1,33 +1,17 @@
 package uno.cod.platform.server.core.service.util;
 
 import uno.cod.platform.server.core.domain.User;
-import uno.cod.platform.server.core.dto.user.ActivationTokenCreateDto;
 import uno.cod.platform.server.core.dto.user.UserPasswordChangeDto;
 import uno.cod.platform.server.core.dto.user.UserUpdateProfileDetailsDto;
 
 import java.util.UUID;
 
 public class UserTestUtil {
-    public static UserPasswordChangeDto getUpdatePasswordChangeDto(String old, String newpass) {
+    public static UserPasswordChangeDto getUpdatePasswordChangeDto(String oldPassword, String newPassword) {
         UserPasswordChangeDto dto = new UserPasswordChangeDto();
-        dto.setNewPassword(newpass);
-        dto.setOldPassword(old);
-
+        dto.setNewPassword(newPassword);
+        dto.setOldPassword(oldPassword);
         return dto;
-    }
-
-    public static ActivationTokenCreateDto getUserCreateDto() {
-        ActivationTokenCreateDto user = getUserCreateDto("username", "password");
-        user.setPassword("password");
-        return user;
-    }
-
-    public static ActivationTokenCreateDto getUserCreateDto(String username, String email) {
-        ActivationTokenCreateDto user = new ActivationTokenCreateDto();
-        user.setNick(username);
-        user.setEmail(email);
-        user.setPassword("password");
-        return user;
     }
 
     public static UserUpdateProfileDetailsDto getUserUpdateProfileDetailsDto(String username, String email) {
