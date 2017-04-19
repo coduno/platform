@@ -9,6 +9,7 @@ import java.util.Date;
 
 public class ParticipationShowDto {
     private String username;
+    private String email;
     private String teamName;
     private String email;
     private String teamCanonicalName;

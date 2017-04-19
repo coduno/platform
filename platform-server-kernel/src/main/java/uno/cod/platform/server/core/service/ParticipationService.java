@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -119,6 +120,13 @@ public class ParticipationService {
 
     public Set<ParticipationShowDto> getByChallengeCanonicalName(String canonicalName) {
         return participationRepository.findAllByChallengeCanonicalName(canonicalName).stream().map(ParticipationShowDto::new).collect(Collectors.toSet());
+    }
+
+    public Set<ParticipationShowDto> getByChallengeCanonicalNameAndLocation(String canonicalName, UUID location) {
+        return participationRepository.findAllByChallengeCanonicalNameAndLocation(canonicalName, location)
+                .stream()
+                .map(ParticipationShowDto::new)
+                .collect(Collectors.toSet());
     }
 
     private boolean checkUserInTeam(User user, Team team) {

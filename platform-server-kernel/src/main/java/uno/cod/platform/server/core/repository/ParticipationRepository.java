@@ -38,4 +38,15 @@ public interface ParticipationRepository extends JpaRepository<Participation, Pa
             "WHERE  participation.key.challenge.canonicalName = :challenge " +
             "ORDER BY participation.created")
     Set<Participation> findAllByChallengeCanonicalName(@Param("challenge") String challenge);
+
+    @Query("SELECT participation FROM Participation      participation " +
+            "LEFT JOIN FETCH participation.key.challenge challenge " +
+            "LEFT JOIN FETCH participation.key.user      user " +
+            "LEFT JOIN FETCH participation.team          team " +
+            "LEFT JOIN FETCH team.members                teamMember " +
+            "LEFT JOIN participation.location location " +
+            "WHERE  participation.key.challenge.canonicalName = :challenge " +
+            "AND (location.id=:location OR (location is NULL AND :location is NULL)) " +
+            "ORDER BY participation.created")
+    Set<Participation> findAllByChallengeCanonicalNameAndLocation(@Param("challenge") String challenge, @Param("location") UUID location);
 }

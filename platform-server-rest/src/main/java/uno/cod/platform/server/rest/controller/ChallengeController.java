@@ -20,6 +20,7 @@ import javax.mail.MessagingException;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 @RestController
 public class ChallengeController {
@@ -41,8 +42,16 @@ public class ChallengeController {
 
     @RequestMapping(value = RestUrls.CHALLENGES_CANONICAL_NAME_PARTICIPANTS, method = RequestMethod.GET)
     @PreAuthorize("isAuthenticated() and @securityService.canAccessChallenge(principal, #canonicalName)")
-    public ResponseEntity<Set<ParticipationShowDto>> getParticipantsByCanonicalName(@PathVariable String canonicalName) {
-        return new ResponseEntity<>(participationService.getByChallengeCanonicalName(canonicalName), HttpStatus.OK);
+    public ResponseEntity<Set<ParticipationShowDto>> getParticipantsByCanonicalName(@PathVariable String canonicalName,
+                                                                                    @RequestParam(required = false) String location) {
+        if (location == null || location.equals("")) {
+            return new ResponseEntity<>(participationService.getByChallengeCanonicalName(canonicalName), HttpStatus.OK);
+        } else if (location.equals("online")) {
+            //TODO: make "Online" an actual location so we can get of the insane stuff right here
+            return new ResponseEntity<>(participationService.getByChallengeCanonicalNameAndLocation(canonicalName, null), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(participationService.getByChallengeCanonicalNameAndLocation(canonicalName, UUID.fromString(location)), HttpStatus.OK);
+        }
     }
 
     @RequestMapping(value = RestUrls.CHALLENGES, method = RequestMethod.POST)
