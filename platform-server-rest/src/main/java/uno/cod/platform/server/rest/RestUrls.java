@@ -48,7 +48,7 @@ public class RestUrls {
     public static final String LEADERBOARD = "/challenge/{id}/leaderboard";
 
     public static final String TASKS = "/tasks";
-    public static final String TASKS_ID = "/tasks/{id}";
+    public static final String TASKS_ID = "/task/{id}";
 
     public static final String TASKS_ID_TEMPLATES = "/tasks/{id}/templates";
     public static final String TASKS_ID_TEMPLATES_NAME = "/tasks/{id}/templates/{name}";
